@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         DatabaseNotifications::trigger('filament.notifications.database-notifications-trigger');
+        DatabaseNotifications::pollingInterval(null);
 
         $this->app->singleton(NotificationService::class, function ($app) {
             return new NotificationService();

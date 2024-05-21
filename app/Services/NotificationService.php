@@ -8,7 +8,7 @@ use Filament\Notifications\Actions\Action;
 
 class NotificationService
 {
-    public function sendNotification($user, $title, $body, $url)
+    public function sendNotification($user, $title, $body)
     {
         FilamentNotification::make()
             ->title($title)
@@ -17,7 +17,7 @@ class NotificationService
             ->actions([
                 Action::make('view')
                     ->button()
-                    ->url($url),
+                    ->url(route('dashboard')),
             ])
             ->send()
             ->sendToDatabase($user);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Pages\Project\Index;
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Pages\Project\ProjectPage;
@@ -17,6 +18,6 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 
-    Volt::route('/projects', 'pages.project.index')->name('projects.index');
+    Route::get('/projects', Index::class)->lazy()->name('projects.index');
 
 });
