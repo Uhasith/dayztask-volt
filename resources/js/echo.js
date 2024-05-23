@@ -12,3 +12,18 @@ window.Echo = new Echo({
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
 });
+
+
+// Listen for notifications on the private channel
+if (window.Laravel.userId) {
+    window.Echo.private(`App.Models.User.${window.Laravel.userId}`)
+        .listen('.database-notifications.sent', (e) => {
+            // Play the notification sound
+            playNotificationSound();
+        });
+
+    function playNotificationSound() {
+        const audio = document.getElementById('notification-sound');
+        audio.play();
+    }
+}

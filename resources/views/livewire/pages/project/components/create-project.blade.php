@@ -2,10 +2,11 @@
     <form wire:submit="create">
         {{ $this->form }}
 
-        <x-button type="submit" class="btn-primary mt-5 w-full">
-            <span class="text-center w-full">Create Project 😃</span>
-        </x-button>
+        <x-filament::button type="submit" class="mt-10 w-full">
+            Create Project 😃
+        </x-filament::button>
+
     </form>
 
-    {{-- <x-filament-actions::modals /> --}}
+    <x-filament-actions::modals />
 </div>

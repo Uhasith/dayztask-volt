@@ -6,7 +6,7 @@
             </div>
         @endforeach
 
-        <div class="col-span-12">
+        <div class="col-span-12 mt-5">
             {{ $projects->links() }}
         </div>
     </div>

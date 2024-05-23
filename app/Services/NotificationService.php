@@ -19,6 +19,7 @@ class NotificationService
                     ->button()
                     ->url(route('dashboard')),
             ])
+            ->persistent()
             ->send()
             ->sendToDatabase($user);
 

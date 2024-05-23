@@ -19,11 +19,9 @@
     </style>
 
     @filamentStyles
-
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-
+    
     @livewireStyles
 </head>
 
@@ -63,6 +61,15 @@
     @stack('modals')
 
     @livewire('notifications')
+
+    @stack('scripts')
+
+    <script>
+        window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+            'userId' => auth()->check() ? auth()->user()->id : null,
+        ]) !!};
+    </script>
 
     @filamentScripts
     @livewireScripts
