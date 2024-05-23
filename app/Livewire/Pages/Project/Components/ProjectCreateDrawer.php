@@ -12,9 +12,6 @@ class ProjectCreateDrawer extends Component
 {
     public $showDrawer = false;
     public $project = null;
-    public $isLoading = false;
-
-    public $amount, $title;
 
     #[On('closeDrawer')]
     public function close()
@@ -25,8 +22,6 @@ class ProjectCreateDrawer extends Component
     #[On('openDrawer')]
     public function open($id)
     {
-        $this->isLoading = true;
-
         $this->project = Project::find($id);
         if (!$this->project) {
             Notification::make()
@@ -37,15 +32,7 @@ class ProjectCreateDrawer extends Component
         } else {
             $this->showDrawer = true;
         }
-
-        $this->isLoading = false;
     }
-
-    public function save()
-    {
-        
-    }
-
 
     public function render()
     {

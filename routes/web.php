@@ -1,6 +1,7 @@
 <?php
 
-use App\Livewire\Pages\Project\Index;
+use App\Livewire\Pages\Project\Index as ProjectIndex;
+use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Pages\Project\ProjectPage;
@@ -14,10 +15,9 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
 
-    Route::get('/projects', Index::class)->lazy()->name('projects.index');
+    Route::get('/dashboard', DashboardIndex::class)->lazy()->name('dashboard');
+
+    Route::get('/projects', ProjectIndex::class)->lazy()->name('projects.index');
 
 });

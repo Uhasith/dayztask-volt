@@ -13,14 +13,15 @@ class Index extends Component
 
     public function mount()
     {
-        sleep(3);
+        sleep(1);
     }
     
     public function render()
     {
         $user = User::find(Auth::user()->id);
+        $projects = $user->projects()->paginate(9);
         return view('livewire.pages.project.index', [
-            'projects' => $user->projects()->paginate(9),
+            'projects' => $projects,
         ]);
     }
 }

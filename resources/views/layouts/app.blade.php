@@ -23,11 +23,11 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Styles -->
+
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased" x-data>
     {{-- The navbar with `sticky` and `full-width` --}}
     @livewire('navigation-menu')
 
