@@ -5,7 +5,7 @@ namespace App\Livewire\Pages\Project\Components;
 use App\Models\Project;
 use Livewire\Component;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Lazy;
+use Illuminate\Support\Facades\Log;
 use Filament\Notifications\Notification;
 
 class ProjectCreateDrawer extends Component
@@ -13,10 +13,13 @@ class ProjectCreateDrawer extends Component
     public $showDrawer = false;
     public $project = null;
 
-    #[On('closeDrawer')]
-    public function close()
+    #[On('close-modal')]
+    public function close($id)
     {
-        $this->showDrawer = false;
+        if ($id == 'create-project') {
+            Log::info('Here');
+            $this->showDrawer = false;
+        }
     }
 
     #[On('openDrawer')]
@@ -31,6 +34,7 @@ class ProjectCreateDrawer extends Component
                 ->send();
         } else {
             $this->showDrawer = true;
+            $this->dispatch('open-modal', id: 'create-project');
         }
     }
 

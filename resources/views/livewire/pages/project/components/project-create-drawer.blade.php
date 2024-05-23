@@ -1,13 +1,13 @@
-<div wire:keydown.esc="$dispatch('closeDrawer')">
-    <x-mary-drawer wire:model="showDrawer" right class="w-full lg:w-5/12">
-        <div @click="$dispatch('closeDrawer')" class="absolute z-10 top-3 left-5 cursor-pointer flex items-center gap-5">
-            <x-mary-icon name="o-arrows-right-left" />
-            <label class="text-lg">Update Project Details</label>
+<div class="z-50">
+    <x-filament::modal slide-over sticky-header width="3xl" :close-by-clicking-away="false" id="create-project">
+        <x-slot name="heading">
+            <label class="text-lg">Create New Project</label>
+        </x-slot>
+
+        <div class="w-full min-h-64 overflow-y-auto px-4">
+            @if ($showDrawer)
+                <livewire:pages.project.components.create-project />
+            @endif
         </div>
-       
-        <div class="w-full min-h-64 overflow-y-auto justify-center mt-10 px-4">
-              <livewire:pages.project.components.create-project />
-        </div>
-    
-    </x-mary-drawer>
+    </x-filament::modal>
 </div>

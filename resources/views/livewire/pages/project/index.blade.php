@@ -7,7 +7,7 @@
         @endforeach
 
         <div class="col-span-12 mt-5">
-            {{ $projects->links() }}
+            <x-filament::pagination :paginator="$projects" extreme-links />
         </div>
     </div>
     <livewire:pages.project.components.project-create-drawer />
