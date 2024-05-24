@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Notifications;
 
 use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Notification as FilamentNotification;
@@ -8,7 +8,7 @@ use Filament\Notifications\Actions\Action;
 
 class NotificationService
 {
-    public function sendNotification($user, $title, $body)
+    public function sendDBNotification($user, $title, $body)
     {
         FilamentNotification::make()
             ->title($title)
@@ -24,5 +24,24 @@ class NotificationService
             ->sendToDatabase($user);
 
         event(new DatabaseNotificationsSent($user));
+    }
+
+    public function sendExeptionNotification()
+    {
+        FilamentNotification::make()
+            ->title('Something Went Wrong')
+            ->danger()
+            ->body('Please contact support team to resolve this issue.')
+            ->send();
+
+    }
+
+    public function sendSuccessNotification($message)
+    {
+        FilamentNotification::make()
+            ->title('Success')
+            ->success()
+            ->body($message)
+            ->send();
     }
 }

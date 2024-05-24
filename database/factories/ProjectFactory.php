@@ -23,7 +23,7 @@ class ProjectFactory extends Factory
             'company_logo' => $this->faker->imageUrl(),
             'bg_image' => $this->faker->imageUrl(),
             'bg_color' => $this->faker->hexColor,
-            'visibility' => $this->faker->randomElement(['public', 'private', 'restricted']),
+            'visibility' => $this->faker->randomElement(['public', 'private']),
             'user_id' => 1,
             'font_color' => $this->faker->hexColor,
             'order' => $this->faker->numberBetween(1, 100),

@@ -2,13 +2,19 @@
 
 namespace App\Livewire\Pages\Project\Components;
 
-use App\Models\Project;
 use Filament\Forms;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use App\Models\Project;
 use Livewire\Component;
+use Filament\Forms\Form;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use App\Services\Notifications\NotificationService;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class EditProject extends Component implements HasForms
 {
@@ -28,31 +34,23 @@ class EditProject extends Component implements HasForms
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(36),
-                Forms\Components\TextInput::make('company_logo')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('font_color')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('bg_color')
-                    ->maxLength(255),
-                Forms\Components\FileUpload::make('bg_image')
-                    ->image(),
-                Forms\Components\TextInput::make('visibility')
-                    ->required(),
-                Forms\Components\TextInput::make('order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('guest_users'),
+                TextInput::make('title')->rules(['required']),
+
+                Section::make('Project Display Settings')
+                    ->schema([
+                        Forms\Components\Select::make('visibility')->default('public')->options([
+                            'public' => 'Public',
+                            'private' => 'Private',
+                        ])->rules(['required']),
+                        Forms\Components\ColorPicker::make('font_color'),
+                        Forms\Components\ColorPicker::make('bg_color'),
+                        Forms\Components\Select::make('guest_users')->options(app(TeamService::class)->getGuestUsers())->multiple()->searchable()->label('Guest Users'),
+                    ])->columns([
+                        'sm' => 1,
+                        'lg' => 2,
+                    ]),
+
+                SpatieMediaLibraryFileUpload::make('company_logo')->image()->collection('company_logo')->optimize('webp'),
             ])
             ->statePath('data')
             ->model($this->record);
@@ -60,9 +58,24 @@ class EditProject extends Component implements HasForms
 
     public function save(): void
     {
-        $data = $this->form->getState();
+        DB::beginTransaction();
 
-        $this->record->update($data);
+        try {
+            $data = $this->form->getState();
+            $this->record->update($data);
+            $this->form->fill();
+            app(NotificationService::class)->sendSuccessNotification('Project updated successfully');
+
+            DB::commit();
+
+            $this->dispatch('close-modal', id: 'project-drawer');
+            $this->redirectRoute('projects.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            app(NotificationService::class)->sendExeptionNotification();
+            throw $e;
+        }
+        
     }
 
     public function render(): View

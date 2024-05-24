@@ -4,7 +4,7 @@ namespace App\Livewire\Pages\Project\Components;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
-use App\Services\NotificationService;
+use App\Services\Notifications\NotificationService;
 
 class ProjectCard extends Component
 {
@@ -18,7 +18,7 @@ class ProjectCard extends Component
         $body = 'Changes to the post have been saved.';
 
         // Use the service to send a notification
-        app(NotificationService::class)->sendNotification($user, $title, $body);
+        app(NotificationService::class)->sendDBNotification($user, $title, $body);
     }
 
     public function render()

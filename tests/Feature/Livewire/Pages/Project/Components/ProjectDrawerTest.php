@@ -1,9 +1,9 @@
 <?php
 
-use App\Livewire\Pages\Project\Index;
+use App\Livewire\Pages\Project\Components\ProjectDrawer;
 use Livewire\Livewire;
 
 it('renders successfully', function () {
-    Livewire::test(Index::class)
+    Livewire::test(ProjectDrawer::class)
         ->assertStatus(200);
 });

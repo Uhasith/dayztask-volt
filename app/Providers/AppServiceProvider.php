@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use App\Services\NotificationService;
-use Illuminate\Support\ServiceProvider;
-use Filament\Notifications\Livewire\DatabaseNotifications;
+
 use Filament\Support\Colors\Color;
+use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentColor;
+use App\Services\Notifications\NotificationService;
+use Filament\Notifications\Livewire\DatabaseNotifications;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(NotificationService::class, function ($app) {
             return new NotificationService();
         });
+
+        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        $loader->alias('Debugbar', \Barryvdh\Debugbar\Facades\Debugbar::class);
     }
 
     /**

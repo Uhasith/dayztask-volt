@@ -7,25 +7,27 @@ use App\Models\Project;
 use Livewire\Component;
 use Filament\Forms\Form;
 use Livewire\Attributes\Lazy;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use App\Interfaces\ProjectRepositoryInterface;
 use Illuminate\Validation\ValidationException;
 use Filament\Forms\Concerns\InteractsWithForms;
+use App\Services\Notifications\NotificationService;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 #[Lazy]
 class CreateProject extends Component implements HasForms
 {
     use InteractsWithForms;
 
-    private ProjectRepositoryInterface $projectRepository;
-
     public ?array $data = [];
 
-    public function mount(ProjectRepositoryInterface $projectRepository): void
+    public function mount(): void
     {
-        $this->projectRepository = $projectRepository;
         $this->form->fill();
     }
 
@@ -41,13 +43,25 @@ class CreateProject extends Component implements HasForms
     public function form(Form $form): Form
     {
         return $form
+
             ->schema([
-                Forms\Components\TextInput::make('title')->rules(['required']),
-                Forms\Components\FileUpload::make('company_logo'),
-                Forms\Components\TextInput::make('visibility')->rules(['required']),
-                Forms\Components\ColorPicker::make('font_color'),
-                Forms\Components\ColorPicker::make('bg_color'),
-                Forms\Components\TextInput::make('guest_users'),
+                TextInput::make('title')->rules(['required']),
+
+                Section::make('Project Display Settings')
+                    ->schema([
+                        Forms\Components\Select::make('visibility')->default('public')->options([
+                            'public' => 'Public',
+                            'private' => 'Private',
+                        ])->rules(['required']),
+                        Forms\Components\ColorPicker::make('font_color'),
+                        Forms\Components\ColorPicker::make('bg_color'),
+                        Forms\Components\Select::make('guest_users')->options(app(TeamService::class)->getGuestUsers())->multiple()->searchable()->label('Guest Users'),
+                    ])->columns([
+                        'sm' => 1,
+                        'lg' => 2,
+                    ]),
+
+                SpatieMediaLibraryFileUpload::make('company_logo')->image()->collection('company_logo')->optimize('webp'),
             ])
             ->statePath('data')
             ->model(Project::class);
@@ -55,13 +69,26 @@ class CreateProject extends Component implements HasForms
 
     public function create(): void
     {
-        $data = $this->form->getState();
+        DB::beginTransaction();
 
-        $data['user_id'] = auth()->id();
+        try {
+            $data = $this->form->getState();
+            $data['user_id'] = auth()->id();
+            $record = Project::create($data);
+            $this->form->model($record)->saveRelationships();
+            $this->form->fill();
 
-        $record = $this->projectRepository->createProject($data);
+            app(NotificationService::class)->sendSuccessNotification('Project updated successfully');
 
-        $this->form->model($record)->saveRelationships();
+            DB::commit();
+
+            $this->dispatch('close-modal', id: 'project-drawer');
+            $this->redirectRoute('projects.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            app(NotificationService::class)->sendExeptionNotification();
+            throw $e;
+        }
     }
 
     public function render(): View
