@@ -3,7 +3,7 @@
         {{ $this->form }}
 
         <x-filament::button type="submit" class="mt-10 w-full">
-            Update Project 😃
+            Update Project
         </x-filament::button>
     </form>
 

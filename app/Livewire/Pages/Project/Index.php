@@ -4,7 +4,6 @@ namespace App\Livewire\Pages\Project;
 
 use App\Models\User;
 use Livewire\Component;
-use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 

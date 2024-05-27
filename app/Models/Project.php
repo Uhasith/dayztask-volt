@@ -22,15 +22,6 @@ class Project extends Model implements HasMedia
         'guest_users' => 'array',
     ];
 
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->uuid = Str::uuid();
-        });
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

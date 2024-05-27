@@ -14,16 +14,43 @@ window.Echo = new Echo({
 });
 
 
+// Request permission to show notifications
+if (Notification.permission === 'default') {
+    Notification.requestPermission();
+}
+
 // Listen for notifications on the private channel
 if (window.Laravel.userId) {
     window.Echo.private(`App.Models.User.${window.Laravel.userId}`)
         .listen('.database-notifications.sent', (e) => {
             // Play the notification sound
             playNotificationSound();
+
+            // Check if the user is not viewing the current tab or window
+            if (document.hidden) {
+                // Send a browser notification
+                sendBrowserNotification(e);
+            }
         });
 
     function playNotificationSound() {
         const audio = document.getElementById('notification-sound');
         audio.play();
+    }
+
+    function sendBrowserNotification(eventData) {
+        if (Notification.permission === 'granted') {
+            const notification = new Notification("New Notification", {
+                title: "Dayz Tracker",
+                body: "You have new notifications", // Customize the message from event data
+                icon: "/assets/images/logo_circle.png", // Optional icon for the notification
+            });
+
+            notification.onclick = () => {
+                // Optional: handle notification click
+                window.focus();
+                notification.close();
+            };
+        }
     }
 }
