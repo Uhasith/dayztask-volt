@@ -1,10 +1,9 @@
 <?php
 
 use App\Livewire\Pages\Project\Index as ProjectIndex;
+use App\Livewire\Pages\Project\Show as ProjectShow;
 use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
-use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Pages\Project\ProjectPage;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,5 +18,6 @@ Route::middleware([
     Route::get('/dashboard', DashboardIndex::class)->lazy()->name('dashboard');
 
     Route::get('/projects', ProjectIndex::class)->lazy()->name('projects.index');
+    Route::get('/projects/{project}', ProjectShow::class)->lazy()->name('projects.show');
 
 });

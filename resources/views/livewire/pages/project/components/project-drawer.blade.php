@@ -1,5 +1,5 @@
 <div class="z-50">
-    <x-filament::modal slide-over sticky-header width="3xl" id="project-drawer">
+    <x-filament::modal slide-over sticky-header width="3xl" id="project-drawer" :close-by-escaping="true">
         <x-slot name="heading">
             @if ($showCreateDrawer)
                 <label class="text-lg">Create New Project</label>

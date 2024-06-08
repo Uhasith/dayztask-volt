@@ -113,5 +113,9 @@ export default {
         },
     },
 
+    daisyui: {
+        themes: false,
+    },
+
     plugins: [forms, typography, require("daisyui")],
 };
