@@ -18,11 +18,12 @@
         }
     </style>
 
-    @wireUiScripts
-    @filamentStyles
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @filamentStyles
     @livewireStyles
+    @wireUiScripts
 </head>
 
 <body class="font-sans antialiased" x-data>
@@ -31,10 +32,8 @@
 
     {{-- The main content with `full-width` --}}
     <x-mary-main with-nav full-width>
-        {{-- This is a sidebar that works also as a drawer on small screens --}}
-        {{-- Notice the `main-drawer` reference here --}}
+        {{-- This is a sidebar --}}
         <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-200">
-            {{-- Activates the menu item when a route matches the `link` property --}}
             <x-mary-menu activate-by-route>
                 <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" />
                 <x-mary-menu-item title="Projects" icon="o-presentation-chart-line"
@@ -46,17 +45,12 @@
             </x-mary-menu>
         </x-slot:sidebar>
 
-        {{-- The `$slot` goes here --}}
         <x-slot:content class="!p-0">
             {{ $slot }}
         </x-slot:content>
     </x-mary-main>
 
-    {{--  SEARCH area --}}
     <x-mary-spotlight search-text="Find Projects, Assigned tasks or Users" no-results-text="Ops! Nothing here." />
-
-    {{--  TOAST area --}}
-    <x-mary-toast />
 
     @stack('modals')
 
@@ -70,7 +64,7 @@
             'userId' => auth()->check() ? auth()->user()->id : null,
         ]) !!};
     </script>
-
+    
     @filamentScripts
     @livewireScripts
 </body>
