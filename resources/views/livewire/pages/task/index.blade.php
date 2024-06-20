@@ -1,3 +1,7 @@
 <div>
-    {{-- Because she competes with no one, no one can compete with her. --}}
+    <div class="text-end px-5">
+        <x-filament::button type="button" class="my-4" wire:click="$dispatch('openProjectCreateDrawer')">
+            Create New Project
+        </x-filament::button>
+    </div>
 </div>

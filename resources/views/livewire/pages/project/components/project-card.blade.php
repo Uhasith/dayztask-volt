@@ -4,7 +4,8 @@
             wire:click="$dispatch('openProjectEditDrawer', { id: {{ $project['id'] }} })">
             <x-mary-icon name="o-bars-3" class="w-8 h-8 text-black/50" />
         </div>
-        <div wire:click="send"
+        <a href="{{ route('projects.show', $project['uuid']) }}" wire:navigate>
+        <div
             class="rounded-xl shadow-xl transform hover:scale-105 transition duration-700 ease-in-out relative">
             <div style="background-color: {{ !empty($project['bg_color']) ? $project['bg_color'] : '#eaddd7' }}"
                 class="rounded-xl flex flex-wrap items-start justify-start gap-x-4 gap-y-2 p-3 hover:shadow-md transition-shadow duration-300 ease-in-out">
@@ -28,5 +29,6 @@
                 </div>
             </div>
         </div>
+        </a>
     </div>
 </div>

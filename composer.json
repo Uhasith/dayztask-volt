@@ -17,7 +17,8 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.6",
-        "robsontenorio/mary": "^1.30"
+        "robsontenorio/mary": "^1.30",
+        "wireui/wireui": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",
@@ -28,6 +29,7 @@
         "nunomaduro/collision": "^8.0",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
+        "spatie/laravel-error-share": "^1.0",
         "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {

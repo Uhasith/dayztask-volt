@@ -18,10 +18,10 @@
         }
     </style>
 
+    @wireUiScripts
     @filamentStyles
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     @livewireStyles
 </head>
 
@@ -47,7 +47,7 @@
         </x-slot:sidebar>
 
         {{-- The `$slot` goes here --}}
-        <x-slot:content>
+        <x-slot:content class="!p-0">
             {{ $slot }}
         </x-slot:content>
     </x-mary-main>
