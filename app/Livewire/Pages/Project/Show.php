@@ -5,18 +5,20 @@ namespace App\Livewire\Pages\Project;
 use App\Models\Project;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Services\Team\TeamService;
 
 class Show extends Component
 {
 
     use WithPagination;
 
-    public $project;
+    public $project, $teamMembers = [], $filterBy, $sortBy;
 
     public function mount($uuid)
     {
         $this->project = Project::where('uuid', $uuid)->firstOrFail();
-        sleep(1);
+        $this->teamMembers = app(TeamService::class)->getTeamMembers();
+        // sleep(1);
     }
 
     public function render()

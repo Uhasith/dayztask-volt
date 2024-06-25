@@ -33,7 +33,7 @@
     {{-- The main content with `full-width` --}}
     <x-mary-main with-nav full-width>
         {{-- This is a sidebar --}}
-        <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-200">
+        <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-200 dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700">
             <x-mary-menu activate-by-route>
                 <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" />
                 <x-mary-menu-item title="Projects" icon="o-presentation-chart-line"
