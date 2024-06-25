@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('bg_color')->nullable();
             $table->string('bg_image')->nullable();
             $table->enum('visibility', ['public', 'private'])->default('public');
-            $table->integer('order')->default(0);
+            $table->integer('view_order')->default(0);
             $table->json('guest_users')->nullable();
             $table->timestamps();
             $table->softDeletes();

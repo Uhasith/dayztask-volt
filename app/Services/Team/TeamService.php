@@ -8,13 +8,21 @@ class TeamService
 {
     public function getGuestUsers()
     {
-        $guestUsers = Auth::user()->currentTeam->allUsers()->pluck('name', 'id');
-        return $guestUsers;
+        $user = Auth::user();
+        if (!$user || !$user->currentTeam) {
+            return []; // Return an empty array or handle differently if needed
+        }
+  
+        return $user->currentTeam->allUsers()->pluck('name', 'id');
     }
 
-     public function getTeamMembers()
+    public function getTeamMembers()
     {
-        $teamMembers = Auth::user()->currentTeam->allUsers();
-        return $teamMembers;
+        $user = Auth::user();
+        if (!$user || !$user->currentTeam) {
+            return []; // Return an empty array or handle differently if needed
+        }
+
+        return $user->currentTeam->allUsers();
     }
 }

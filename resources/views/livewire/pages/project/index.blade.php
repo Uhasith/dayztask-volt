@@ -9,7 +9,7 @@
         <div class="grid grid-cols-12 gap-8 overflow-auto py-5">
             @foreach ($projects as $key => $project)
                 <div class="col-span-12 md:col-span-6 lg:col-span-4 cursor-pointer">
-                    <livewire:pages.project.components.project-card :project="$project" :key="'project-' . $key" />
+                    <livewire:pages.project.components.project-card :project="$project" :key="'project-' . $project['uuid']" />
                 </div>
             @endforeach
 

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -24,9 +25,9 @@ class ProjectFactory extends Factory
             'bg_image' => $this->faker->imageUrl(),
             'bg_color' => $this->faker->hexColor,
             'visibility' => $this->faker->randomElement(['public', 'private']),
-            'user_id' => 1,
+            'user_id' => User::factory(),
             'font_color' => $this->faker->hexColor,
-            'order' => $this->faker->numberBetween(1, 100),
+            'view_order' => $this->faker->numberBetween(1, 100),
             'guest_users' => null,
         ];
     }

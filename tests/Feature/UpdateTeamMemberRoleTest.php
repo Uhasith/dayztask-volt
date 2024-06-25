@@ -13,11 +13,11 @@ test('team member roles can be updated', function () {
 
     Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
         ->set('managingRoleFor', $otherUser)
-        ->set('currentRole', 'editor')
+        ->set('currentRole', 'member')
         ->call('updateRole');
 
     expect($otherUser->fresh()->hasTeamRole(
-        $user->currentTeam->fresh(), 'editor'
+        $user->currentTeam->fresh(), 'member'
     ))->toBeTrue();
 });
 

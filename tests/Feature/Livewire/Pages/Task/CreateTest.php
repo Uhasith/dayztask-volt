@@ -1,9 +1,9 @@
 <?php
 
-use App\Livewire\Global\Placeholder;
+use App\Livewire\Pages\Task\Create;
 use Livewire\Livewire;
 
 it('renders successfully', function () {
-    Livewire::test(Placeholder::class)
+    Livewire::test(Create::class)
         ->assertStatus(200);
 });

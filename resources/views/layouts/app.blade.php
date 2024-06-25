@@ -18,10 +18,10 @@
         }
     </style>
 
+    @filamentStyles
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    @filamentStyles
     @livewireStyles
     @wireUiScripts
 </head>
@@ -33,7 +33,8 @@
     {{-- The main content with `full-width` --}}
     <x-mary-main with-nav full-width>
         {{-- This is a sidebar --}}
-        <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-200 dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700">
+        <x-slot:sidebar drawer="main-drawer" collapsible
+            class="bg-base-200 dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700">
             <x-mary-menu activate-by-route>
                 <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" />
                 <x-mary-menu-item title="Projects" icon="o-presentation-chart-line"
@@ -52,6 +53,8 @@
 
     <x-mary-spotlight search-text="Find Projects, Assigned tasks or Users" no-results-text="Ops! Nothing here." />
 
+    <x-wui-dialog />
+
     @stack('modals')
 
     @livewire('notifications')
@@ -64,7 +67,7 @@
             'userId' => auth()->check() ? auth()->user()->id : null,
         ]) !!};
     </script>
-    
+
     @filamentScripts
     @livewireScripts
 </body>

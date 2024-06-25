@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Task;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use App\Models\Project;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -23,6 +24,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory(100)->withPersonalTeam()->create();
-        Project::factory(100)->create();
+        Project::factory(100)->create(['user_id' => 1]);
+        Task::factory(100)->create(['project_id' => 1]);
+        Task::factory(100)->create(['project_id' => 2]);
+        Task::factory(100)->create(['project_id' => 3]);
     }
 }

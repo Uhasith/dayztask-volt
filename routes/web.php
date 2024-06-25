@@ -16,7 +16,6 @@ Route::middleware([
 ])->group(function () {
 
     Route::get('/dashboard', DashboardIndex::class)->lazy()->name('dashboard');
-
     Route::get('/projects', ProjectIndex::class)->lazy()->name('projects.index');
     Route::get('/projects/{uuid}', ProjectShow::class)->lazy()->name('projects.show');
 

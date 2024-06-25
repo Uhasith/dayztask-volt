@@ -1,15 +1,14 @@
 <?php
 
-use Livewire\Volt\Volt;
+use App\Models\User;
+use Livewire\Livewire;
+use App\Models\Project;
+use App\Livewire\Pages\Project\Components\ProjectCard;
 
-it('project card can render', function () {
-    $project = [
-        'bg_color' => '#ffffff',
-        'font_color' => '#000000',
-        'title' => 'Test Project',
-        'company_logo' => null,
-    ];
-
-    $component = Volt::test('pages.project.components.project-card', ['project' => $project]);
-    $component->assertSee('');
+it('renders successfully', function () {
+    $this->actingAs(User::factory()->withPersonalTeam()->create());
+    $project = Project::factory()->create();
+    Livewire::test(ProjectCard::class, ['project' => $project])
+        ->assertStatus(200);
 });
+
