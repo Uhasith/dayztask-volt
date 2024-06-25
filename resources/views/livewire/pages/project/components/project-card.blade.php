@@ -1,6 +1,6 @@
 <div>
-    <div class="relative">
-        <div class="absolute z-10 block top-3 right-4 cursor-pointer"
+    <div class="relative px-2">
+        <div class="absolute z-10 block top-3 right-6 cursor-pointer"
             wire:click="$dispatch('openProjectEditDrawer', { id: {{ $project['id'] }} })">
             <x-mary-icon name="o-bars-3" class="w-8 h-8 text-black/50" />
         </div>
