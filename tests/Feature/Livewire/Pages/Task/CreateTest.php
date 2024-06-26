@@ -1,9 +1,13 @@
 <?php
 
-use App\Livewire\Pages\Task\Create;
+use App\Models\User;
 use Livewire\Livewire;
+use App\Models\Project;
+use App\Livewire\Pages\Task\Create;
 
 it('renders successfully', function () {
-    Livewire::test(Create::class)
+    $this->actingAs(User::factory()->withPersonalTeam()->create());
+    $project = Project::factory()->create();
+    Livewire::test(Create::class, ['uuid' => $project->uuid])
         ->assertStatus(200);
 });
