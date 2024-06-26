@@ -12,11 +12,13 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Include stylesheet -->
+    <!-- Quill stylesheet -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-    <!-- Include the Quill library -->
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- Filepond stylesheet -->
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+        rel="stylesheet" />
 
     <style>
         [x-cloak] {
@@ -54,7 +56,6 @@
         </x-slot:sidebar>
 
         <x-slot:content class="!p-0">
-
             {{ $slot }}
         </x-slot:content>
     </x-mary-main>
@@ -77,6 +78,14 @@
     @filamentScripts
     @livewireScripts
     @stack('scripts')
+
+    <!-- Include the Quill library -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <!-- Include the Filepond library -->
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
 </body>
 
 </html>

@@ -32,9 +32,6 @@
                         'indent': '+1'
                     }],
                     [{
-                        'direction': 'rtl'
-                    }],
-                    [{
                         'color': []
                     }, {
                         'background': []
@@ -42,7 +39,6 @@
                     [{
                         'align': []
                     }],
-                    ['clean']
                 ],
             },
         });

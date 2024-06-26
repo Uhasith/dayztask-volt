@@ -40,20 +40,14 @@ export default {
             {
                 light: {
                     ...require("daisyui/src/theming/themes")["light"],
-                    primary: colors.amber,
-                    secondary: colors.gray,
+                    primary: "#f59e0b",
                 },
                 dark: {
                     ...require("daisyui/src/theming/themes")["dark"],
-                    primary: colors.amber,
-                    secondary: colors.gray,
+                    primary: "#f59e0b",
                 },
             },
         ],
     },
-    plugins: [
-        forms,
-        typography,
-        require("daisyui")
-    ],
+    plugins: [forms, typography, require("daisyui")],
 };

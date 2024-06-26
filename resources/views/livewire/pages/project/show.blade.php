@@ -21,7 +21,7 @@
                 @endforeach
             </x-wui-select>
         </div>
-        <div class="col-span-12 md:col-span-4 mt-4 md:mt-0 flex items-center justify-center gap-5">
+        <div class="col-span-12 md:col-span-4 mt-4 md:mt-0 flex items-center justify-end gap-4 md:gap-6">
             <x-wui-button primary label="My Tasks" x-tooltip.placement.bottom.raw="Show only My Tasks" />
             <x-wui-button positive label="Completed" x-tooltip.placement.bottom.raw="Show Completed Tasks" />
             <x-wui-mini-button info icon="document-text" x-tooltip.placement.bottom.raw="Project Notes" />
