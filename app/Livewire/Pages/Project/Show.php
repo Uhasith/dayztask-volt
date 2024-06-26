@@ -27,7 +27,6 @@ class Show extends Component
 
     public function deleteTaskDialog($uuid)
     {
-
         $this->dialog()->confirm([
             'title'       => 'Are you Sure ?',
             'description' => 'You want to delete this Task ?',

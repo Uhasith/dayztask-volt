@@ -17,13 +17,14 @@
             display: none !important;
         }
     </style>
-
-    @filamentStyles
+    
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    @filamentStyles
     @livewireStyles
     @wireUiScripts
+    @stack('styles')
 </head>
 
 <body class="font-sans antialiased" x-data>
@@ -59,8 +60,6 @@
 
     @livewire('notifications')
 
-    @stack('scripts')
-
     <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
@@ -70,6 +69,7 @@
 
     @filamentScripts
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

@@ -25,7 +25,9 @@
             <x-wui-button primary label="My Tasks" x-tooltip.placement.bottom.raw="Show only My Tasks" />
             <x-wui-button positive label="Completed" x-tooltip.placement.bottom.raw="Show Completed Tasks" />
             <x-wui-mini-button info icon="document-text" x-tooltip.placement.bottom.raw="Project Notes" />
-            <x-wui-mini-button primary icon="plus" x-tooltip.placement.bottom.raw="Create New Task" />
+            <a href="{{ route('projects.tasks.create', $project['uuid']) }}" wire:navigate>
+                <x-wui-mini-button primary icon="plus" x-tooltip.placement.bottom.raw="Create New Task" />
+            </a>
         </div>
     </div>
     <div class="mt-5 md:mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
