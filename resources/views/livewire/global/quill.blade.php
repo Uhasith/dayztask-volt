@@ -48,10 +48,13 @@
             },
         });
 
+        let initialValue = $wire.$get('value');
+        quill.clipboard.dangerouslyPasteHTML(initialValue);
+
         quill.on('text-change', function() {
             console.log('call');
             let value = document.getElementsByClassName('ql-editor')[0].innerHTML;
-            @this.set('value', value)
+            $wire.$set('value', value)
         });
     </script>
 @endscript

@@ -19,7 +19,6 @@ class Create extends Component
     {
         $this->project = Project::where('uuid', $uuid)->firstOrFail();
         $this->teamMembers = app(TeamService::class)->getTeamMembers();
-        $this->description = '<p>Hello World</p>';
     }
 
     #[On(Quill::EVENT_VALUE_UPDATED)] 
