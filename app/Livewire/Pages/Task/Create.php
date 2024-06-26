@@ -24,6 +24,7 @@ class Create extends Component
     #[On(Quill::EVENT_VALUE_UPDATED)] 
     public function quill_value_updated($value)
     {
+        Log::info($value);
         $this->description = $value;
     }
 

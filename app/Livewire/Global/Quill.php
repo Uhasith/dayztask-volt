@@ -3,7 +3,6 @@
 namespace App\Livewire\Global;
 
 use Livewire\Component;
-use Illuminate\Support\Facades\Log;
 
 class Quill extends Component
 {
