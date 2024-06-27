@@ -1,3 +1,4 @@
+import defaultTheme from "tailwindcss/defaultTheme";
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
 import wireuiConfig from "./vendor/wireui/wireui/tailwind.config.js";
@@ -10,11 +11,13 @@ export default {
     darkMode: "class",
     content: [
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
-        "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
         "./vendor/laravel/jetstream/**/*.blade.php",
-        "./vendor/robsontenorio/mary/src/View/Components/**/*.php",
         "./storage/framework/views/*.php",
         "./resources/views/**/*.blade.php",
+        "./resources/**/*.blade.php",
+        "./resources/**/*.js",
+        "./node_modules/flowbite/**/*.js",
+        "./vendor/robsontenorio/mary/src/View/Components/**/*.php",
         "./app/Filament/**/*.php",
         "./resources/views/filament/**/*.blade.php",
         "./vendor/filament/**/*.blade.php",
@@ -33,6 +36,12 @@ export default {
                 warning: colors.amber,
                 info: colors.blue,
             },
+            fontFamily: {
+                sans: ["Nunito", ...defaultTheme.fontFamily.sans],
+                Yantramanav: ["Yantramanav", "sans-serif"],
+                FutureForces: ["Futer forces", ...defaultTheme.fontFamily.sans],
+                FutureForces3D: ["Futer forces 3d"],
+            },
         },
     },
     daisyui: {
@@ -49,5 +58,10 @@ export default {
             },
         ],
     },
-    plugins: [forms, typography, require("daisyui")],
+    plugins: [
+        forms,
+        typography,
+        require("daisyui"),
+        require("flowbite/plugin"),
+    ],
 };

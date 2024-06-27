@@ -1,4 +1,4 @@
-<div class="w-full mx-auto p-5 lg:px-10 lg:py-5">
+<div x-init="initFlowbite();" class="w-full mx-auto p-5 lg:px-10 lg:py-5">
     <form wire:submit="create">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
@@ -31,15 +31,24 @@
                     </x-wui-select>
                 </div>
             </div>
-            <div>
-                <label for="description"
-                    class="text-sm font-medium disabled:opacity-60 text-gray-700 dark:text-gray-400 invalidated:text-negative-600 dark:invalidated:text-negative-700">Description</label>
-                <livewire:global.quill :value="$description">
-            </div>
-            <div class="mt-2 px-1">
-                <label for="file"
-                    class="text-sm font-medium disabled:opacity-60 text-gray-700 dark:text-gray-400 invalidated:text-negative-600 dark:invalidated:text-negative-700">Attachments</label>
-                <x-file-pond wire:model="newAvatar" multiple />
+            <div class="mt-5">
+                <x-filament::section collapsible :collapsed="empty($description) && empty($attachments)" id="task-details" icon="heroicon-m-document-text"
+                    icon-size="md" :style="'background-color: #1E293B;'">
+                    <x-slot name="heading">
+                        Task Description and Attachments
+                    </x-slot>
+
+                    <div>
+                        <label for="description"
+                            class="text-sm font-medium disabled:opacity-60 text-gray-700 dark:text-gray-400 invalidated:text-negative-600 dark:invalidated:text-negative-700">Description</label>
+                        <x-quill-editor wire:model="description" />
+                    </div>
+                    <div class="mt-2 px-1">
+                        <label for="file"
+                            class="text-sm font-medium disabled:opacity-60 text-gray-700 dark:text-gray-400 invalidated:text-negative-600 dark:invalidated:text-negative-700">Attachments</label>
+                        <x-file-pond wire:model="attachments" multiple />
+                    </div>
+                </x-filament::section>
             </div>
         </div>
     </form>

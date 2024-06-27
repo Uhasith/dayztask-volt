@@ -26,13 +26,23 @@
         }
     </style>
 
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            initFlowbite();
+        });
+
+        document.addEventListener("livewire:navigated", () => {
+            initFlowbite();
+        });
+    </script> --}}
 
     @filamentStyles
     @livewireStyles
     @wireUiScripts
     @stack('styles')
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="font-sans antialiased" x-data>
