@@ -1,10 +1,9 @@
 <?php
 
-use App\Models\Team;
+use App\Livewire\Pages\Project\Show;
+use App\Models\Project;
 use App\Models\User;
 use Livewire\Livewire;
-use App\Models\Project;
-use App\Livewire\Pages\Project\Show;
 
 it('renders successfully', function () {
     $project = Project::factory()->create();

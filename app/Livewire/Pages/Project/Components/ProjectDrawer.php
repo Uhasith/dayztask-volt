@@ -3,13 +3,16 @@
 namespace App\Livewire\Pages\Project\Components;
 
 use App\Models\Project;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Services\Notifications\NotificationService;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class ProjectDrawer extends Component
 {
-    public $showEditDrawer = false, $showCreateDrawer = false;
+    public $showEditDrawer = false;
+
+    public $showCreateDrawer = false;
+
     public $project = null;
 
     #[On('close-modal')]
@@ -31,7 +34,7 @@ class ProjectDrawer extends Component
     public function openEditDrawer($id)
     {
         $this->project = Project::find($id);
-        if (!$this->project) {
+        if (! $this->project) {
             // Use the service to send a notification
             app(NotificationService::class)->sendExeptionNotification();
         } else {

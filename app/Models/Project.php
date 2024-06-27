@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Project extends Model implements HasMedia
-{ 
-    use HasFactory, SoftDeletes, InteractsWithMedia;
+{
+    use HasFactory, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = ['uuid', 'user_id', 'title', 'company_logo', 'bg_image', 'bg_color', 'font_color', 'visibility',  'order', 'guest_users'];
 

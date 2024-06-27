@@ -8,6 +8,7 @@ use Livewire\Component;
 class MentionInput extends Component
 {
     public $name;
+
     public $suggestions = [];
 
     public function updatedName($value)
@@ -16,7 +17,7 @@ class MentionInput extends Component
         // Check if the last character is '@'
         if (str_starts_with($value, '@')) {
             // Fetch user suggestions
-            $this->suggestions = User::where('name', 'like', '%' . substr($value, -1) . '%')->get()->toArray();
+            $this->suggestions = User::where('name', 'like', '%'.substr($value, -1).'%')->get()->toArray();
         } else {
             $this->suggestions = [];
         }
@@ -28,7 +29,6 @@ class MentionInput extends Component
         $this->name = preg_replace('/@$/', $name, $this->name);
         $this->suggestions = [];
     }
-
 
     public function render()
     {

@@ -2,12 +2,11 @@
 
 namespace App\Providers;
 
-
-use Filament\Support\Colors\Color;
-use Illuminate\Support\ServiceProvider;
-use Filament\Support\Facades\FilamentColor;
 use App\Services\Notifications\NotificationService;
 use Filament\Notifications\Livewire\DatabaseNotifications;
+use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
             'success' => Color::Green,
             'warning' => Color::Amber,
         ]);
-        
+
         DatabaseNotifications::trigger('filament.notifications.database-notifications-trigger');
         DatabaseNotifications::pollingInterval(null);
 

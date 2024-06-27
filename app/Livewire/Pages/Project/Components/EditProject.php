@@ -2,19 +2,19 @@
 
 namespace App\Livewire\Pages\Project\Components;
 
-use Filament\Forms;
 use App\Models\Project;
-use Livewire\Component;
-use Filament\Forms\Form;
+use App\Services\Notifications\NotificationService;
 use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Contracts\View\View;
+use Filament\Forms;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Services\Notifications\NotificationService;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class EditProject extends Component implements HasForms
 {
@@ -75,7 +75,7 @@ class EditProject extends Component implements HasForms
             app(NotificationService::class)->sendExeptionNotification();
             throw $e;
         }
-        
+
     }
 
     public function render(): View

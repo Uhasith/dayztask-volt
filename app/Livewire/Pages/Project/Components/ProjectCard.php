@@ -2,9 +2,8 @@
 
 namespace App\Livewire\Pages\Project\Components;
 
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Services\Notifications\NotificationService;
+use Livewire\Component;
 
 class ProjectCard extends Component
 {

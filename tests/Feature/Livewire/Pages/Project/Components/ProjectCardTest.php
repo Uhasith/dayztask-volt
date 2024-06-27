@@ -1,9 +1,9 @@
 <?php
 
+use App\Livewire\Pages\Project\Components\ProjectCard;
+use App\Models\Project;
 use App\Models\User;
 use Livewire\Livewire;
-use App\Models\Project;
-use App\Livewire\Pages\Project\Components\ProjectCard;
 
 it('renders successfully', function () {
     $this->actingAs(User::factory()->withPersonalTeam()->create());
@@ -11,4 +11,3 @@ it('renders successfully', function () {
     Livewire::test(ProjectCard::class, ['project' => $project])
         ->assertStatus(200);
 });
-

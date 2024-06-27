@@ -2,37 +2,76 @@
 
 namespace App\Livewire\Pages\Task;
 
-use Exception;
 use App\Models\Project;
+use App\Services\Notifications\NotificationService;
+use App\Services\Team\TeamService;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\Log;
-use App\Services\Notifications\NotificationService;
 
 class Create extends Component
 {
     use WithFileUploads;
 
-    public $project, $teamMembers = [];
+    public $project;
 
-    public $name, $assignTo = [], $attachments = [], $description, $priority = 'medium', $range = 'day', $time = 1, $deadline;
+    public $teamMembers = [];
+
+    public $name;
+
+    public $assignTo = [];
+
+    public $attachments = [];
+
+    public $newSubTasks = [];
+
+    public $description;
+
+    public $priority = 'medium';
+
+    public $range = 'day';
+
+    public $time = 1;
+
+    public $deadline;
 
     public function mount($uuid)
     {
         try {
             $project = Project::where('uuid', $uuid)->first();
-            if (!$project) {
+            if (! $project) {
                 app(NotificationService::class)->sendExeptionNotification();
+
                 return $this->redirectRoute('projects.index');
             }
             $this->teamMembers = app(TeamService::class)->getTeamMembers();
             $this->project = $project;
         } catch (Exception $e) {
             Log::error("Failed to find project: {$e->getMessage()}");
-            app(NotificationService::class)->sendExeptionNotification("Failed to create task due to a server error.");
+            app(NotificationService::class)->sendExeptionNotification();
+
             return $this->redirectRoute('projects.index');
         }
+    }
+
+    public function addSubTask()
+    {
+        $tempCollect = collect($this->newSubTasks)->push([
+            'subTask' => '',
+        ]);
+
+        $this->newSubTasks = $tempCollect->toArray();
+    }
+
+    public function removeSubTask($key)
+    {
+        unset($this->newSubTasks[$key]);
+    }
+
+    public function createTask()
+    {
+        info('call');
     }
 
     public function render()

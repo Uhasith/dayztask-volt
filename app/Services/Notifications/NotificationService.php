@@ -2,9 +2,9 @@
 
 namespace App\Services\Notifications;
 
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Notification as FilamentNotification;
-use Filament\Notifications\Actions\Action;
 
 class NotificationService
 {

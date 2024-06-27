@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Project;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
@@ -32,7 +32,7 @@ class TaskFactory extends Factory
             'follow_up_message' => $this->faker->sentence,
             'proof_method' => $this->faker->word,
             'invoice_reference' => $this->faker->word,
-            'estimate_time' => $this->faker->randomDigitNotNull . ' hours',
+            'estimate_time' => $this->faker->randomDigitNotNull.' hours',
             'deadline' => $this->faker->date(),
             'recurring_period' => $this->faker->randomElement(['daily', 'weekly', 'monthly']),
             'is_mark_as_done' => false,

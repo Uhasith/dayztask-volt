@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Task extends Model
 {
@@ -16,7 +16,7 @@ class Task extends Model
         'uuid', 'project_id', 'check_by_user_id', 'confirm_by_user_id', 'follow_up_user_id',
         'name', 'description', 'status', 'priority', 'page_order', 'follow_up_message',
         'proof_method', 'invoice_reference', 'estimate_time', 'deadline', 'recurring_period',
-        'is_mark_as_done', 'is_checked', 'is_confirmed', 'is_archived'
+        'is_mark_as_done', 'is_checked', 'is_confirmed', 'is_archived',
     ];
 
     protected $casts = [
@@ -49,22 +49,22 @@ class Task extends Model
         // });
     }
 
-    public function project() : BelongsTo
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
-    public function checkByUser() : BelongsTo
+    public function checkByUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'check_by_user_id');
     }
 
-    public function confirmByUser() : BelongsTo
+    public function confirmByUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'confirm_by_user_id');
     }
 
-    public function followUpUser() : BelongsTo
+    public function followUpUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'follow_up_user_id');
     }

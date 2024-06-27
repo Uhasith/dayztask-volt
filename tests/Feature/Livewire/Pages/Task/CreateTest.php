@@ -1,9 +1,9 @@
 <?php
 
+use App\Livewire\Pages\Task\Create;
+use App\Models\Project;
 use App\Models\User;
 use Livewire\Livewire;
-use App\Models\Project;
-use App\Livewire\Pages\Task\Create;
 
 it('renders successfully', function () {
     $this->actingAs(User::factory()->withPersonalTeam()->create());

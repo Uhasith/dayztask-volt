@@ -3,9 +3,9 @@
 namespace App\Livewire\Pages\Project;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
@@ -15,6 +15,7 @@ class Index extends Component
     {
         $user = User::find(Auth::user()->id);
         $projects = $user->projects()->orderBy('created_at', 'desc')->paginate(9);
+
         return view('livewire.pages.project.index', [
             'projects' => $projects,
         ]);

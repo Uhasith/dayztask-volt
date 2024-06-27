@@ -1,8 +1,8 @@
 <?php
 
+use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
 use App\Livewire\Pages\Project\Index as ProjectIndex;
 use App\Livewire\Pages\Project\Show as ProjectShow;
-use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
 use App\Livewire\Pages\Task\Create as TaskCreate;
 use Illuminate\Support\Facades\Route;
 

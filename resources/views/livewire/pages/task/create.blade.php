@@ -1,5 +1,5 @@
 <div x-init="initFlowbite();" class="w-full mx-auto p-5 lg:px-10 lg:py-5">
-    <form wire:submit="create">
+    <form wire:submit="createTask">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
                 <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
@@ -30,8 +30,40 @@
                         <x-wui-select.option label="Day" value="day" />
                     </x-wui-select>
                 </div>
+                <div class="mt-5 md:mt-10">
+                    <x-filament::section collapsible id="task-sub-tasks" icon="heroicon-m-document-text" icon-size="md"
+                        class="filament-wui-dark">
+                        <x-slot name="heading">
+                            Manage Sub Tasks
+                        </x-slot>
+
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-md md:text-lg font-medium text-gray-900 dark:text-gray-100">Add Sub Tasks
+                            </h2>
+                            <x-wui-mini-button rounded secondary icon="plus" wire:click="addSubTask" spinner="addSubTask" x-tooltip.placement.bottom.raw="Add Sub Task" />
+                            {{-- <x-wui-mini-button type="button" secondary rounded wire:loading.attr="disabled"
+                                x-tooltip.placement.bottom.raw="Add Sub Task" wire:click="addSubTask">
+                                <x-mary-icon wire:loading.remove wire:target="addSubTask" name="o-plus" />
+                                <x-mary-loading wire:loading wire:target="addSubTask" class="loading-ring" />
+                            </x-wui-mini-button> --}}
+                        </div>
+                        @foreach ($newSubTasks as $key => $subTask)
+                            <div wire:key="{{ 'new-sub-task-' . $key }}"
+                                class="flex items-center justify-between py-2 gap-5">
+                                <x-wui-input icon="document-text" placeholder="Add Sub Task"
+                                    wire:model="newSubTasks.{{ $key }}.subTask" />
+                                <button type="button" wire:loading.attr="disabled" wire:target="removeSubTask"
+                                    x-tooltip.placement.top.raw="Remove"
+                                    wire:click="removeSubTask({{ $key }})">
+                                    <x-mary-icon name="m-trash"
+                                        class="text-red-400 hover:text-red-600 cursor-pointer w-6 h-6" />
+                                </button>
+                            </div>
+                        @endforeach
+                    </x-filament::section>
+                </div>
             </div>
-            <div class="mt-5">
+            <div class="md:mt-5">
                 <x-filament::section collapsible :collapsed="empty($description) || empty($attachments)" id="task-details" icon="heroicon-m-document-text"
                     icon-size="md" class="filament-wui-dark">
                     <x-slot name="heading">
@@ -50,6 +82,9 @@
                     </div>
                 </x-filament::section>
             </div>
+        </div>
+        <div class="text-center"> 
+            <x-wui-button type="submit" amber label="Amber" class="w-[50%] mx-auto mt-10" />
         </div>
     </form>
 </div>

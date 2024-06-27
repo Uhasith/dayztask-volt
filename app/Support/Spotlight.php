@@ -13,7 +13,7 @@ class Spotlight
     {
         // Example of security concern
         // Guests can not search
-        if (!auth()->user()) {
+        if (! auth()->user()) {
             return [];
         }
 
@@ -32,14 +32,13 @@ class Spotlight
             ->get()
             ->map(function (Project $project) {
                 return [
-                    'name' => 'Project' . ' - ' . $project->title,
+                    'name' => 'Project'.' - '.$project->title,
                     'description' => $project->uuid,
-                    'link' => "/projects",
-                    'icon' => Blade::render("<x-mary-icon name='o-bolt' />")
+                    'link' => '/projects',
+                    'icon' => Blade::render("<x-mary-icon name='o-bolt' />"),
                 ];
             });
     }
-
 
     // Database search
     public function users(string $search = '')
@@ -53,8 +52,8 @@ class Spotlight
                 return [
                     'name' => $user->name,
                     'description' => $user->email,
-                    'link' => "/",
-                    'icon' => Blade::render("<x-mary-icon name='o-user' />")
+                    'link' => '/',
+                    'icon' => Blade::render("<x-mary-icon name='o-user' />"),
                 ];
             });
     }
