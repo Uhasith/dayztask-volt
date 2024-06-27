@@ -11,11 +11,6 @@ class Index extends Component
 {
     use WithPagination;
 
-    public function mount()
-    {
-        sleep(1);
-    }
-    
     public function render()
     {
         $user = User::find(Auth::user()->id);

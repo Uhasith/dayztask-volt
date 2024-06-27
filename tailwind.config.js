@@ -35,6 +35,9 @@ export default {
                 negative: colors.red,
                 warning: colors.amber,
                 info: colors.blue,
+                customGray: {
+                    900: "#1E293B",
+                },
             },
             fontFamily: {
                 sans: ["Nunito", ...defaultTheme.fontFamily.sans],

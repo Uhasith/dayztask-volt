@@ -32,8 +32,8 @@
                 </div>
             </div>
             <div class="mt-5">
-                <x-filament::section collapsible :collapsed="empty($description) && empty($attachments)" id="task-details" icon="heroicon-m-document-text"
-                    icon-size="md" :style="'background-color: #1E293B;'">
+                <x-filament::section collapsible :collapsed="empty($description) || empty($attachments)" id="task-details" icon="heroicon-m-document-text"
+                    icon-size="md" class="filament-wui-dark">
                     <x-slot name="heading">
                         Task Description and Attachments
                     </x-slot>

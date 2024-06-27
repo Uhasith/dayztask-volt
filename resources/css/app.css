@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Customize filament dark mode color to match wireui */
+.dark .filament-wui-dark {
+  background-color: #1E293B !important;
+}
