@@ -35,6 +35,10 @@ class Create extends Component
     public $time = 1;
 
     public $deadline;
+    public $needToCheck = false;
+    public $needProof = false;
+    public $check_user;
+    public $proof_method;
 
     public function mount($uuid)
     {
@@ -71,7 +75,7 @@ class Create extends Component
 
     public function createTask()
     {
-        info('call');
+        info($this->newSubTasks);
     }
 
     public function render()
