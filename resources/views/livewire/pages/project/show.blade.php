@@ -57,7 +57,7 @@
                         <x-mary-icon name="m-pencil-square" class="text-green-400 hover:text-green-600 cursor-pointer"
                             x-tooltip.placement.top.raw="Update" />
                         <x-mary-icon name="m-trash" class="text-red-400 hover:text-red-600 cursor-pointer"
-                            x-tooltip.placement.top.raw="Delete" wire:confirm="Are you sure you want to delete this post?"
+                            x-tooltip.placement.top.raw="Delete"
                             wire:click="deleteTaskDialog('{{ $task['uuid'] }}')" />
                     </div>
                 </div>

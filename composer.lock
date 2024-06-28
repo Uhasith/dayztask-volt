@@ -3513,16 +3513,16 @@
         },
         {
             "name": "laravel/reverb",
-            "version": "v1.0.0-beta13",
+            "version": "v1.0.0-beta14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/reverb.git",
-                "reference": "363d7398b6e6fdfa7f19efeee1b88618db745ef9"
+                "reference": "472c37df7cc61abab31f246ac10bb94c9ebcb352"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/reverb/zipball/363d7398b6e6fdfa7f19efeee1b88618db745ef9",
-                "reference": "363d7398b6e6fdfa7f19efeee1b88618db745ef9",
+                "url": "https://api.github.com/repos/laravel/reverb/zipball/472c37df7cc61abab31f246ac10bb94c9ebcb352",
+                "reference": "472c37df7cc61abab31f246ac10bb94c9ebcb352",
                 "shasum": ""
             },
             "require": {
@@ -3589,9 +3589,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/reverb/issues",
-                "source": "https://github.com/laravel/reverb/tree/v1.0.0-beta13"
+                "source": "https://github.com/laravel/reverb/tree/v1.0.0-beta14"
             },
-            "time": "2024-05-31T16:22:08+00:00"
+            "time": "2024-06-27T07:58:53+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -14023,16 +14023,16 @@
         },
         {
             "name": "spatie/error-solutions",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/error-solutions.git",
-                "reference": "9782ba6e25cb026cc653619e01ca695d428b3f03"
+                "reference": "55ea4117e0fde89d520883734ab9b71064c48876"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/error-solutions/zipball/9782ba6e25cb026cc653619e01ca695d428b3f03",
-                "reference": "9782ba6e25cb026cc653619e01ca695d428b3f03",
+                "url": "https://api.github.com/repos/spatie/error-solutions/zipball/55ea4117e0fde89d520883734ab9b71064c48876",
+                "reference": "55ea4117e0fde89d520883734ab9b71064c48876",
                 "shasum": ""
             },
             "require": {
@@ -14085,7 +14085,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/error-solutions/issues",
-                "source": "https://github.com/spatie/error-solutions/tree/1.0.2"
+                "source": "https://github.com/spatie/error-solutions/tree/1.0.3"
             },
             "funding": [
                 {
@@ -14093,7 +14093,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-26T13:09:17+00:00"
+            "time": "2024-06-27T12:22:48+00:00"
         },
         {
             "name": "spatie/flare-client-php",
