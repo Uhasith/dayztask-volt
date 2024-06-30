@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\Notifications\NotificationService;
+use App\Services\Task\TaskService;
 use Filament\Notifications\Livewire\DatabaseNotifications;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(NotificationService::class, function ($app) {
             return new NotificationService();
+        });
+
+        $this->app->singleton(TaskService::class, function ($app) {
+            return new TaskService();
         });
 
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();

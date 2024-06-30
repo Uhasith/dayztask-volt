@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Task extends Model
+class Task extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, InteractsWithMedia, SoftDeletes;
 
-    protected $fillable = [
-        'uuid', 'project_id', 'check_by_user_id', 'confirm_by_user_id', 'follow_up_user_id',
-        'name', 'description', 'status', 'priority', 'page_order', 'follow_up_message',
-        'proof_method', 'invoice_reference', 'estimate_time', 'deadline', 'recurring_period',
-        'is_mark_as_done', 'is_checked', 'is_confirmed', 'is_archived',
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'deadline' => 'date',
@@ -49,9 +48,21 @@ class Task extends Model
         // });
     }
 
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+        ->width(368)
+            ->height(232);
+    }
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'tasks_users', 'task_id', 'user_id');
     }
 
     public function checkByUser(): BelongsTo

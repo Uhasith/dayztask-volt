@@ -4,7 +4,7 @@
     proof: $wire.entangle('needProof'),
     followup: $wire.entangle('needFollowUp'),
     billable: $wire.entangle('isBillable'),
-    newSubs: $wire.entangle('newSubTasks')
+    newSubs: $wire.entangle('subtasks')
 }"
     class="w-full mx-auto p-5 lg:px-10 lg:py-5 min-h-[calc(100vh - 5rem)]">
     <form wire:submit="createTask">
@@ -13,7 +13,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
                     <x-wui-input icon="document-text" label="Task Name" placeholder="Task Name" wire:model="name" />
                     <x-wui-select id="assignTo" icon="user" label="Assign To" placeholder="Assign To"
-                        class="w-[50%]" wire:model="assignTo" multiselect>
+                        class="w-[50%]" wire:model="assigned_users" multiselect>
                         @foreach ($teamMembers as $key => $member)
                             <x-wui-select.user-option
                                 src="{{ !empty($member['profile_photo_path']) ? asset($member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
@@ -30,7 +30,7 @@
                     <x-wui-datetime-picker wire:model="deadline" label="Deadline" placeholder="Task Deadline"
                         without-time :disable-past-dates="true" />
 
-                    <x-wui-number label="Estimate Time" placeholder="0" min="0" wire:model="time" />
+                    <x-wui-number label="Estimate Time" placeholder="0" min="1" wire:model="estimate_time" />
                     <x-wui-select icon="clock" label="Time Range" placeholder="Minutes" wire:model="range"
                         :clearable="false">
                         <x-wui-select.option label="Minute" value="minute" />
@@ -154,7 +154,7 @@
 
             </div>
             <div class="md:mt-5">
-                <x-filament::section collapsible :collapsed="empty($description) || empty($attachments)" id="task-details" icon="heroicon-m-document-text"
+                <x-filament::section collapsible :collapsed="false" persist-collapsed id="task-details" icon="heroicon-m-document-text"
                     icon-size="md" class="filament-wui-dark">
                     <x-slot name="heading">
                         Task Description and Attachments

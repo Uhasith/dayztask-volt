@@ -14,7 +14,7 @@ class Project extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, SoftDeletes;
 
-    protected $fillable = ['uuid', 'user_id', 'title', 'company_logo', 'bg_image', 'bg_color', 'font_color', 'visibility',  'order', 'guest_users'];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'guest_users' => 'array',
