@@ -2,14 +2,17 @@
 
 namespace App\Livewire\Pages\Project;
 
-use App\Models\Project;
-use App\Services\Notifications\NotificationService;
-use App\Services\Team\TeamService;
 use Exception;
-use Illuminate\Support\Facades\Log;
+use App\Models\Task;
+use App\Models\Project;
 use Livewire\Component;
+use App\Models\TaskTracking;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Notifications\NotificationService;
 
 class Show extends Component
 {
@@ -30,40 +33,40 @@ class Show extends Component
         $this->teamMembers = app(TeamService::class)->getTeamMembers();
     }
 
-    public function deleteTaskDialog($uuid)
+    public function endTracking($id)
     {
-        $this->dialog()->confirm([
-            'title' => 'Are you Sure ?',
-            'description' => 'You want to delete this Task ?',
-            'icon' => 'error',
-            'accept' => [
-                'label' => 'Yes, delete it',
-                'method' => 'deleteTask',
-                'params' => ''.$uuid.'',
-            ],
-        ]);
-    }
+        $userId = Auth::user()->id;
+        $taskId = $id;
 
-    public function deleteTask($uuid)
-    {
-        try {
-            $task = $this->project->tasks()->where('uuid', $uuid)->first();
-            if (! $task) {
-                app(NotificationService::class)->sendExeptionNotification();
+        // Find the active tracking record
+        $taskTracking = TaskTracking::where('task_id', $taskId)
+            ->where('user_id', $userId)
+            ->whereNull('end_time')
+            ->where('enable_tracking', true)
+            ->latest()
+            ->first();
 
-                return $this->redirectRoute('projects.show', $this->project->uuid);
-            }
-            $task->delete();
-            app(NotificationService::class)->sendSuccessNotification('Task deleted successfully');
-        } catch (Exception $e) {
-            Log::error("Failed to delete task: {$e->getMessage()}");
-            app(NotificationService::class)->sendExeptionNotification();
-
-            return $this->redirectRoute('projects.show', $this->project->uuid);
+        // End the current tracking session
+        if ($taskTracking) {
+            $taskTracking->update([
+                'end_time' => now(),
+                'enable_tracking' => false,
+            ]);
         }
 
-        return $this->redirectRoute('projects.show', $this->project->uuid);
+        // Disable any remaining active tracking sessions for the task
+        TaskTracking::where('task_id', $taskId)
+            ->where('user_id', $userId)
+            ->where('enable_tracking', true)
+            ->update(['enable_tracking' => false]);
+
+        // Update the task status
+        $task = Task::findOrFail($taskId);
+        $task->update(['status' => 'todo']);
+
     }
+
+  
 
     public function render()
     {

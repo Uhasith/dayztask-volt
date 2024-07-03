@@ -5,8 +5,11 @@ namespace App\Services\Task;
 use Exception;
 use App\Models\Task;
 use App\Models\SubTask;
+use Livewire\Component;
+use App\Models\TaskTracking;
 use App\Mail\NotificationMail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
@@ -16,7 +19,7 @@ use App\Services\Notifications\NotificationService;
  * Class TaskService
  * @package App\Services
  */
-class TaskService
+class TaskService extends Component
 {
 
     public function createTask($validatedData)
@@ -94,6 +97,132 @@ class TaskService
             DB::commit();
 
             return $task;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function calculateTotalTrackedTime($taskId)
+    {
+        $trackedRecords = TaskTracking::where('user_id', Auth::user()->id)
+            ->where('task_id', $taskId)
+            ->get();
+
+        if ($trackedRecords->isEmpty()) {
+            return '00:00:00';
+        }
+
+        $totalSeconds = $trackedRecords->reduce(function ($carry, $record) {
+            $start = strtotime($record->start_time);
+            $end = $record->end_time ? strtotime($record->end_time) : time();
+            return $carry + ($end - $start);
+        }, 0);
+
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+
+
+    public function startTracking($uuid)
+    {
+        DB::beginTransaction();
+
+        try {
+            $userId = Auth::user()->id;
+            $task = Task::where('uuid', $uuid)->first();
+
+            if (!$task) {
+                app(NotificationService::class)->sendExceptionNotification();
+                return;
+            }
+
+            $taskId = $task->id;
+
+            $alreadyTrackingDifferentTask = TaskTracking::where('user_id', $userId)
+                ->whereNull('end_time')
+                ->where('enable_tracking', true)
+                ->with('task')
+                ->first();
+
+            if ($alreadyTrackingDifferentTask) {
+                $this->stopTracking($alreadyTrackingDifferentTask->task->uuid, true);
+            }
+
+            $taskTracking = TaskTracking::firstOrCreate(
+                [
+                    'task_id' => $taskId,
+                    'user_id' => $userId,
+                    'end_time' => null
+                ],
+                [
+                    'start_time' => now(),
+                    'enable_tracking' => true
+                ]
+            );
+
+            $task->update(['status' => 'doing']);
+
+            app(NotificationService::class)->sendSuccessNotification('Task tracking started successfully');
+
+            DB::commit();
+
+            return [
+                'taskId' => $taskId,
+                'alreadyTrackingDifferentTask' => $alreadyTrackingDifferentTask
+            ];
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function stopTracking($uuid, $alreadyTrackingDifferentTask = false)
+    {
+        DB::beginTransaction();
+
+        try {
+            $userId = Auth::user()->id;
+            $task = Task::where('uuid', $uuid)->first();
+
+            if (!$task) {
+                app(NotificationService::class)->sendExceptionNotification();
+                return;
+            }
+
+            $taskId = $task->id;
+
+            $taskTracking = TaskTracking::where('task_id', $taskId)
+                ->where('user_id', $userId)
+                ->whereNull('end_time')
+                ->where('enable_tracking', true)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($taskTracking) {
+                $taskTracking->update([
+                    'end_time' => now(),
+                    'enable_tracking' => false
+                ]);
+            }
+
+            TaskTracking::where('task_id', $taskId)
+                ->where('user_id', $userId)
+                ->where('enable_tracking', true)
+                ->update(['enable_tracking' => false]);
+
+            $task->update(['status' => 'todo']);
+
+            if (!$alreadyTrackingDifferentTask) {
+                app(NotificationService::class)->sendSuccessNotification('Task tracking ended successfully');
+            }
+
+            DB::commit();
+
+            return $taskId;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
