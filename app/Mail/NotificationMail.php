@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -42,11 +41,10 @@ class NotificationMail extends Mailable
         $task = $this->mailData['task'];
         $user = $this->mailData['user'];
         $email_subject = $this->mailData['email_subject'];
+
         return new Content(
             view: 'emails.notificationEmail',
             with: ['email_body' => $email_body, 'task' => $task, 'user' => $user, 'email_subject' => $email_subject]
         );
     }
-
-
 }

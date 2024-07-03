@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SubTask extends Model
 {
@@ -15,7 +15,6 @@ class SubTask extends Model
     protected $casts = [
         'is_completed' => 'boolean',
     ];
-
 
     public function task(): BelongsTo
     {

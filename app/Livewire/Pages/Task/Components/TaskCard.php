@@ -2,34 +2,46 @@
 
 namespace App\Livewire\Pages\Task\Components;
 
-use Exception;
 use App\Models\Task;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Models\TaskTracking;
-use Livewire\Attributes\Locked;
-use WireUi\Traits\WireUiActions;
-use App\Services\Task\TaskService;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use App\Services\Notifications\NotificationService;
+use App\Services\Task\TaskService;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
 class TaskCard extends Component
 {
     use WireUiActions;
 
-    #[Locked] 
+    #[Locked]
     public $taskId;
-    #[Locked] 
-    public  $projectId;
 
-    public $task, $userAlredyTrackingThisTask = false, $trackedTime = '00:00:00', $timerRunning = false;
+    #[Locked]
+    public $projectId;
+
+    #[Locked]
+    public $project;
+
+    #[Locked]
+    public $task;
+
+    public $userAlredyTrackingThisTask = false;
+
+    public $trackedTime = '00:00:00';
+
+    public $timerRunning = false;
 
     public function mount($taskId)
     {
         $this->taskId = $taskId;
         $this->task = Task::where('id', $this->taskId)->with('users')->first();
-        $this->projectId = $this->task->project->uuid;
+        $this->project = $this->task->project;
+        $this->projectId = $this->project->uuid;
         $this->trackedTime = $this->calculateTotalTrackedTime($taskId);
         $trackingTask = TaskTracking::where('user_id', Auth::user()->id)->where('task_id', $this->taskId)
             ->whereNull('end_time')
@@ -46,7 +58,8 @@ class TaskCard extends Component
     {
         $taskService = app(TaskService::class);
         $time = $taskService->calculateTotalTrackedTime($taskId);
-        return  $time;
+
+        return $time;
     }
 
     #[On('end-tracking')]
@@ -102,7 +115,7 @@ class TaskCard extends Component
             'accept' => [
                 'label' => 'Yes, delete it',
                 'method' => 'deleteTask',
-                'params' => '' . $uuid . '',
+                'params' => ''.$uuid.'',
             ],
         ]);
     }
@@ -111,10 +124,10 @@ class TaskCard extends Component
     {
         try {
             $task = $this->project->tasks()->where('uuid', $uuid)->first();
-            if (!$task) {
+            if (! $task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
-                return $this->redirectRoute('projects.show', $this->project->uuid);
+                return $this->redirectRoute('projects.show', $this->projectId);
             }
             $task->delete();
             app(NotificationService::class)->sendSuccessNotification('Task deleted successfully');
@@ -125,7 +138,7 @@ class TaskCard extends Component
             return $this->redirectRoute('projects.show', $this->projectId);
         }
 
-        return $this->redirectRoute('projects.show',$this->projectId);
+        return $this->redirectRoute('projects.show', $this->projectId);
     }
 
     public function render()

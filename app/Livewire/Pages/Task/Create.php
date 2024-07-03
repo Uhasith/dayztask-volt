@@ -2,16 +2,16 @@
 
 namespace App\Livewire\Pages\Task;
 
-use Exception;
 use App\Models\Project;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Validate;
+use App\Services\Notifications\NotificationService;
 use App\Services\Task\TaskService;
 use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\Log;
+use Exception;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Notifications\NotificationService;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Create extends Component
 {
@@ -47,14 +47,19 @@ class Create extends Component
     public $needProof = false;
 
     public $needFollowUp = false;
+
     public $isBillable = false;
 
     public $check_user;
 
     public $confirm_user;
+
     public $follow_up_user;
+
     public $follow_up_message;
+
     public $invoice_reference;
+
     public $recurring_period;
 
     public $proof_method;
@@ -85,7 +90,7 @@ class Create extends Component
     {
         try {
             $project = Project::where('uuid', $uuid)->first();
-            if (!$project) {
+            if (! $project) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return $this->redirectRoute('projects.index');
@@ -121,8 +126,8 @@ class Create extends Component
         $validatedData['project_id'] = $this->project->id;
         $uuid = $this->project->uuid;
 
-        if (!empty($validatedData['estimate_time'])) {
-            $validatedData['estimate_time'] = $validatedData['estimate_time'] . ' ' . $this->range;
+        if (! empty($validatedData['estimate_time'])) {
+            $validatedData['estimate_time'] = $validatedData['estimate_time'].' '.$this->range;
         }
 
         try {
@@ -131,7 +136,7 @@ class Create extends Component
             $this->reset();
             app(NotificationService::class)->sendSuccessNotification('Task created successfully');
 
-            return $this->redirectRoute('projects.show',  $uuid);
+            return $this->redirectRoute('projects.show', $uuid);
         } catch (Exception $e) {
             Log::error("Failed to create task: {$e->getMessage()}");
 

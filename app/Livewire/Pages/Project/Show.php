@@ -2,17 +2,14 @@
 
 namespace App\Livewire\Pages\Project;
 
-use Exception;
-use App\Models\Task;
 use App\Models\Project;
-use Livewire\Component;
+use App\Models\Task;
 use App\Models\TaskTracking;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
-use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use App\Services\Notifications\NotificationService;
 
 class Show extends Component
 {
@@ -65,8 +62,6 @@ class Show extends Component
         $task->update(['status' => 'todo']);
 
     }
-
-  
 
     public function render()
     {

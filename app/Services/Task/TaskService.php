@@ -2,26 +2,23 @@
 
 namespace App\Services\Task;
 
-use Exception;
-use App\Models\Task;
-use App\Models\SubTask;
-use Livewire\Component;
-use App\Models\TaskTracking;
 use App\Mail\NotificationMail;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Spatie\ImageOptimizer\OptimizerChainFactory;
+use App\Models\SubTask;
+use App\Models\Task;
+use App\Models\TaskTracking;
 use App\Services\Notifications\NotificationService;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Livewire\Component;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 /**
  * Class TaskService
- * @package App\Services
  */
 class TaskService extends Component
 {
-
     public function createTask($validatedData)
     {
         DB::beginTransaction();
@@ -36,9 +33,9 @@ class TaskService extends Component
                 $task->save();
             }
 
-            if (!empty($validatedData['subtasks'])) {
+            if (! empty($validatedData['subtasks'])) {
                 foreach ($validatedData['subtasks'] as $subtask) {
-                    if (!empty($subtask['subTask'])) {
+                    if (! empty($subtask['subTask'])) {
                         $data = [
                             'name' => $subtask['subTask'],
                             'task_id' => $task->id,
@@ -49,12 +46,12 @@ class TaskService extends Component
                 }
             }
 
-            if (!empty($validatedData['attachments'])) {
+            if (! empty($validatedData['attachments'])) {
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
                     $path = $attachment->store('TaskAttachments');
-                    $absolutePath = storage_path('app/' . $path);
+                    $absolutePath = storage_path('app/'.$path);
 
                     // Optimize the image
                     $optimizerChain->optimize($absolutePath);
@@ -68,7 +65,7 @@ class TaskService extends Component
 
             $task->users()->detach();
 
-            if (!empty($validatedData['assigned_users'])) {
+            if (! empty($validatedData['assigned_users'])) {
                 $task->users()->attach($validatedData['assigned_users']);
             }
 
@@ -77,17 +74,17 @@ class TaskService extends Component
             foreach ($assignedUsers as $user) {
                 if ($user->id !== Auth::id()) {
                     $title = 'Task Assigned';
-                    $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
+                    $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
 
                     app(NotificationService::class)->sendDBNotification($user, $title, $body);
 
                     $mailData = [
                         'email' => $user->email,
                         'email_subject' => 'New Task.',
-                        'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                        'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                         'task' => $task,
                         'user' => $user,
-                        'caused_by' => Auth::user()
+                        'caused_by' => Auth::user(),
                     ];
 
                     Mail::to($user->email)->queue(new NotificationMail($mailData));
@@ -116,6 +113,7 @@ class TaskService extends Component
         $totalSeconds = $trackedRecords->reduce(function ($carry, $record) {
             $start = strtotime($record->start_time);
             $end = $record->end_time ? strtotime($record->end_time) : time();
+
             return $carry + ($end - $start);
         }, 0);
 
@@ -126,7 +124,6 @@ class TaskService extends Component
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 
-
     public function startTracking($uuid)
     {
         DB::beginTransaction();
@@ -135,8 +132,9 @@ class TaskService extends Component
             $userId = Auth::user()->id;
             $task = Task::where('uuid', $uuid)->first();
 
-            if (!$task) {
+            if (! $task) {
                 app(NotificationService::class)->sendExceptionNotification();
+
                 return;
             }
 
@@ -156,11 +154,11 @@ class TaskService extends Component
                 [
                     'task_id' => $taskId,
                     'user_id' => $userId,
-                    'end_time' => null
+                    'end_time' => null,
                 ],
                 [
                     'start_time' => now(),
-                    'enable_tracking' => true
+                    'enable_tracking' => true,
                 ]
             );
 
@@ -172,7 +170,7 @@ class TaskService extends Component
 
             return [
                 'taskId' => $taskId,
-                'alreadyTrackingDifferentTask' => $alreadyTrackingDifferentTask
+                'alreadyTrackingDifferentTask' => $alreadyTrackingDifferentTask,
             ];
         } catch (Exception $e) {
             DB::rollBack();
@@ -188,8 +186,9 @@ class TaskService extends Component
             $userId = Auth::user()->id;
             $task = Task::where('uuid', $uuid)->first();
 
-            if (!$task) {
+            if (! $task) {
                 app(NotificationService::class)->sendExceptionNotification();
+
                 return;
             }
 
@@ -205,7 +204,7 @@ class TaskService extends Component
             if ($taskTracking) {
                 $taskTracking->update([
                     'end_time' => now(),
-                    'enable_tracking' => false
+                    'enable_tracking' => false,
                 ]);
             }
 
@@ -216,7 +215,7 @@ class TaskService extends Component
 
             $task->update(['status' => 'todo']);
 
-            if (!$alreadyTrackingDifferentTask) {
+            if (! $alreadyTrackingDifferentTask) {
                 app(NotificationService::class)->sendSuccessNotification('Task tracking ended successfully');
             }
 

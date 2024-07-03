@@ -3,12 +3,14 @@
 namespace App\Livewire\Global;
 
 use Livewire\Component;
-use Livewire\Attributes\On;
-use Illuminate\Support\Facades\Log;
 
 class Timer extends Component
 {
-    public $trackedTime, $timerRunning, $taskId;
+    public $trackedTime;
+
+    public $timerRunning;
+
+    public $taskId;
 
     public function render()
     {
