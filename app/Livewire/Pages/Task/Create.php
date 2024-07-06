@@ -50,11 +50,11 @@ class Create extends Component
 
     public $isBillable = false;
 
-    public $check_user;
+    public $check_by_user_id;
 
-    public $confirm_user;
+    public $confirm_by_user_id;
 
-    public $follow_up_user;
+    public $follow_up_user_id;
 
     public $follow_up_message;
 
@@ -73,9 +73,9 @@ class Create extends Component
             'follow_up_message' => 'nullable|string',
             'assigned_users' => 'nullable|array',
             'assigned_users.*' => 'exists:users,id',
-            'check_user' => 'nullable|exists:users,id',
-            'confirm_user' => 'nullable|exists:users,id',
-            'follow_up_user' => 'nullable|exists:users,id',
+            'check_by_user_id' => 'nullable|exists:users,id',
+            'confirm_by_user_id' => 'nullable|exists:users,id',
+            'follow_up_user_id' => 'nullable|exists:users,id',
             'proof_method' => 'nullable|string',
             'invoice_reference' => 'nullable|string',
             'estimate_time' => 'nullable|numeric',

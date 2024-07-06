@@ -168,7 +168,7 @@
                     <div class="mt-2 px-1">
                         <label for="file"
                             class="text-sm font-medium disabled:opacity-60 text-gray-700 dark:text-gray-400 invalidated:text-negative-600 dark:invalidated:text-negative-700">Attachments</label>
-                        <x-file-pond wire:model="attachments" multiple />
+                       <x-file-pond wire:model="attachments" multiple :uploads="$old_attachments"  />
                     </div>
                 </x-filament::section>
 

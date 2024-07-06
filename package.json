@@ -21,6 +21,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "@ryangjchandler/alpine-tooltip": "^2.0.0"
+        "@ryangjchandler/alpine-tooltip": "^2.0.0",
+        "filepond-plugin-get-file": "^1.1.0"
     }
 }

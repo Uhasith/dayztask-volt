@@ -24,6 +24,10 @@ class Task extends Model implements HasMedia
         'is_checked' => 'boolean',
         'is_confirmed' => 'boolean',
         'is_archived' => 'boolean',
+        'check_by_user_id' => 'string',
+        'confirm_by_user_id' => 'string',
+        'follow_up_user_id' => 'string'
+
     ];
 
     public static function boot()

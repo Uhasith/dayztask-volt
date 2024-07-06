@@ -4,6 +4,7 @@ use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
 use App\Livewire\Pages\Project\Index as ProjectIndex;
 use App\Livewire\Pages\Project\Show as ProjectShow;
 use App\Livewire\Pages\Task\Create as TaskCreate;
+use App\Livewire\Pages\Task\Update as TaskUpdate;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,5 +22,6 @@ Route::middleware([
     Route::get('/projects', ProjectIndex::class)->lazy()->name('projects.index');
     Route::get('/projects/{uuid}', ProjectShow::class)->lazy()->name('projects.show');
     Route::get('/projects/tasks/create/{uuid}', TaskCreate::class)->lazy()->name('projects.tasks.create');
+    Route::get('/projects/tasks/update/{uuid}', TaskUpdate::class)->lazy()->name('projects.tasks.update');
 
 });

@@ -15,15 +15,17 @@
                         <x-wui-button 2xs positive label="Mark as done" /> --}}
                 @if ($userAlredyTrackingThisTask)
                     <x-mary-icon name="m-pause" class=" text-blue-400 hover:text-blue-600 cursor-pointer"
-                        x-tooltip.placement.top.raw="Stop Tracking" wire:click="stopTracking('{{ $task['uuid'] }}')"  />
+                        x-tooltip.placement.top.raw="Stop Tracking" wire:click="stopTracking('{{ $task['uuid'] }}')" />
                 @else
                     <x-mary-icon name="m-play" class=" text-blue-400 hover:text-blue-600 cursor-pointer"
                         x-tooltip.placement.top.raw="Start Tracking"
                         wire:click="startTracking('{{ $task['uuid'] }}')" />
                 @endif
 
-                <x-mary-icon name="m-pencil-square" class="text-green-400 hover:text-green-600 cursor-pointer"
-                    x-tooltip.placement.top.raw="Update" />
+                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" wire:navigate>
+                    <x-mary-icon name="m-pencil-square" class="text-green-400 hover:text-green-600 cursor-pointer"
+                        x-tooltip.placement.top.raw="Update" />
+                </a>
                 <x-mary-icon name="m-trash" class="text-red-400 hover:text-red-600 cursor-pointer"
                     x-tooltip.placement.top.raw="Delete" wire:click="deleteTaskDialog('{{ $task['uuid'] }}')" />
             </div>
@@ -31,8 +33,7 @@
         <div class="flex items-center justify-between py-1">
             <p class="text-md max-w-[50%] truncate">Project : {{ $task['project']['title'] }}</p>
             <div class="px-1">
-                <livewire:global.timer :trackedTime="$trackedTime" :timerRunning="$timerRunning"
-                    :taskId="$taskId" />
+                <livewire:global.timer :trackedTime="$trackedTime" :timerRunning="$timerRunning" :taskId="$taskId" />
             </div>
         </div>
         <div class="flex items-center justify-between py-1">

@@ -50,7 +50,8 @@ class TaskService extends Component
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
-                    $path = $attachment->store('TaskAttachments');
+                    $originalFileName = $attachment->getClientOriginalName();
+                    $path = $attachment->storeAs('TaskAttachments', $originalFileName);
                     $absolutePath = storage_path('app/'.$path);
 
                     // Optimize the image
@@ -58,7 +59,6 @@ class TaskService extends Component
 
                     // Add to media collection
                     $task->addMedia($absolutePath)
-                        ->preservingOriginal()
                         ->toMediaCollection('attachments');
                 }
             }
