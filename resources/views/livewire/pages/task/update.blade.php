@@ -4,10 +4,11 @@
     proof: $wire.entangle('needProof'),
     followup: $wire.entangle('needFollowUp'),
     billable: $wire.entangle('isBillable'),
-    newSubs: $wire.entangle('subtasks')
+    newSubs: $wire.entangle('subtasks'),
+    oldSubs: $wire.entangle('oldRemovedSubTasks'),
 }"
     class="w-full mx-auto p-5 lg:px-10 lg:py-5 min-h-[calc(100vh - 5rem)]">
-    <form wire:submit="createTask">
+    <form wire:submit="updateTask">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
                 <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
@@ -154,8 +155,8 @@
 
             </div>
             <div class="md:mt-5">
-                <x-filament::section collapsible :collapsed="false" persist-collapsed id="task-details" icon="heroicon-m-document-text"
-                    icon-size="md" class="filament-wui-dark">
+                <x-filament::section collapsible :collapsed="false" persist-collapsed id="task-details"
+                    icon="heroicon-m-document-text" icon-size="md" class="filament-wui-dark">
                     <x-slot name="heading">
                         Task Description and Attachments
                     </x-slot>
@@ -168,7 +169,7 @@
                     <div class="mt-2 px-1">
                         <label for="file"
                             class="text-sm font-medium disabled:opacity-60 text-gray-700 dark:text-gray-400 invalidated:text-negative-600 dark:invalidated:text-negative-700">Attachments</label>
-                       <x-file-pond wire:model="attachments" multiple :uploads="$old_attachments"  />
+                        <x-file-pond wire:model="attachments" multiple :uploads="$old_attachments" />
                     </div>
                 </x-filament::section>
 
@@ -197,7 +198,8 @@
                         <template x-for="(sub, index) in newSubs" :key="'sub-task-' + index">
                             <div x-show="newSubs.length > 0" class="flex items-center justify-between py-2 gap-5">
                                 <x-wui-input icon="document-text" placeholder="Add Sub Task" x-model="sub.subTask" />
-                                <x-mary-icon name="m-trash" x-on:click="newSubs.splice(index, 1);"
+                                <x-mary-icon name="m-trash"
+                                    x-on:click="if(sub.old === true) { oldSubs.push(sub.id)};   newSubs.splice(index, 1);"
                                     class="text-red-400 hover:text-red-600 cursor-pointer w-6 h-6"
                                     x-tooltip.placement.top.raw="Remove" />
                             </div>

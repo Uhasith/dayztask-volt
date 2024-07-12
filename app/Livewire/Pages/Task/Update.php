@@ -2,15 +2,18 @@
 
 namespace App\Livewire\Pages\Task;
 
-use App\Models\Task;
-use App\Services\Notifications\NotificationService;
-use App\Services\Team\TeamService;
 use Exception;
-use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Validate;
+use App\Models\Task;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\Validate;
+use App\Services\Task\TaskService;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Notifications\NotificationService;
+use Livewire\Attributes\Locked;
 
 class Update extends Component
 {
@@ -18,6 +21,10 @@ class Update extends Component
 
     #[Validate]
     public $task;
+    public $project;
+
+    #[Locked]
+    public $taskId;
 
     public $teamMembers = [];
 
@@ -65,6 +72,9 @@ class Update extends Component
 
     public $proof_method;
 
+    public $oldRemovedSubTasks = [];
+    public $oldRemovedAttachments = [];
+
     public function rules()
     {
         return [
@@ -90,7 +100,7 @@ class Update extends Component
     public function mount($uuid)
     {
         try {
-            $task = Task::where('uuid', $uuid)->first();
+            $task = Task::with('project')->where('uuid', $uuid)->first();
             if (! $task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
@@ -98,6 +108,8 @@ class Update extends Component
             }
             $this->teamMembers = app(TeamService::class)->getTeamMembers();
             $this->task = $task;
+            $this->project = $task->project;
+            $this->taskId = $task->id;
 
             // Set default values from the task
             $this->name = $task->name;
@@ -110,10 +122,33 @@ class Update extends Component
             })->toArray();
 
             $this->check_by_user_id = $task->check_by_user_id;
+            if (! empty($this->check_by_user_id)) {
+                $this->needToCheck = true;
+            }
+
             $this->confirm_by_user_id = $task->confirm_by_user_id;
+            if (! empty($this->confirm_by_user_id)) {
+                $this->needToConfirm = true;
+            }
+
             $this->follow_up_user_id = $task->follow_up_user_id;
+            if (! empty($this->confirm_by_user_id)) {
+                $this->needFollowUp = true;
+            }
+
             $this->proof_method = $task->proof_method;
+            if (!empty($this->proof_method)) {
+                $this->needProof = true;
+            }
+
             $this->invoice_reference = $task->invoice_reference;
+            if (! empty($this->invoice_reference)) {
+                $this->isBillable = true;
+            }
+
+            $this->deadline = $task->deadline;
+            // $this->recurring_period = $task->recurring_period;
+
             $this->old_attachments = $task->getMedia('attachments');
 
             if (! empty($task->estimate_time)) {
@@ -130,12 +165,21 @@ class Update extends Component
                     $this->estimate_time = 0; // Default or error value
                     $this->range = ''; // Default or error value
                 }
-
             }
 
-            $this->deadline = $task->deadline;
-            // $this->recurring_period = $task->recurring_period;
-            // $this->subtasks = $task->subtasks;
+            $subtasks = $task->subTasks->map(function ($subtask) {
+
+                return [
+                    'id' => $subtask->id,
+                    'subTask' => $subtask->name,
+                    'is_completed' => $subtask->is_completed,
+                    'old' => true
+                ];
+            });
+
+            $this->subtasks = $subtasks;
+ 
+           
         } catch (Exception $e) {
             Log::error("Failed to find task: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -147,12 +191,35 @@ class Update extends Component
     #[On('remove-upload')]
     public function removeUploads($params)
     {
-        Log::info($params);
+        $this->oldRemovedAttachments[] = $params['id'];
     }
 
-    public function createTask()
+    public function updateTask()
     {
-        Log::info($this->attachments);
+        $validatedData = $this->validate();
+        $validatedData['oldRemovedSubTasks'] = $this->oldRemovedSubTasks;
+        $validatedData['oldRemovedAttachments'] = $this->oldRemovedAttachments;
+        $validatedData['task_id'] = $this->taskId;
+        $uuid = $this->project->uuid;
+
+        if (!empty($validatedData['estimate_time'])) {
+            $validatedData['estimate_time'] = $validatedData['estimate_time'] . ' ' . $this->range;
+        }
+
+        try {
+            $taskService = app(TaskService::class);
+            $taskService->updateTask($validatedData);
+            $this->reset();
+            app(NotificationService::class)->sendSuccessNotification('Task updated successfully');
+
+            return $this->redirectRoute('projects.show', $uuid);
+        } catch (Exception $e) {
+            Log::error("Failed to update task: {$e->getMessage()}");
+
+            app(NotificationService::class)->sendExeptionNotification();
+
+            return $this->redirectRoute('projects.show', $uuid);
+        }
     }
 
     public function render()

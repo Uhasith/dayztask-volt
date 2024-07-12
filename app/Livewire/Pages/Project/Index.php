@@ -14,7 +14,7 @@ class Index extends Component
     public function render()
     {
         $user = User::find(Auth::user()->id);
-        $projects = $user->projects()->orderBy('created_at', 'desc')->paginate(9);
+        $projects = $user->projects()->orderBy('created_at', 'asc')->paginate(9);
 
         return view('livewire.pages.project.index', [
             'projects' => $projects,
