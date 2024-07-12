@@ -26,7 +26,7 @@ class Task extends Model implements HasMedia
         'is_archived' => 'boolean',
         'check_by_user_id' => 'string',
         'confirm_by_user_id' => 'string',
-        'follow_up_user_id' => 'string'
+        'follow_up_user_id' => 'string',
 
     ];
 

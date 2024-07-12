@@ -2,15 +2,15 @@
 
 namespace App\Livewire\Pages\Task;
 
-use Exception;
 use App\Models\Task;
-use Livewire\Component;
-use Livewire\Attributes\On;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Validate;
-use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\Log;
 use App\Services\Notifications\NotificationService;
+use App\Services\Team\TeamService;
+use Exception;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Update extends Component
 {
@@ -65,7 +65,6 @@ class Update extends Component
 
     public $proof_method;
 
-
     public function rules()
     {
         return [
@@ -92,7 +91,7 @@ class Update extends Component
     {
         try {
             $task = Task::where('uuid', $uuid)->first();
-            if (!$task) {
+            if (! $task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return $this->redirectRoute('projects.index');
@@ -115,9 +114,9 @@ class Update extends Component
             $this->follow_up_user_id = $task->follow_up_user_id;
             $this->proof_method = $task->proof_method;
             $this->invoice_reference = $task->invoice_reference;
-            $this->old_attachments = $task->getMedia("attachments");
+            $this->old_attachments = $task->getMedia('attachments');
 
-            if(!empty($task->estimate_time)) {
+            if (! empty($task->estimate_time)) {
 
                 // Assuming $task->estimate_time contains the time estimate as a string
                 $estimateTime = $task->estimate_time;
@@ -131,7 +130,7 @@ class Update extends Component
                     $this->estimate_time = 0; // Default or error value
                     $this->range = ''; // Default or error value
                 }
-                
+
             }
 
             $this->deadline = $task->deadline;
@@ -145,14 +144,15 @@ class Update extends Component
         }
     }
 
-    #[On('remove-upload')] 
-    public function removeUploads($params){
+    #[On('remove-upload')]
+    public function removeUploads($params)
+    {
         Log::info($params);
     }
 
     public function createTask()
     {
-       Log::info($this->attachments);
+        Log::info($this->attachments);
     }
 
     public function render()

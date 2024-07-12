@@ -6,11 +6,9 @@
             </x-filament::button>
         </div>
 
-        <div class="grid grid-cols-12 gap-8 overflow-auto py-5">
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 py-5">
             @foreach ($projects as $key => $project)
-                <div class="col-span-12 md:col-span-6 lg:col-span-4 cursor-pointer">
-                    <livewire:pages.project.components.project-card :project="$project" :key="'project-' . $project['uuid']" />
-                </div>
+                <livewire:pages.project.components.project-card :project="$project" :key="'project-' . $project['uuid']" />
             @endforeach
 
         </div>

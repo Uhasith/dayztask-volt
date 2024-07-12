@@ -133,7 +133,7 @@ class TaskService extends Component
             $task = Task::where('uuid', $uuid)->first();
 
             if (! $task) {
-                app(NotificationService::class)->sendExceptionNotification();
+                app(NotificationService::class)->sendExeptionNotification();
 
                 return;
             }
@@ -187,7 +187,7 @@ class TaskService extends Component
             $task = Task::where('uuid', $uuid)->first();
 
             if (! $task) {
-                app(NotificationService::class)->sendExceptionNotification();
+                app(NotificationService::class)->sendExeptionNotification();
 
                 return;
             }
