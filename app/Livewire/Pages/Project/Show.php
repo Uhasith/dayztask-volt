@@ -24,6 +24,9 @@ class Show extends Component
 
     public $sortBy;
 
+    public $searchTerm = '';
+
+
     public function mount($uuid)
     {
         $this->project = Project::where('uuid', $uuid)->firstOrFail();
@@ -60,12 +63,23 @@ class Show extends Component
         // Update the task status
         $task = Task::findOrFail($taskId);
         $task->update(['status' => 'todo']);
-
     }
 
     public function render()
     {
-        $tasks = $this->project->tasks()->orderBy('created_at', 'desc')->with('project')->paginate(6);
+        if (!$this->searchTerm) {
+            $tasks = $this->project->tasks()
+                ->orderBy('created_at', 'desc')
+                ->with('project')
+                ->paginate(6);
+        } else {
+            $tasks = Task::search($this->searchTerm)
+                ->query(function ($query) {
+                    $query->where('project_id', $this->project->id);
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(6);
+        }
 
         return view('livewire.pages.project.show', [
             'tasks' => $tasks,

@@ -11,6 +11,8 @@ class Index extends Component
 {
     use WithPagination;
 
+    public $searchTerm;
+
     public function render()
     {
         $user = User::find(Auth::user()->id);

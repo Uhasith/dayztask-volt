@@ -2,18 +2,17 @@
 
 namespace App\Livewire\Pages\Task;
 
-use Exception;
 use App\Models\Task;
-use Livewire\Component;
-use Livewire\Attributes\On;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Validate;
+use App\Services\Notifications\NotificationService;
 use App\Services\Task\TaskService;
 use App\Services\Team\TeamService;
+use Exception;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use App\Services\Notifications\NotificationService;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Update extends Component
 {
@@ -21,6 +20,7 @@ class Update extends Component
 
     #[Validate]
     public $task;
+
     public $project;
 
     #[Locked]
@@ -73,6 +73,7 @@ class Update extends Component
     public $proof_method;
 
     public $oldRemovedSubTasks = [];
+
     public $oldRemovedAttachments = [];
 
     public function rules()
@@ -132,12 +133,12 @@ class Update extends Component
             }
 
             $this->follow_up_user_id = $task->follow_up_user_id;
-            if (! empty($this->confirm_by_user_id)) {
+            if (! empty($this->follow_up_user_id)) {
                 $this->needFollowUp = true;
             }
 
             $this->proof_method = $task->proof_method;
-            if (!empty($this->proof_method)) {
+            if (! empty($this->proof_method)) {
                 $this->needProof = true;
             }
 
@@ -173,13 +174,12 @@ class Update extends Component
                     'id' => $subtask->id,
                     'subTask' => $subtask->name,
                     'is_completed' => $subtask->is_completed,
-                    'old' => true
+                    'old' => true,
                 ];
             });
 
             $this->subtasks = $subtasks;
- 
-           
+
         } catch (Exception $e) {
             Log::error("Failed to find task: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -202,8 +202,8 @@ class Update extends Component
         $validatedData['task_id'] = $this->taskId;
         $uuid = $this->project->uuid;
 
-        if (!empty($validatedData['estimate_time'])) {
-            $validatedData['estimate_time'] = $validatedData['estimate_time'] . ' ' . $this->range;
+        if (! empty($validatedData['estimate_time'])) {
+            $validatedData['estimate_time'] = $validatedData['estimate_time'].' '.$this->range;
         }
 
         try {

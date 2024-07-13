@@ -105,20 +105,6 @@ class Create extends Component
         }
     }
 
-    // public function addSubTask()
-    // {
-    //     $tempCollect = collect($this->subtasks)->push([
-    //         'subTask' => '',
-    //     ]);
-
-    //     $this->subtasks = $tempCollect->toArray();
-    // }
-
-    // public function removeSubTask($key)
-    // {
-    //     unset($this->subtasks[$key]);
-    // }
-
     public function createTask()
     {
         $validatedData = $this->validate();

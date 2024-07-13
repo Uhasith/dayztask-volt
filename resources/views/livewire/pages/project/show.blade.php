@@ -1,7 +1,7 @@
 <div class="w-full mx-auto p-5 lg:px-10 lg:py-5" x-data>
     <div class="grid grid-cols-12 items-center">
         <div class="col-span-12 md:col-span-3 px-2 md:mt-0">
-            <x-wui-input icon="magnifying-glass" placeholder="Search Task ..." />
+            <x-wui-input icon="magnifying-glass" placeholder="Search Task ..." wire:model.live.debounce.250ms="searchTerm" />
         </div>
         <div class="col-span-12 md:col-span-5 mt-4 md:mt-0 px-2 md:px-5 flex items-center justify-end gap-5 text-end">
             <x-wui-select placeholder="Filter By" class="w-[50%]" wire:model.live="filterBy">
