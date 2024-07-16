@@ -202,6 +202,8 @@ class Update extends Component
         $validatedData['task_id'] = $this->taskId;
         $uuid = $this->project->uuid;
 
+        info($validatedData);
+
         if (! empty($validatedData['estimate_time'])) {
             $validatedData['estimate_time'] = $validatedData['estimate_time'].' '.$this->range;
         }

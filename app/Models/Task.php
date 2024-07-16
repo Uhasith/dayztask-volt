@@ -2,20 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Task extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, SoftDeletes, Searchable;
+    use HasFactory, InteractsWithMedia, Searchable, SoftDeletes;
 
     protected $guarded = ['id'];
 
@@ -35,7 +35,7 @@ class Task extends Model implements HasMedia
     {
         return [
             'id' => (int) $this->id,
-            'name' => $this->name
+            'name' => $this->name,
         ];
     }
 

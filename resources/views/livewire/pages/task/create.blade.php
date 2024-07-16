@@ -28,7 +28,7 @@
                         <x-wui-select.option label="High" value="high" />
                     </x-wui-select>
                     <x-wui-datetime-picker wire:model="deadline" label="Deadline" placeholder="Task Deadline"
-                        without-time :disable-past-dates="true" />
+                        without-time without-timezone :disable-past-dates="true" />
 
                     <x-wui-number label="Estimate Time" placeholder="0" min="1" wire:model="estimate_time" />
                     <x-wui-select icon="clock" label="Time Range" placeholder="Minutes" wire:model="range"
@@ -44,7 +44,7 @@
                         <x-wui-toggle id="needToCheck" x-bind:checked="check"
                             left-label="Does this task need to be checked once done ?"
                             x-on:click="check = !check; if (check === false) { confirm = false; $wire.set('check_by_user_id', null);
-                        $wire.set('confirm_by_user_id', null); $wire.set('proof_method', null); }"
+                        $wire.set('confirm_by_user_id', null); $wire.set('proof_method', null); proof = false; }"
                             name="needToCheck" />
                     </div>
 

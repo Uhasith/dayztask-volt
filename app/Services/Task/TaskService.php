@@ -20,7 +20,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 class TaskService extends Component
 {
-
     public function search($query)
     {
         return Task::search($query)->get();
