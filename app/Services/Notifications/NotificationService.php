@@ -20,7 +20,7 @@ class NotificationService
                     ->url(route('dashboard')),
             ])
             ->persistent()
-            ->send()
+            ->broadcast($user)
             ->sendToDatabase($user);
 
         event(new DatabaseNotificationsSent($user));

@@ -8,11 +8,11 @@
 
         <div class="max-w-lg mx-auto mt-4 md:-mt-14">
             <x-wui-card shadow="xl" rounded="3xl"
-                class="px-4 bg-[#eaddd7] transform hover:scale-105 transition duration-700 ease-in-out">
+                class="px-4 bg-[#eaddd7] dark:bg-[#eaddd7] transform hover:scale-105 transition duration-700 ease-in-out">
                 <a href="{{ route('projects.show.all') }}" wire:navigate>
                     <div>
                         <h5
-                            class="mb-2 mx-auto text-center text-xl max-w-60 font-bold tracking-tight text-gray-900 dark:text-white truncate">
+                            class="mb-2 mx-auto text-center text-xl max-w-60 font-bold tracking-tight text-gray-900 dark:text-gray-900 truncate">
                             {{ 'All Projects' }}
                         </h5>
 
