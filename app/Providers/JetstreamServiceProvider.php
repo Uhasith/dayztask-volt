@@ -52,14 +52,14 @@ class JetstreamServiceProvider extends ServiceProvider
             'delete',
         ])->description('Administrator users can perform any action.');
 
-        Jetstream::role('member', 'Member', [
+        Jetstream::role('member', 'Team Member', [
             'read',
             'create',
             'update',
-        ])->description('Member users have the ability to read, create, and update.');
+        ])->description('Team Member users have the ability to read, create, and update.');
 
-        Jetstream::role('guest', 'Guest', [
+        Jetstream::role('guest', 'Guest Member', [
             'read',
-        ])->description('Guest users have the ability to read.');
+        ])->description('Guest Member users only have the ability to read.');
     }
 }

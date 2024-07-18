@@ -2,21 +2,18 @@
 
 namespace App\Livewire\Pages\Project;
 
-use App\Models\Project;
 use App\Models\Task;
-use App\Models\TaskTracking;
-use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use App\Models\TaskTracking;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\Auth;
 
-class Show extends Component
+class ShowAll extends Component
 {
     use WireUiActions;
     use WithPagination;
-
-    public $project;
 
     public $teamMembers = [];
 
@@ -30,9 +27,8 @@ class Show extends Component
 
     public $showCompletedTasks = false;
 
-    public function mount($uuid)
+    public function mount()
     {
-        $this->project = Project::where('uuid', $uuid)->firstOrFail();
         $this->teamMembers = app(TeamService::class)->getTeamMembers();
     }
 
@@ -70,6 +66,8 @@ class Show extends Component
 
     public function render()
     {
+        $projectIds = Auth::user()->currentTeam->owner->projects->pluck('id')->toArray();
+
         if ($this->searchTerm) {
             // Perform the search with Scout and get the IDs of matching tasks
             $taskIds = Task::search($this->searchTerm)->keys();
@@ -78,15 +76,15 @@ class Show extends Component
             $query = Task::with(['project', 'users'])
                 ->whereIn('id', $taskIds)
                 ->whereIn('status', ['todo', 'doing'])
-                ->whereHas('project', function ($query) {
-                    $query->where('id', $this->project->id);
+                ->whereHas('project', function ($query) use ($projectIds) {
+                    $query->whereIn('id', $projectIds);
                 });
         } else {
             // If no search term, just apply the filters directly
             $query = Task::with(['project', 'users'])
                 ->whereIn('status', ['todo', 'doing'])
-                ->whereHas('project', function ($query) {
-                    $query->where('id', $this->project->id);
+                ->whereHas('project', function ($query) use ($projectIds) {
+                    $query->whereIn('id', $projectIds);
                 });
         }
 
@@ -142,7 +140,7 @@ class Show extends Component
         // Paginate the results
         $tasks = $query->paginate(6);
 
-        return view('livewire.pages.project.show', [
+        return view('livewire.pages.project.show-all', [
             'tasks' => $tasks,
         ]);
     }

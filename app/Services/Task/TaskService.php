@@ -229,8 +229,8 @@ class TaskService extends Component
         }
 
         $totalSeconds = $trackedRecords->reduce(function ($carry, $record) {
-            $start = strtotime($record->start_time);
-            $end = $record->end_time ? strtotime($record->end_time) : time();
+            $start = strtotime($record->created_at);
+            $end = strtotime($record->updated_at);
 
             return $carry + ($end - $start);
         }, 0);
