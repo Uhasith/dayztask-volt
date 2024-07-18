@@ -13,12 +13,12 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        Log::info('User created: ' . $user);
-        
+        Log::info('User created: '.$user);
+
         // Create a new team for the user
         $team = Team::forceCreate([
             'user_id' => $user->id,
-            'name' => explode(' ', $user->name, 2)[0] . "'s Team",
+            'name' => explode(' ', $user->name, 2)[0]."'s Team",
             'personal_team' => true,
         ]);
 

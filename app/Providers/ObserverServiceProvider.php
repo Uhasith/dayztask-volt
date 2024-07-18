@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Project;
-use App\Observers\ProjectObserver;
 use Illuminate\Support\ServiceProvider;
 
 class ObserverServiceProvider extends ServiceProvider
@@ -19,8 +17,5 @@ class ObserverServiceProvider extends ServiceProvider
     /**
      * Bootstrap services.
      */
-    public function boot(): void
-    {
-  
-    }
+    public function boot(): void {}
 }

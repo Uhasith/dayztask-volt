@@ -114,10 +114,22 @@ class Show extends Component
                     $query->orderBy('deadline', 'asc');
                     break;
                 case 3:
-                    $query->orderByRaw("STR_TO_DATE(estimate_time, '%d %b %Y %h:%i %p') DESC");
+                    $query->orderByRaw("
+                                CASE
+                                    WHEN estimate_time LIKE '% day%' THEN CAST(SUBSTRING_INDEX(estimate_time, ' ', 1) AS UNSIGNED) * 1440
+                                    WHEN estimate_time LIKE '% hour%' THEN CAST(SUBSTRING_INDEX(estimate_time, ' ', 1) AS UNSIGNED) * 60
+                                    WHEN estimate_time LIKE '% minute%' THEN CAST(SUBSTRING_INDEX(estimate_time, ' ', 1) AS UNSIGNED)
+                                END DESC
+                            ");
                     break;
                 case 4:
-                    $query->orderByRaw("STR_TO_DATE(estimate_time, '%d %b %Y %h:%i %p') ASC");
+                    $query->orderByRaw("
+                                CASE
+                                    WHEN estimate_time LIKE '% day%' THEN CAST(SUBSTRING_INDEX(estimate_time, ' ', 1) AS UNSIGNED) * 1440
+                                    WHEN estimate_time LIKE '% hour%' THEN CAST(SUBSTRING_INDEX(estimate_time, ' ', 1) AS UNSIGNED) * 60
+                                    WHEN estimate_time LIKE '% minute%' THEN CAST(SUBSTRING_INDEX(estimate_time, ' ', 1) AS UNSIGNED)
+                                END ASC
+                            ");
                     break;
                 case 5:
                     // High priority first for descending order
