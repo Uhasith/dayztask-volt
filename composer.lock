@@ -7682,16 +7682,16 @@
         },
         {
             "name": "spatie/image",
-            "version": "3.7.0",
+            "version": "3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "1151c3271a6fe212fc2cd3ac8248387ab51ad9a0"
+                "reference": "3e3ae45c849f07e1efb7ecc6868e75f4d8dc4475"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/1151c3271a6fe212fc2cd3ac8248387ab51ad9a0",
-                "reference": "1151c3271a6fe212fc2cd3ac8248387ab51ad9a0",
+                "url": "https://api.github.com/repos/spatie/image/zipball/3e3ae45c849f07e1efb7ecc6868e75f4d8dc4475",
+                "reference": "3e3ae45c849f07e1efb7ecc6868e75f4d8dc4475",
                 "shasum": ""
             },
             "require": {
@@ -7738,7 +7738,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/image/tree/3.7.0"
+                "source": "https://github.com/spatie/image/tree/3.7.1"
             },
             "funding": [
                 {
@@ -7750,7 +7750,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-07-18T11:57:39+00:00"
+            "time": "2024-07-18T13:07:12+00:00"
         },
         {
             "name": "spatie/image-optimizer",

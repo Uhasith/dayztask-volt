@@ -12,9 +12,9 @@
                 </h5>
 
                 <div class="flex items-center justify-center">
-                    @if (isset($project['company_logo']))
+                    {{-- @if (isset($project['company_logo'])) --}}
                        <img class="w-32 max-h-12 rounded-md" src="{{ asset('assets/images/logo.png') }}" alt="project-logo" />
-                    @endif
+                    {{-- @endif --}}
                 </div>
             </div>
         </a>

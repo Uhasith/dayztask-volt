@@ -70,6 +70,11 @@ class User extends AuthUser
         ];
     }
 
+    public function workspaces(): HasMany
+    {
+        return $this->hasMany(Workspace::class);
+    }
+
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);

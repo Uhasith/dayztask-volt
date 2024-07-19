@@ -17,13 +17,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory()->withPersonalTeam()->create([
+        User::factory()->create([
             'name' => 'Test User',
             'email' => 'info@dayzsolutions.com',
             'password' => Hash::make('elakiri123'),
         ]);
 
-        User::factory(100)->withPersonalTeam()->create();
+        User::factory(100)->create();
         Project::factory(100)->create(['user_id' => 1]);
         Task::factory(100)->create(['project_id' => 1]);
         Task::factory(100)->create(['project_id' => 2]);

@@ -74,6 +74,7 @@ class CreateProject extends Component implements HasForms
         try {
             $data = $this->form->getState();
             $data['user_id'] = auth()->id();
+            $data['workspace_id'] = auth()->user()->current_workspace_id;
             $record = Project::create($data);
             $this->form->model($record)->saveRelationships();
             $this->form->fill();

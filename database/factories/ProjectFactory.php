@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Team;
 use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -26,6 +28,7 @@ class ProjectFactory extends Factory
             'bg_color' => $this->faker->hexColor,
             'visibility' => $this->faker->randomElement(['public', 'private']),
             'user_id' => User::factory(),
+            'workspace_id' => Workspace::inRandomOrder()->first()->id,
             'font_color' => $this->faker->hexColor,
             'view_order' => $this->faker->numberBetween(1, 100),
             'guest_users' => null,
