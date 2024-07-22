@@ -25,6 +25,28 @@ class TaskService extends Component
         return Task::search($query)->get();
     }
 
+    public function markAsDone($taskId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $task = Task::where('id', $taskId)->first();
+
+            if (!$task) {
+                app(NotificationService::class)->sendExeptionNotification();
+
+                return;
+            }
+
+            $task->update(['status' => 'done']);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            app(NotificationService::class)->sendExeptionNotification();
+            throw $e;
+        }
+    }
+
     public function createTask($validatedData)
     {
         DB::beginTransaction();
@@ -39,9 +61,9 @@ class TaskService extends Component
                 $task->save();
             }
 
-            if (! empty($validatedData['subtasks'])) {
+            if (!empty($validatedData['subtasks'])) {
                 foreach ($validatedData['subtasks'] as $subtask) {
-                    if (! empty($subtask['subTask'])) {
+                    if (!empty($subtask['subTask'])) {
                         $data = [
                             'name' => $subtask['subTask'],
                             'task_id' => $task->id,
@@ -52,13 +74,13 @@ class TaskService extends Component
                 }
             }
 
-            if (! empty($validatedData['attachments'])) {
+            if (!empty($validatedData['attachments'])) {
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
                     $originalFileName = $attachment->getClientOriginalName();
                     $path = $attachment->storeAs('TaskAttachments', $originalFileName);
-                    $absolutePath = storage_path('app/'.$path);
+                    $absolutePath = storage_path('app/' . $path);
 
                     // Optimize the image
                     $optimizerChain->optimize($absolutePath);
@@ -71,7 +93,7 @@ class TaskService extends Component
 
             $task->users()->detach();
 
-            if (! empty($validatedData['assigned_users'])) {
+            if (!empty($validatedData['assigned_users'])) {
                 $task->users()->attach($validatedData['assigned_users']);
             }
 
@@ -80,14 +102,14 @@ class TaskService extends Component
             foreach ($assignedUsers as $user) {
                 if ($user->id !== Auth::id()) {
                     $title = 'Task Assigned';
-                    $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+                    $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
 
                     app(NotificationService::class)->sendDBNotification($user, $title, $body);
 
                     $mailData = [
                         'email' => $user->email,
                         'email_subject' => 'New Task.',
-                        'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                        'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                         'task' => $task,
                         'user' => $user,
                         'caused_by' => Auth::user(),
@@ -120,7 +142,7 @@ class TaskService extends Component
             }
 
             // Handle subtasks
-            if (! empty($validatedData['subtasks'])) {
+            if (!empty($validatedData['subtasks'])) {
                 foreach ($validatedData['subtasks'] as $subtask) {
                     // Check if the subtask is old and removed
                     if (isset($subtask['old'])) {
@@ -133,7 +155,7 @@ class TaskService extends Component
                         }
                     } else {
                         // Add or update subtasks
-                        if (! empty($subtask['subTask'])) {
+                        if (!empty($subtask['subTask'])) {
                             SubTask::updateOrCreate(
                                 ['id' => $subtask['id'] ?? null],
                                 [
@@ -147,7 +169,7 @@ class TaskService extends Component
                 }
             }
 
-            if (! empty($validatedData['oldRemovedSubTasks'])) {
+            if (!empty($validatedData['oldRemovedSubTasks'])) {
                 $subtasks = SubTask::whereIn('id', $validatedData['oldRemovedSubTasks'])->get();
                 foreach ($subtasks as $item) {
                     $item->delete();
@@ -155,13 +177,13 @@ class TaskService extends Component
             }
 
             // Handle attachments
-            if (! empty($validatedData['attachments'])) {
+            if (!empty($validatedData['attachments'])) {
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
                     $originalFileName = $attachment->getClientOriginalName();
                     $path = $attachment->storeAs('TaskAttachments', $originalFileName);
-                    $absolutePath = storage_path('app/'.$path);
+                    $absolutePath = storage_path('app/' . $path);
 
                     // Optimize the image
                     $optimizerChain->optimize($absolutePath);
@@ -172,7 +194,7 @@ class TaskService extends Component
                 }
             }
 
-            if (! empty($validatedData['oldRemovedAttachments'])) {
+            if (!empty($validatedData['oldRemovedAttachments'])) {
                 $mediaItems = Media::whereIn('id', $validatedData['oldRemovedAttachments'])->get();
                 foreach ($mediaItems as $mediaItem) {
                     $mediaItem->delete(); // This will delete both the database record and the file
@@ -182,7 +204,7 @@ class TaskService extends Component
             // Detach and reattach users
             $task->users()->detach();
 
-            if (! empty($validatedData['assigned_users'])) {
+            if (!empty($validatedData['assigned_users'])) {
                 $task->users()->attach($validatedData['assigned_users']);
             }
 
@@ -192,14 +214,14 @@ class TaskService extends Component
             foreach ($assignedUsers as $user) {
                 if ($user->id !== Auth::id()) {
                     $title = 'Task Assigned';
-                    $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+                    $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
 
                     app(NotificationService::class)->sendDBNotification($user, $title, $body);
 
                     $mailData = [
                         'email' => $user->email,
                         'email_subject' => 'New Task.',
-                        'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                        'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                         'task' => $task,
                         'user' => $user,
                         'caused_by' => Auth::user(),
@@ -218,9 +240,9 @@ class TaskService extends Component
         }
     }
 
-    public function calculateTotalTrackedTime($taskId)
+    public function calculateTotalTrackedTime($taskId, $userId)
     {
-        $trackedRecords = TaskTracking::where('user_id', Auth::user()->id)
+        $trackedRecords = TaskTracking::where('user_id', $userId)
             ->where('task_id', $taskId)
             ->get();
 
@@ -250,7 +272,7 @@ class TaskService extends Component
             $userId = Auth::user()->id;
             $task = Task::where('uuid', $uuid)->first();
 
-            if (! $task) {
+            if (!$task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return;
@@ -304,7 +326,7 @@ class TaskService extends Component
             $userId = Auth::user()->id;
             $task = Task::where('uuid', $uuid)->first();
 
-            if (! $task) {
+            if (!$task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return;
@@ -333,7 +355,7 @@ class TaskService extends Component
 
             $task->update(['status' => 'todo']);
 
-            if (! $alreadyTrackingDifferentTask) {
+            if (!$alreadyTrackingDifferentTask) {
                 app(NotificationService::class)->sendSuccessNotification('Task tracking ended successfully');
             }
 

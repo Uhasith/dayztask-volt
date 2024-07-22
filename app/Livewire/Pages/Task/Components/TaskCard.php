@@ -2,17 +2,17 @@
 
 namespace App\Livewire\Pages\Task\Components;
 
-use App\Models\Task;
-use App\Models\TaskTracking;
-use App\Services\Notifications\NotificationService;
-use App\Services\Task\TaskService;
 use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
+use App\Models\Task;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use App\Models\TaskTracking;
+use Livewire\Attributes\Locked;
 use WireUi\Traits\WireUiActions;
+use App\Services\Task\TaskService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Notifications\NotificationService;
 
 class TaskCard extends Component
 {
@@ -35,14 +35,47 @@ class TaskCard extends Component
     public $trackedTime = '00:00:00';
 
     public $timerRunning = false;
+    public $userAssigned = false;
+    public $subTasksCount = 0;
+    public $completedPrecent = 0;
 
     public function mount($taskId)
     {
         $this->taskId = $taskId;
-        $this->task = Task::where('id', $this->taskId)->with('users')->first();
+        $this->task = Task::where('id', $this->taskId)->with('users', 'subtasks')->first();
         $this->project = $this->task->project;
         $this->projectId = $this->project->uuid;
-        $this->trackedTime = $this->calculateTotalTrackedTime($taskId);
+        $this->trackedTime = $this->calculateTotalTrackedTimeOnTask($this->taskId, Auth::user()->id);
+
+        if (!empty($this->task['subtasks'])) {
+            $this->subTasksCount = count($this->task['subtasks']);
+            if ($this->subTasksCount > 0) {
+                $completedCount = $this->task['subtasks']->where('is_completed', true)->count();
+                $this->completedPrecent = ($completedCount / $this->subTasksCount) * 100;
+            } else {
+                $this->completedPrecent = 0; // or handle this case appropriately
+            }
+        }
+      
+        if (!empty($this->task['users'])) {
+            foreach ($this->task['users'] as $user) {
+
+                if($user->id == Auth::user()->id) {
+                    $this->userAssigned = true;
+                }
+
+                $user->trackedTime = $this->calculateTotalTrackedTimeOnTask($this->taskId, $user->id);
+                $userTrackingTask = TaskTracking::where('user_id', $user->id)
+                    ->where('task_id', $this->taskId)
+                    ->whereNull('end_time')
+                    ->where('enable_tracking', true)
+                    ->first();
+
+                $user->userAlreadyTrackingThisTask = $userTrackingTask ? true : false;
+                $user->timerRunning = $userTrackingTask ? true : false;
+            }
+        }
+
         $trackingTask = TaskTracking::where('user_id', Auth::user()->id)->where('task_id', $this->taskId)
             ->whereNull('end_time')
             ->where('enable_tracking', true)
@@ -54,12 +87,24 @@ class TaskCard extends Component
         }
     }
 
-    public function calculateTotalTrackedTime($taskId)
+    public function calculateTotalTrackedTimeOnTask($taskId, $userId)
     {
         $taskService = app(TaskService::class);
-        $time = $taskService->calculateTotalTrackedTime($taskId);
+        $time = $taskService->calculateTotalTrackedTime($taskId, $userId);
 
         return $time;
+    }
+
+    public function markAsDone()
+    {
+        try {
+            $taskService = app(TaskService::class);
+            $taskService->markAsDone($this->taskId);
+            app(NotificationService::class)->sendSuccessNotification('Task marked as done successfully');
+        } catch (Exception $e) {
+            Log::error("Failed to start task tracking: {$e->getMessage()}");
+            app(NotificationService::class)->sendExeptionNotification();
+        }
     }
 
     #[On('end-tracking')]
@@ -115,7 +160,7 @@ class TaskCard extends Component
             'accept' => [
                 'label' => 'Yes, delete it',
                 'method' => 'deleteTask',
-                'params' => ''.$uuid.'',
+                'params' => '' . $uuid . '',
             ],
         ]);
     }
@@ -124,7 +169,7 @@ class TaskCard extends Component
     {
         try {
             $task = $this->project->tasks()->where('uuid', $uuid)->first();
-            if (! $task) {
+            if (!$task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return $this->redirectRoute('projects.show', $this->projectId);

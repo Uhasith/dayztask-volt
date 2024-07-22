@@ -13,16 +13,12 @@ class TeamObserver
      */
     public function created(Team $team): void
     {
-        $workspace = Workspace::forceCreate([
+        Workspace::forceCreate([
             'user_id' => $team->user_id,
             'team_id' => $team->id,
             'name' => $team->name.'\'s Workspace',
             'description' => $team->name.'\'s Workspace',
         ]);
-
-        $user = Auth::user();
-        $user->current_workspace_id = $workspace->id;
-        $user->save();
 
     }
 

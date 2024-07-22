@@ -77,14 +77,12 @@ class Show extends Component
             // Now query those tasks to apply additional filters
             $query = Task::with(['project', 'users'])
                 ->whereIn('id', $taskIds)
-                ->whereIn('status', ['todo', 'doing'])
                 ->whereHas('project', function ($query) {
                     $query->where('id', $this->project->id);
                 });
         } else {
             // If no search term, just apply the filters directly
             $query = Task::with(['project', 'users'])
-                ->whereIn('status', ['todo', 'doing'])
                 ->whereHas('project', function ($query) {
                     $query->where('id', $this->project->id);
                 });
@@ -102,6 +100,13 @@ class Show extends Component
             $query->whereHas('users', function ($query) {
                 $query->where('users.id', $this->filterBy);
             });
+        }
+
+        // Apply show completed tasks logic
+        if ($this->showCompletedTasks) {
+            $query->whereIn('status', ['todo', 'doing', 'done']);
+        } else {
+            $query->whereIn('status', ['todo', 'doing']);
         }
 
         // Apply sorting logic based on sortBy value
@@ -146,10 +151,6 @@ class Show extends Component
             $query->orderBy('created_at', 'desc');
         }
 
-        // Apply show completed tasks logic
-        if ($this->showCompletedTasks) {
-            $query->whereIn('status', ['todo', 'doing', 'done']);
-        }
 
         // Paginate the results
         $tasks = $query->paginate(6);

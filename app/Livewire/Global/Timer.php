@@ -3,6 +3,7 @@
 namespace App\Livewire\Global;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Log;
 
 class Timer extends Component
 {

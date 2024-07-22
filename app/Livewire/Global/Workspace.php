@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Global;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Workspace extends Component
 {
-    public $workspaces, $workspaceId;
+    public $workspaces;
+
+    public $workspaceId;
 
     public function mount()
     {
@@ -18,7 +20,7 @@ class Workspace extends Component
         $this->workspaces = $team->workspaces;
 
         // Check if the current_workspace_id is part of the team's workspaces
-        if (!$this->workspaces->contains('id', $user->current_workspace_id)) {
+        if (! $this->workspaces->contains('id', $user->current_workspace_id)) {
             // Set current_workspace_id to the first workspace in the list if not present
             $firstWorkspace = $this->workspaces->first();
 

@@ -66,7 +66,7 @@ class ShowAll extends Component
 
     public function render()
     {
-        $projectIds = Auth::user()->currentTeam->owner->projects->pluck('id')->toArray();
+        $projectIds = Auth::user()->currentTeam->owner->projects->where('workspace_id', Auth::user()->current_workspace_id)->pluck('id')->toArray();
 
         if ($this->searchTerm) {
             // Perform the search with Scout and get the IDs of matching tasks
@@ -75,14 +75,12 @@ class ShowAll extends Component
             // Now query those tasks to apply additional filters
             $query = Task::with(['project', 'users'])
                 ->whereIn('id', $taskIds)
-                ->whereIn('status', ['todo', 'doing'])
                 ->whereHas('project', function ($query) use ($projectIds) {
                     $query->whereIn('id', $projectIds);
                 });
         } else {
             // If no search term, just apply the filters directly
             $query = Task::with(['project', 'users'])
-                ->whereIn('status', ['todo', 'doing'])
                 ->whereHas('project', function ($query) use ($projectIds) {
                     $query->whereIn('id', $projectIds);
                 });
@@ -100,6 +98,13 @@ class ShowAll extends Component
             $query->whereHas('users', function ($query) {
                 $query->where('users.id', $this->filterBy);
             });
+        }
+
+        // Apply show completed tasks logic
+        if ($this->showCompletedTasks) {
+            $query->whereIn('status', ['todo', 'doing', 'done']);
+        } else {
+            $query->whereIn('status', ['todo', 'doing']);
         }
 
         // Apply sorting logic based on sortBy value
