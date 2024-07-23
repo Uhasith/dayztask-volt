@@ -2,17 +2,17 @@
 
 namespace App\Livewire\Pages\Task\Components;
 
-use Exception;
 use App\Models\Task;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Models\TaskTracking;
-use Livewire\Attributes\Locked;
-use WireUi\Traits\WireUiActions;
-use App\Services\Task\TaskService;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use App\Services\Notifications\NotificationService;
+use App\Services\Task\TaskService;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
 class TaskCard extends Component
 {
@@ -29,23 +29,29 @@ class TaskCard extends Component
 
     #[Locked]
     public $task;
+    public $taskStatus;
 
     public $userAlredyTrackingThisTask = false;
 
     public $trackedTime = '00:00:00';
 
+    public $totalTrackedTime = '00:00:00';
+
     public $timerRunning = false;
-    public $userAssigned = false;
+
     public $subTasksCount = 0;
+
     public $completedPrecent = 0;
 
     public function mount($taskId)
     {
         $this->taskId = $taskId;
         $this->task = Task::where('id', $this->taskId)->with('users', 'subtasks')->first();
+        $this->taskStatus = $this->task->status;
         $this->project = $this->task->project;
         $this->projectId = $this->project->uuid;
         $this->trackedTime = $this->calculateTotalTrackedTimeOnTask($this->taskId, Auth::user()->id);
+        $this->totalTrackedTime = $this->calculateAllUsersTotalTrackedTimeOnTask($this->taskId);
 
         if (!empty($this->task['subtasks'])) {
             $this->subTasksCount = count($this->task['subtasks']);
@@ -56,13 +62,9 @@ class TaskCard extends Component
                 $this->completedPrecent = 0; // or handle this case appropriately
             }
         }
-      
+
         if (!empty($this->task['users'])) {
             foreach ($this->task['users'] as $user) {
-
-                if($user->id == Auth::user()->id) {
-                    $this->userAssigned = true;
-                }
 
                 $user->trackedTime = $this->calculateTotalTrackedTimeOnTask($this->taskId, $user->id);
                 $userTrackingTask = TaskTracking::where('user_id', $user->id)
@@ -87,6 +89,14 @@ class TaskCard extends Component
         }
     }
 
+    public function calculateAllUsersTotalTrackedTimeOnTask($taskId)
+    {
+        $taskService = app(TaskService::class);
+        $time = $taskService->calculateAllUsersTotalTrackedTime($taskId);
+
+        return $time;
+    }
+
     public function calculateTotalTrackedTimeOnTask($taskId, $userId)
     {
         $taskService = app(TaskService::class);
@@ -99,10 +109,24 @@ class TaskCard extends Component
     {
         try {
             $taskService = app(TaskService::class);
-            $taskService->markAsDone($this->taskId);
+            $updatedTask = $taskService->markAsDone($this->taskId);
+            $this->taskStatus = $updatedTask->status;
             app(NotificationService::class)->sendSuccessNotification('Task marked as done successfully');
         } catch (Exception $e) {
-            Log::error("Failed to start task tracking: {$e->getMessage()}");
+            Log::error("Failed to mark task as done: {$e->getMessage()}");
+            app(NotificationService::class)->sendExeptionNotification();
+        }
+    }
+
+    public function revertToTodo()
+    {
+        try {
+            $taskService = app(TaskService::class);
+            $updatedTask = $taskService->revertToTodo($this->taskId);
+            $this->taskStatus = $updatedTask->status;
+            app(NotificationService::class)->sendSuccessNotification('Task marked as todo successfully');
+        } catch (Exception $e) {
+            Log::error("Failed to revert task to todo: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
         }
     }

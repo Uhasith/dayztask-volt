@@ -1,5 +1,9 @@
-<div>
- <section class="bg-white dark:bg-gray-900">
+<div class="p-6 mx-auto max-w-screen-xl lg:py-8 lg:px-4">
+    <div class="grid gap-8 mb-4 lg:mb-8 md:grid-cols-2">
+        @livewire(\App\Livewire\Widgets\TeamMemberWeekTimeChart::class)
+        @livewire(\App\Livewire\Widgets\TeamMemberTaskStatusChart::class)
+    </div>
+    {{-- <section class="bg-white dark:bg-gray-900">
   <div class="py-2 px-4 mx-auto max-w-screen-xl lg:py-4 lg:px-6 ">
       <div class="mx-auto max-w-screen-sm text-center mb-4 lg:mb-8">
           <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Our Team</h2>
@@ -144,5 +148,5 @@
           </div>  
       </div>  
   </div>
-</section>
+</section> --}}
 </div>

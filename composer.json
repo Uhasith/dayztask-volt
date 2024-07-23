@@ -13,6 +13,8 @@
         "filament/forms": "^3.2",
         "filament/notifications": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
+        "filament/widgets": "^3.2",
+        "flowframe/laravel-trend": "^0.2.0",
         "joshembling/image-optimizer": "^1.4",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.1",

@@ -7,6 +7,7 @@ use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\TaskTracking;
 use App\Services\Notifications\NotificationService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +40,33 @@ class TaskService extends Component
             }
 
             $task->update(['status' => 'done']);
+            $updatedTask = $task->fresh();
             DB::commit();
+            return $updatedTask;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            app(NotificationService::class)->sendExeptionNotification();
+            throw $e;
+        }
+    }
+
+    public function revertToTodo($taskId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $task = Task::where('id', $taskId)->first();
+
+            if (!$task) {
+                app(NotificationService::class)->sendExeptionNotification();
+
+                return;
+            }
+
+            $task->update(['status' => 'todo']);
+            $updatedTask = $task->fresh();
+            DB::commit();
+            return $updatedTask;
         } catch (\Exception $e) {
             DB::rollBack();
             app(NotificationService::class)->sendExeptionNotification();
@@ -240,6 +267,35 @@ class TaskService extends Component
         }
     }
 
+    public function calculateAllUsersTotalTrackedTime($taskId)
+    {
+        $trackedRecords = TaskTracking::where('task_id', $taskId)
+            ->get();
+
+        if ($trackedRecords->isEmpty()) {
+            return '00:00:00';
+        }
+
+        $totalSeconds = $trackedRecords->reduce(function ($carry, $record) {
+
+            if ($record->end_time) {
+                $start = strtotime($record->created_at);
+                $end = strtotime($record->updated_at);
+            } else {
+                $start = strtotime($record->created_at);
+                $end = strtotime(Carbon::now());
+            }
+
+            return $carry + ($end - $start);
+        }, 0);
+
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+
     public function calculateTotalTrackedTime($taskId, $userId)
     {
         $trackedRecords = TaskTracking::where('user_id', $userId)
@@ -251,8 +307,14 @@ class TaskService extends Component
         }
 
         $totalSeconds = $trackedRecords->reduce(function ($carry, $record) {
-            $start = strtotime($record->created_at);
-            $end = strtotime($record->updated_at);
+
+            if ($record->end_time) {
+                $start = strtotime($record->created_at);
+                $end = strtotime($record->updated_at);
+            } else {
+                $start = strtotime($record->created_at);
+                $end = strtotime(Carbon::now());
+            }
 
             return $carry + ($end - $start);
         }, 0);

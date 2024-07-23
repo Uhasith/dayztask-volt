@@ -151,7 +151,6 @@ class Show extends Component
             $query->orderBy('created_at', 'desc');
         }
 
-
         // Paginate the results
         $tasks = $query->paginate(6);
 

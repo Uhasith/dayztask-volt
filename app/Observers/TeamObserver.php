@@ -4,7 +4,6 @@ namespace App\Observers;
 
 use App\Models\Team;
 use App\Models\Workspace;
-use Illuminate\Support\Facades\Auth;
 
 class TeamObserver
 {
