@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Widgets;
 
-use Carbon\Carbon;
-use App\Models\Task;
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\TaskTracking;
+use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,9 +47,9 @@ class TeamMemberWeekTimeChart extends ChartWidget
                 $endDate = Carbon::now()->endOfWeek();
                 break;
         }
+
         return [$startDate, $endDate];
     }
-
 
     protected function getData(): array
     {
@@ -71,6 +71,7 @@ class TeamMemberWeekTimeChart extends ChartWidget
                 return $day->sum(function ($record) {
                     $startTime = Carbon::parse($record->created_at);
                     $endTime = $record->end_time ? Carbon::parse($record->updated_at) : Carbon::now();
+
                     return round($startTime->diffInHours($endTime), 2);
                 });
             });
