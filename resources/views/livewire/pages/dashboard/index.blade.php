@@ -3,6 +3,9 @@
         @livewire(\App\Livewire\Widgets\TeamMemberWeekTimeChart::class)
         @livewire(\App\Livewire\Widgets\TeamMemberTaskStatusChart::class)
     </div>
+    <div>
+        @livewire(\App\Livewire\Widgets\StatsOverview::class)
+    </div>
     {{-- <section class="bg-white dark:bg-gray-900">
   <div class="py-2 px-4 mx-auto max-w-screen-xl lg:py-4 lg:px-6 ">
       <div class="mx-auto max-w-screen-sm text-center mb-4 lg:mb-8">

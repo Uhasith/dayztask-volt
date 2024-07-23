@@ -2,15 +2,15 @@
 
 namespace App\Livewire\Widgets;
 
-use Carbon\Carbon;
-use App\Models\Task;
 use App\Models\Project;
+use App\Models\Task;
+use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 
 class TeamMemberTaskStatusChart extends ChartWidget
 {
-    protected static ?string $heading = 'Your Assigned Task Chart';
+    protected static ?string $heading = 'Your Task Status Chart';
 
     protected static string $color = 'info';
 
@@ -46,9 +46,9 @@ class TeamMemberTaskStatusChart extends ChartWidget
                 $endDate = Carbon::now()->endOfWeek();
                 break;
         }
+
         return [$startDate, $endDate];
     }
-
 
     protected function getData(): array
     {

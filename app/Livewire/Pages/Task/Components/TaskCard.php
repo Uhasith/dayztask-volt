@@ -29,6 +29,7 @@ class TaskCard extends Component
 
     #[Locked]
     public $task;
+
     public $taskStatus;
 
     public $userAlredyTrackingThisTask = false;
@@ -53,7 +54,7 @@ class TaskCard extends Component
         $this->trackedTime = $this->calculateTotalTrackedTimeOnTask($this->taskId, Auth::user()->id);
         $this->totalTrackedTime = $this->calculateAllUsersTotalTrackedTimeOnTask($this->taskId);
 
-        if (!empty($this->task['subtasks'])) {
+        if (! empty($this->task['subtasks'])) {
             $this->subTasksCount = count($this->task['subtasks']);
             if ($this->subTasksCount > 0) {
                 $completedCount = $this->task['subtasks']->where('is_completed', true)->count();
@@ -63,7 +64,7 @@ class TaskCard extends Component
             }
         }
 
-        if (!empty($this->task['users'])) {
+        if (! empty($this->task['users'])) {
             foreach ($this->task['users'] as $user) {
 
                 $user->trackedTime = $this->calculateTotalTrackedTimeOnTask($this->taskId, $user->id);
@@ -154,6 +155,8 @@ class TaskCard extends Component
             if ($data['alreadyTrackingDifferentTask']) {
                 $this->dispatch('end-tracking', ['id' => $data['alreadyTrackingDifferentTask']->task_id]);
             }
+
+            $this->taskStatus = $data['updatedTask']->status;
         } catch (Exception $e) {
             Log::error("Failed to start task tracking: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -164,11 +167,13 @@ class TaskCard extends Component
     {
         try {
             $taskService = app(TaskService::class);
-            $taskId = $taskService->stopTracking($uuid, false);
+            $data = $taskService->stopTracking($uuid, false);
 
-            if ($taskId) {
-                $this->dispatch('end-tracking', ['id' => $taskId]);
+            if ($data['taskId']) {
+                $this->dispatch('end-tracking', ['id' => $data['taskId']]);
             }
+
+            $this->taskStatus = $data['updatedTask']->status;
         } catch (Exception $e) {
             Log::error("Failed to end task tracking: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -184,7 +189,7 @@ class TaskCard extends Component
             'accept' => [
                 'label' => 'Yes, delete it',
                 'method' => 'deleteTask',
-                'params' => '' . $uuid . '',
+                'params' => ''.$uuid.'',
             ],
         ]);
     }
@@ -193,7 +198,7 @@ class TaskCard extends Component
     {
         try {
             $task = $this->project->tasks()->where('uuid', $uuid)->first();
-            if (!$task) {
+            if (! $task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return $this->redirectRoute('projects.show', $this->projectId);

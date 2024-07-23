@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TeamMemberWeekTimeChart extends ChartWidget
 {
-    protected static ?string $heading = 'Your Time Tracking Chart';
+    protected static ?string $heading = 'Your Task Tracking Chart';
 
     protected static string $color = 'info';
 
