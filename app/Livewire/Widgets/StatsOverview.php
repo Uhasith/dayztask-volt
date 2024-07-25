@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Widgets;
 
+use App\Models\Project;
 use App\Models\Task;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -16,11 +17,13 @@ class StatsOverview extends BaseWidget
         $openTaskColor = '';
         $openTaskIcon = '';
 
+        $projectIds = Project::where('workspace_id', Auth::user()->current_workspace_id)->pluck('id');
+
         // Current week task count
-        $currentWeekTaskCount = Task::wherehas('users', fn ($q) => $q->where('user_id', Auth::user()->id))->where('status', 'todo')->count();
+        $currentWeekTaskCount = Task::whereIn('project_id', $projectIds)->wherehas('users', fn ($q) => $q->where('user_id', Auth::user()->id))->where('status', 'todo')->count();
 
         // Last week task count
-        $lastWeekTaskCount = Task::wherehas('users', fn ($q) => $q->where('user_id', Auth::user()->id))
+        $lastWeekTaskCount = Task::whereIn('project_id', $projectIds)->wherehas('users', fn ($q) => $q->where('user_id', Auth::user()->id))
             ->where('status', 'todo')
             ->whereBetween('created_at', [now()->subWeeks(2), now()->subWeek()])
             ->count();

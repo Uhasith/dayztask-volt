@@ -133,7 +133,7 @@ class TaskService extends Component
                     $title = 'Task Assigned';
                     $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
 
-                    app(NotificationService::class)->sendDBNotification($user, $title, $body);
+                    app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
 
                     $mailData = [
                         'email' => $user->email,
@@ -245,7 +245,7 @@ class TaskService extends Component
                     $title = 'Task Assigned';
                     $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
 
-                    app(NotificationService::class)->sendDBNotification($user, $title, $body);
+                    app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
 
                     $mailData = [
                         'email' => $user->email,

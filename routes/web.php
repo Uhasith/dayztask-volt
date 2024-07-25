@@ -1,12 +1,13 @@
 <?php
 
-use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
-use App\Livewire\Pages\Project\Index as ProjectIndex;
-use App\Livewire\Pages\Project\Show as ProjectShow;
-use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskController;
 use App\Livewire\Pages\Task\Create as TaskCreate;
 use App\Livewire\Pages\Task\Update as TaskUpdate;
-use Illuminate\Support\Facades\Route;
+use App\Livewire\Pages\Project\Show as ProjectShow;
+use App\Livewire\Pages\Project\Index as ProjectIndex;
+use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
+use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,5 +26,6 @@ Route::middleware([
     Route::get('/projects/show/all', ProjectShowAll::class)->lazy()->name('projects.show.all');
     Route::get('/projects/tasks/create/{uuid}', TaskCreate::class)->lazy()->name('projects.tasks.create');
     Route::get('/projects/tasks/update/{uuid}', TaskUpdate::class)->lazy()->name('projects.tasks.update');
+    Route::get('/update-user-team-workspace/{uuid}', [TaskController::class, 'updateUserTeamAndWorkspace'])->name('update.user.team.workspace');
 
 });

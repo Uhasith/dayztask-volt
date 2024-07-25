@@ -17,7 +17,7 @@ class ProjectCard extends Component
         $body = 'Changes to the post have been saved.';
 
         // Use the service to send a notification
-        app(NotificationService::class)->sendDBNotification($user, $title, $body);
+        app(NotificationService::class)->sendDBNotificationWithoutAction($user, $title, $body);
     }
 
     public function render()

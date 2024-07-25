@@ -28,6 +28,11 @@ class Project extends Model implements HasMedia
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function workspace(): BelongsTo
+    {
+        return $this->belongsTo(Workspace::class, 'workspace_id');
+    }
+
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class, 'project_id');

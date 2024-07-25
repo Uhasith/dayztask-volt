@@ -13,6 +13,7 @@ class Workspace extends Component
 
     public function mount()
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
         $team = $user->currentTeam;
 
