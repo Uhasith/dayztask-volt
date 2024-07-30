@@ -6,11 +6,13 @@ use App\Mail\NotificationMail;
 use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\TaskTracking;
+use App\Models\User;
 use App\Services\Notifications\NotificationService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
@@ -33,7 +35,7 @@ class TaskService extends Component
         try {
             $task = Task::where('id', $taskId)->first();
 
-            if (! $task) {
+            if (!$task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return;
@@ -58,7 +60,7 @@ class TaskService extends Component
         try {
             $task = Task::where('id', $taskId)->first();
 
-            if (! $task) {
+            if (!$task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return;
@@ -90,9 +92,9 @@ class TaskService extends Component
                 $task->save();
             }
 
-            if (! empty($validatedData['subtasks'])) {
+            if (!empty($validatedData['subtasks'])) {
                 foreach ($validatedData['subtasks'] as $subtask) {
-                    if (! empty($subtask['subTask'])) {
+                    if (!empty($subtask['subTask'])) {
                         $data = [
                             'name' => $subtask['subTask'],
                             'task_id' => $task->id,
@@ -103,13 +105,13 @@ class TaskService extends Component
                 }
             }
 
-            if (! empty($validatedData['attachments'])) {
+            if (!empty($validatedData['attachments'])) {
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
                     $originalFileName = $attachment->getClientOriginalName();
                     $path = $attachment->storeAs('TaskAttachments', $originalFileName);
-                    $absolutePath = storage_path('app/'.$path);
+                    $absolutePath = storage_path('app/' . $path);
 
                     // Optimize the image
                     $optimizerChain->optimize($absolutePath);
@@ -122,7 +124,7 @@ class TaskService extends Component
 
             $task->users()->detach();
 
-            if (! empty($validatedData['assigned_users'])) {
+            if (!empty($validatedData['assigned_users'])) {
                 $task->users()->attach($validatedData['assigned_users']);
             }
 
@@ -131,14 +133,14 @@ class TaskService extends Component
             foreach ($assignedUsers as $user) {
                 if ($user->id !== Auth::id()) {
                     $title = 'Task Assigned';
-                    $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+                    $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
 
                     app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
 
                     $mailData = [
                         'email' => $user->email,
                         'email_subject' => 'New Task.',
-                        'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                        'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                         'task' => $task,
                         'user' => $user,
                         'caused_by' => Auth::user(),
@@ -171,7 +173,7 @@ class TaskService extends Component
             }
 
             // Handle subtasks
-            if (! empty($validatedData['subtasks'])) {
+            if (!empty($validatedData['subtasks'])) {
                 foreach ($validatedData['subtasks'] as $subtask) {
                     // Check if the subtask is old and removed
                     if (isset($subtask['old'])) {
@@ -184,7 +186,7 @@ class TaskService extends Component
                         }
                     } else {
                         // Add or update subtasks
-                        if (! empty($subtask['subTask'])) {
+                        if (!empty($subtask['subTask'])) {
                             SubTask::updateOrCreate(
                                 ['id' => $subtask['id'] ?? null],
                                 [
@@ -198,7 +200,7 @@ class TaskService extends Component
                 }
             }
 
-            if (! empty($validatedData['oldRemovedSubTasks'])) {
+            if (!empty($validatedData['oldRemovedSubTasks'])) {
                 $subtasks = SubTask::whereIn('id', $validatedData['oldRemovedSubTasks'])->get();
                 foreach ($subtasks as $item) {
                     $item->delete();
@@ -206,13 +208,13 @@ class TaskService extends Component
             }
 
             // Handle attachments
-            if (! empty($validatedData['attachments'])) {
+            if (!empty($validatedData['attachments'])) {
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
                     $originalFileName = $attachment->getClientOriginalName();
                     $path = $attachment->storeAs('TaskAttachments', $originalFileName);
-                    $absolutePath = storage_path('app/'.$path);
+                    $absolutePath = storage_path('app/' . $path);
 
                     // Optimize the image
                     $optimizerChain->optimize($absolutePath);
@@ -223,37 +225,166 @@ class TaskService extends Component
                 }
             }
 
-            if (! empty($validatedData['oldRemovedAttachments'])) {
+            if (!empty($validatedData['oldRemovedAttachments'])) {
                 $mediaItems = Media::whereIn('id', $validatedData['oldRemovedAttachments'])->get();
                 foreach ($mediaItems as $mediaItem) {
                     $mediaItem->delete(); // This will delete both the database record and the file
                 }
             }
 
+            // Get the list of currently assigned users
+            $currentUsers = $task->users->pluck('id')->toArray();
+
             // Detach and reattach users
             $task->users()->detach();
 
-            if (! empty($validatedData['assigned_users'])) {
-                $task->users()->attach($validatedData['assigned_users']);
+            if (!empty($validatedData['assigned_users'])) {
+                $newAssignedUsers = $validatedData['assigned_users'];
+                $task->users()->attach($newAssignedUsers);
+
+                // Determine newly assigned users
+                $newUsers = array_diff($newAssignedUsers, $currentUsers);
+
+                // Send notifications to newly assigned users
+                foreach ($newUsers as $userId) {
+                    $user = User::find($userId);
+                    if ($user && $user->id !== Auth::id()) {
+                        $title = 'Task Assigned';
+                        $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
+
+                        app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
+
+                        $mailData = [
+                            'email' => $user->email,
+                            'email_subject' => 'New Task.',
+                            'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                            'task' => $task,
+                            'user' => $user,
+                            'caused_by' => Auth::user(),
+                        ];
+
+                        Mail::to($user->email)->queue(new NotificationMail($mailData));
+                    }
+                }
             }
 
-            // Send notifications to assigned users
-            $assignedUsers = $task->users;
+            DB::commit();
 
-            foreach ($assignedUsers as $user) {
-                if ($user->id !== Auth::id()) {
-                    $title = 'Task Assigned';
-                    $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+            return $task;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 
-                    app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
+    public function updateTaskStatus($taskId, $status)
+    {
+        try {
+
+            /** @var \App\Models\User */
+            $user = Auth::user();
+            $team = $user->currentTeam;
+            $roleName = $user->teamRole($team)->key;
+
+            $task = Task::find($taskId);
+            $task->status = $status;
+            $task->save();
+            $task = $task->refresh();
+
+            if ($task->status == 'todo' && $task->check_by_user_id) {
+                $task->is_checked = null;
+                $task->is_confirmed = null;
+                $task->is_mark_as_done = false;
+                $task->is_archived = false;
+                $task->save();
+            }
+
+            if ($task->status == 'todo' && $task->follow_up_user_id) {
+                $followUpTask = Task::where('parent_task_id', $task->id)->first();
+
+                if ($followUpTask) {
+                    $followUpTask->delete();
+                }
+            }
+
+            if ($task->check_by_user_id && $task->status == 'done' && $roleName != 'owner') {
+                $task->is_checked = true;
+                $task->is_mark_as_done = true;
+                $task->save();
+
+                $title = 'Please check your checklist';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . '. Please review it on your checklist to appreciate the achievement.';
+                $checkByUser = User::find($task->check_by_user_id);
+
+                if ($checkByUser) {
+                    app(NotificationService::class)->sendUserTaskDBNotification($checkByUser, $title, $body, $task->id);
 
                     $mailData = [
-                        'email' => $user->email,
-                        'email_subject' => 'New Task.',
-                        'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                        'email' => $task->checkByUser->email,
+                        'email_subject' => $title,
+                        'email_body' => $body,
                         'task' => $task,
-                        'user' => $user,
-                        'caused_by' => Auth::user(),
+                        'user' => $task->checkByUser,
+                        'caused_by' => $user,
+                    ];
+
+                    Mail::to($user->email)->queue(new NotificationMail($mailData));
+                }
+            } elseif ($task->check_by_user_id && $task->status == 'done' && $roleName == 'owner') {
+                $task->is_checked = true;
+                $task->is_confirmed = true;
+                $task->is_mark_as_done = true;
+                $task->save();
+
+                $title = 'Please check your checklist';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . '. Please review it on your checklist to appreciate the achievement.';
+                $checkByUser = User::find($task->check_by_user_id);
+
+                if ($checkByUser && Auth::user()->id != $task->check_by_user_id) {
+                    app(NotificationService::class)->sendUserTaskDBNotification($checkByUser, $title, $body, $task->id);
+
+                    $mailData = [
+                        'email' => $task->checkByUser->email,
+                        'email_subject' => $title,
+                        'email_body' => $body,
+                        'task' => $task,
+                        'user' => $task->checkByUser,
+                        'caused_by' => $user,
+                    ];
+
+                    Mail::to($user->email)->queue(new NotificationMail($mailData));
+                }
+            }
+
+            if ($task->follow_up_user_id && $task->status == 'done') {
+                $lastTask = Task::where('project_id', $task->project_id)->orderBy('id', 'desc')->first();
+                $taskOrder = $lastTask ? $lastTask->page_order + 1 : 0;
+
+                $followUpTask = Task::create([
+                    'name' => $task->follow_up_message ? $task->follow_up_message : $task->name . ' Follow Up',
+                    'user_id' => $user->id,
+                    'parent_task_id' => $task->id,
+                    'order' => $taskOrder,
+                    'project_id' => $task->project_id,
+                    'priority' => 'high',
+                    'status' => 'todo',
+                ]);
+
+                $followUpTask->users()->attach($task->follow_up_user_id);
+
+                $title = 'New Follow Up Task';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . '. You are assigned to a Follow Up Task named ' . $followUpTask->name . '. Please review it on your task list.';
+                $followUpUser = User::find($task->follow_up_user_id);
+
+                if ($followUpUser) {
+                    app(NotificationService::class)->sendUserTaskDBNotification($followUpUser, $title, $body, $followUpTask->id);
+
+                    $mailData = [
+                        'email' => $task->followUpUser->email,
+                        'email_subject' => $title,
+                        'email_body' => $body,
+                        'task' => $task,
+                        'user' => $task->followUpUser,
                     ];
 
                     Mail::to($user->email)->queue(new NotificationMail($mailData));
@@ -262,7 +393,9 @@ class TaskService extends Component
 
             DB::commit();
 
-            return $task;
+            $updatedTask = $task->refresh();
+
+            return $updatedTask;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -336,7 +469,7 @@ class TaskService extends Component
             $userId = Auth::user()->id;
             $task = Task::where('uuid', $uuid)->first();
 
-            if (! $task) {
+            if (!$task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return;
@@ -392,7 +525,7 @@ class TaskService extends Component
             $userId = Auth::user()->id;
             $task = Task::where('uuid', $uuid)->first();
 
-            if (! $task) {
+            if (!$task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
                 return;
@@ -422,7 +555,7 @@ class TaskService extends Component
             $task->update(['status' => 'todo']);
             $updatedTask = $task->fresh();
 
-            if (! $alreadyTrackingDifferentTask) {
+            if (!$alreadyTrackingDifferentTask) {
                 app(NotificationService::class)->sendSuccessNotification('Task tracking ended successfully');
             }
 

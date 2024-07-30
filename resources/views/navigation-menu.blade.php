@@ -24,7 +24,9 @@
                 <x-mary-theme-toggle class="btn btn-sm mx-4 btn-circle btn-ghost" />
 
                 <!-- Notifications -->
-                @livewire('database-notifications')
+                <div>
+                    @livewire('database-notifications')
+                </div>
 
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())

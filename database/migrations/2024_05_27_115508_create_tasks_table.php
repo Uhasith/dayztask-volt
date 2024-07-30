@@ -29,10 +29,10 @@ return new class extends Migration
             $table->string('estimate_time')->nullable();
             $table->date('deadline')->nullable();
             $table->string('recurring_period')->nullable();
-            $table->boolean('is_mark_as_done')->default(false);
-            $table->boolean('is_checked')->default(false);
-            $table->boolean('is_confirmed')->default(false);
-            $table->boolean('is_archived')->default(false);
+            $table->boolean('is_mark_as_done')->default(false)->nullable();
+            $table->boolean('is_checked')->default(false)->nullable();
+            $table->boolean('is_confirmed')->default(false)->nullable();
+            $table->boolean('is_archived')->default(false)->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Services\Notifications\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -67,7 +68,13 @@ class TaskController extends Controller
     public function updateUserTeamAndWorkspace($uuid)
     {
         // Retrieve the task
-        $task = Task::with('project.workspace')->where('uuid', $uuid)->firstOrFail();
+        $task = Task::with('project.workspace')->where('uuid', $uuid)->first();
+
+        if (! $task) {
+            app(NotificationService::class)->sendExeptionNotification();
+
+            return redirect()->route('projects.index');
+        }
 
         // Get the project and workspace
         $project = $task->project;

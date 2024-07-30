@@ -29,11 +29,11 @@ class AppServiceProvider extends ServiceProvider
         DatabaseNotifications::pollingInterval(null);
 
         $this->app->singleton(NotificationService::class, function ($app) {
-            return new NotificationService();
+            return new NotificationService;
         });
 
         $this->app->singleton(TaskService::class, function ($app) {
-            return new TaskService();
+            return new TaskService;
         });
 
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();

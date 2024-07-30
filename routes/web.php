@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
+use App\Livewire\Pages\Project\Index as ProjectIndex;
+use App\Livewire\Pages\Project\Show as ProjectShow;
+use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
 use App\Livewire\Pages\Task\Create as TaskCreate;
 use App\Livewire\Pages\Task\Update as TaskUpdate;
-use App\Livewire\Pages\Project\Show as ProjectShow;
-use App\Livewire\Pages\Project\Index as ProjectIndex;
-use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
-use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
