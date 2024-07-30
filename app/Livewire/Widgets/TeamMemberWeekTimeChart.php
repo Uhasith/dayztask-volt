@@ -19,14 +19,19 @@ class TeamMemberWeekTimeChart extends ChartWidget
 
     protected static ?string $maxHeight = '35vh';
 
-    public ?string $filter = 'week';
+    public ?string $filter = 'today';
 
     protected function getFilters(): ?array
     {
         return [
-            'week' => 'Last week',
-            'month' => 'Last month',
-            'year' => 'This year',
+            'today' => 'Today',
+            'yesterday' => 'Yesterday',
+            'week' => 'Current week',
+            'month' => 'Current month',
+            'year' => 'Current year',
+            'lastWeek' => 'Last week',
+            'lastMonth' => 'Last month',
+            'lastYear' => 'Last year',
         ];
     }
 
@@ -40,6 +45,26 @@ class TeamMemberWeekTimeChart extends ChartWidget
             case 'year':
                 $startDate = Carbon::now()->startOfYear();
                 $endDate = Carbon::now()->endOfYear();
+                break;
+            case 'today':
+                $startDate = Carbon::now()->startOfDay();
+                $endDate = Carbon::now()->endOfDay();
+                break;
+            case 'yesterday':
+                $startDate = Carbon::yesterday()->startOfDay();
+                $endDate = Carbon::yesterday()->endOfDay();
+                break;
+            case 'lastMonth':
+                $startDate = Carbon::now()->subMonth()->startOfMonth();
+                $endDate = Carbon::now()->subMonth()->endOfMonth();
+                break;
+            case 'lastYear':
+                $startDate = Carbon::now()->subYear()->startOfYear();
+                $endDate = Carbon::now()->subYear()->endOfYear();
+                break;
+            case 'lastWeek':
+                $startDate = Carbon::now()->subWeek()->startOfWeek();
+                $endDate = Carbon::now()->subWeek()->endOfWeek();
                 break;
             case 'week':
             default:
