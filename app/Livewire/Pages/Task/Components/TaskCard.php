@@ -110,6 +110,21 @@ class TaskCard extends Component
     {
         try {
             $taskService = app(TaskService::class);
+            $checkIfProofNeeded = $taskService->checkIfProofNeeded($this->taskId);
+            Log::info($checkIfProofNeeded);
+            if ($checkIfProofNeeded) {
+                $this->dialog()->confirm([
+                    'title' => 'Task Proof Needed ?',
+                    'description' => 'Do You want to upload proof ?',
+                    'icon' => 'warning',
+                    'accept' => [
+                        'label' => 'Yes, upload proof',
+                        'method' => 'openUploadProofModal',
+                        'params' => '' . $this->taskId. '',
+                    ],
+                ]);
+                return;
+            }
             $updatedTask = $taskService->updateTaskStatus($this->taskId, 'done');
             $this->taskStatus = $updatedTask->status;
             app(NotificationService::class)->sendSuccessNotification('Task marked as done successfully');
@@ -217,6 +232,11 @@ class TaskCard extends Component
         }
 
         return $this->redirectRoute('projects.show', $this->projectId);
+    }
+
+    public function openUploadProofModal()
+    {
+        $this->dispatch('open-modal', modalId: 'proof-upload-modal', taskId: $this->taskId);
     }
 
     public function render()

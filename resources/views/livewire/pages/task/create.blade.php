@@ -71,7 +71,7 @@
                                 <x-wui-radio id="needProof" wire:model="proof_method" label="Screenshot"
                                     value="screenshot" md />
                                 <x-wui-radio id="needProof" wire:model="proof_method" label="Multiple screenshots"
-                                    value="multiple screenshots" md />
+                                    value="multiple_screenshots" md />
                                 <x-wui-radio id="needProof" wire:model="proof_method" label="Video" value="video"
                                     md />
                                 <x-wui-radio id="needProof" wire:model="proof_method" label="Comment" value="comment"

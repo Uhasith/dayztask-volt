@@ -51,6 +51,8 @@
         @endforeach
     </div>
 
+        <livewire:pages.task.components.proof-upload-modal />
+
     <div class="col-span-12 mt-10">
         <x-filament::pagination :paginator="$tasks" extreme-links />
     </div>

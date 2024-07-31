@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
@@ -567,6 +566,72 @@ class TaskService extends Component
             ];
         } catch (Exception $e) {
             DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function checkIfProofNeeded($taskId)
+    {
+        try {
+            $task = Task::where('id', $taskId)->first();
+
+            if (!$task) {
+                app(NotificationService::class)->sendExeptionNotification();
+                return;
+            }
+
+            if (empty($task->proof_method)) {
+                return false;
+            } else {
+                $requiredType = $task->proof_method;
+                // Define proof method types
+                $proofMethods = [
+                    'screenshot' => 'proof_screenshot',
+                    'multiple_screenshots' => 'proof_multiple_screenshots',
+                    'video' => 'proof_video_link',
+                    'comment' => 'proof_comment',
+                    'file' => 'proof_file'
+                ];
+
+                // Check only for the required type
+                if (array_key_exists($requiredType, $proofMethods)) {
+                    $collection = $proofMethods[$requiredType];
+
+                    switch ($requiredType) {
+                        case 'screenshot':
+                        case 'multiple_screenshots':
+                        case 'file':
+                            // Check if the media collection is not empty
+                            if ($task->getMedia($collection)->isEmpty()) {
+                                return true; // Proof is needed
+                            }
+                            break;
+
+                        case 'video':
+                            // Check if the proof_video_link column is not empty
+                            if (empty($task->proof_video_link)) {
+                                return true; // Proof is needed
+                            }
+                            break;
+
+                        case 'comment':
+                            // Check if the proof_comment column is not empty
+                            if (empty($task->proof_comment)) {
+                                return true; // Proof is needed
+                            }
+                            break;
+
+                        default:
+                            return false; // Unknown proof method
+                    }
+
+                    return false; // Proof is not needed, as it is already present
+                }
+
+                return false; // Invalid proof method, no proof is needed
+            }
+        } catch (\Exception $e) {
+            app(NotificationService::class)->sendExeptionNotification();
             throw $e;
         }
     }

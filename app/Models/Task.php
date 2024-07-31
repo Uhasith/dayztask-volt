@@ -49,19 +49,6 @@ class Task extends Model implements HasMedia
         static::creating(function ($model) {
             $model->uuid = Str::uuid();
         });
-
-        // static::deleting(function ($task) {
-        //     // Delete related comments, attachments, notifications, tracking records, and sub-tasks
-        //     $task->comments()->delete();
-        //     $task->attachments()->delete();
-        //     $task->notifications()->delete();
-        //     $task->tracking_records()->delete();
-        //     $task->sub_tasks()->delete();
-
-        //     // Detach related users in many-to-many relationships
-        //     $task->users()->detach();
-        //     $task->watch_users()->detach();
-        // });
     }
 
     public function registerMediaConversions(?Media $media = null): void
@@ -79,6 +66,11 @@ class Task extends Model implements HasMedia
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'tasks_users', 'task_id', 'user_id');
+    }
+
+    public function trackingRecords(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'task_trackings', 'task_id', 'user_id');
     }
 
     public function subTasks()

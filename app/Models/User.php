@@ -90,4 +90,9 @@ class User extends AuthUser
     {
         return $this->belongsToMany(Task::class, 'tasks_users', 'user_id', 'task_id');
     }
+
+    public function trackingRecords(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'task_trackings', 'user_id', 'task_id');
+    }
 }

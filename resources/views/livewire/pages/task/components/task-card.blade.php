@@ -1,5 +1,5 @@
 <div x-init="initFlowbite();">
-    <x-wui-card rounded="3xl" class="cursor-pointer" data-popover-target="popover-user-profile-{{ $task['uuid'] }}">
+    <x-wui-card rounded="3xl" class="cursor-pointer">
         <div class="flex items-center justify-between">
             <div class="max-w-[80%]">
                 <p class="text-lg font-semibold truncate">{{ $task['name'] }}</p>
@@ -28,8 +28,8 @@
                         </div>
                     @elseif ($taskStatus == 'done')
                         <div>
-                            <x-wui-button 2xs orange label="Revert as todo"
-                                x-tooltip.placement.top.raw="Revert as todo" wire:click="revertToTodo"  />
+                            <x-wui-button 2xs orange label="Revert as todo" x-tooltip.placement.top.raw="Revert as todo"
+                                wire:click="revertToTodo" />
                         </div>
                     @endif
 
@@ -48,6 +48,11 @@
                     @endif
 
                 @endif
+
+                <div>
+                    <x-mary-icon name="m-eye" class=" text-gray-400 hover:text-gray-600 cursor-pointer"
+                        data-popover-target="popover-user-profile-{{ $task['uuid'] }}" />
+                </div>
 
                 <a href="{{ route('projects.tasks.update', $task['uuid']) }}" wire:navigate>
                     <x-mary-icon name="m-pencil-square" class="text-green-400 hover:text-green-600 cursor-pointer"

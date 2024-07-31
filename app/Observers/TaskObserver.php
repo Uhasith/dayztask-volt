@@ -49,6 +49,9 @@ class TaskObserver
         // Detach all subtasks associated with the task
         $task->subtasks()->delete();
 
+        // Delete all tracking records associated with the task 
+        $task->trackingRecords()->delete();
+
         // Delete notifications related to the task if the follow-up user exists
         if ($user) {
 

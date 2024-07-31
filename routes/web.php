@@ -26,6 +26,8 @@ Route::middleware([
     Route::get('/projects/show/all', ProjectShowAll::class)->lazy()->name('projects.show.all');
     Route::get('/projects/tasks/create/{uuid}', TaskCreate::class)->lazy()->name('projects.tasks.create');
     Route::get('/projects/tasks/update/{uuid}', TaskUpdate::class)->lazy()->name('projects.tasks.update');
+
+    // User's Current Workspace Changing route when user's team is changed
     Route::get('/update-user-team-workspace/{uuid}', [TaskController::class, 'updateUserTeamAndWorkspace'])->name('update.user.team.workspace');
 
 });
