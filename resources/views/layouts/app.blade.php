@@ -8,6 +8,9 @@
 
     <title>{{ config('app.name', 'DayzTask') }}</title>
 
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="/laravel.248x256.png">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         DatabaseNotifications::trigger('filament.notifications.database-notifications-trigger');
-        DatabaseNotifications::pollingInterval(null);
+        DatabaseNotifications::pollingInterval('30s');
 
         $this->app->singleton(NotificationService::class, function ($app) {
             return new NotificationService;
@@ -36,8 +36,6 @@ class AppServiceProvider extends ServiceProvider
             return new TaskService;
         });
 
-        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-        $loader->alias('Debugbar', \Barryvdh\Debugbar\Facades\Debugbar::class);
     }
 
     /**

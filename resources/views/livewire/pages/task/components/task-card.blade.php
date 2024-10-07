@@ -1,4 +1,4 @@
-<div x-init="initFlowbite();">
+<div>
     <x-wui-card rounded="3xl" class="cursor-pointer">
         <div class="flex items-center justify-between">
             <div class="max-w-[80%]">
@@ -18,7 +18,6 @@
                         </x-slot>
                     </x-wui-badge>
                 </div> --}}
-
                 @if ($task['users']->pluck('id')->contains(auth()->id()))
 
                     @if ($taskStatus == 'todo')
@@ -69,8 +68,7 @@
         <div class="flex items-center justify-between py-1">
             <p class="text-md max-w-[50%] font-semibold truncate">Project : {{ $task['project']['title'] }}</p>
             <div class="px-1">
-                <livewire:global.timer :trackedTime="$trackedTime" :timerRunning="$timerRunning" :taskId="$taskId"
-                    wire:key="authUserTimer-{{ $task['uuid'] }}" />
+                <livewire:global.timer :trackedTime="$trackedTime" :timerRunning="$timerRunning" :taskId="$taskId" :key="'authUserTimer-' . $task['uuid']" />
             </div>
         </div>
         <div class="flex items-center justify-between py-1">
@@ -98,21 +96,22 @@
         <div class="p-3">
             <div class="mb-4">
                 @foreach ($task['users'] as $user)
-                    @if ($user['id'] != auth()->user()->id)
-                        <div class="flex items-center justify-between mb-2" wire:key="userTimer-{{ $user['uuid'] }}">
-                            <div class="flex items-center gap-2">
-                                <x-wui-avatar 2xs
-                                    src="{{ !empty($user['profile_photo_path']) ? asset($user['profile_photo_path']) : asset('assets/images/no-user-image.png') }}" />
-                                <p class="text-xs font-semibold leading-none text-gray-900 dark:text-white">
-                                    {{ $user['name'] }}
-                                </p>
-                            </div>
-                            <div class="px-1">
-                                <livewire:global.timer wire:key="userTimer-{{ $user['uuid'] }}" :trackedTime="$user['trackedTime']"
-                                    :timerRunning="$user['timerRunning']" :taskId="$taskId" />
-                            </div>
+                    {{-- @if ($user['id'] != auth()->user()->id) --}}
+                    <div class="flex items-center justify-between mb-2"
+                        wire:key="userTimer-{{ $task['uuid'] }}-{{ $user['uuid'] }}">
+                        <div class="flex items-center gap-2">
+                            <x-wui-avatar 2xs
+                                src="{{ !empty($user['profile_photo_path']) ? asset($user['profile_photo_path']) : asset('assets/images/no-user-image.png') }}" />
+                            <p class="text-xs font-semibold leading-none text-gray-900 dark:text-white">
+                                {{ $user['name'] }}
+                            </p>
                         </div>
-                    @endif
+                        <div class="px-1">
+                            <livewire:global.timer :key="'userGlobalTimer-' . $task['uuid'] . '-' . $user['uuid']" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']"
+                                :taskId="$taskId" />
+                        </div>
+                    </div>
+                    {{-- @endif --}}
                 @endforeach
             </div>
 
@@ -140,7 +139,6 @@
                 <h3 class="font-semibold text-gray-900 dark:text-white">Total Tracked Time</h3>
                 <p class="font-semibold text-blue-600 dark:text-blue-500 ">{{ $totalTrackedTime }}</p>
             </div>
-
             {{-- <ul class="flex text-sm">
                 <li class="me-2">
                     <a href="#" class="hover:underline">

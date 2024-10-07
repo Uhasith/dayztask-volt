@@ -236,7 +236,7 @@ class TaskCard extends Component
 
     public function openUploadProofModal()
     {
-        $this->dispatch('open-modal', modalId: 'proof-upload-modal', taskId: $this->taskId);
+        $this->dispatch('open-proof-modal', modalId: 'proof-upload-modal', taskId: $this->taskId);
     }
 
     public function render()

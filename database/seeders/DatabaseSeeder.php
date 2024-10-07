@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory(100)->create();
-        Project::factory(100)->create(['user_id' => 1]);
+        Project::factory(100)->create(['user_id' => 1, 'workspace_id' => 2]);
         Task::factory(100)->create(['project_id' => 1]);
         Task::factory(100)->create(['project_id' => 2]);
         Task::factory(100)->create(['project_id' => 3]);

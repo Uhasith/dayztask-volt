@@ -4,17 +4,18 @@ namespace App\Livewire\Pages\Task\Components;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Locked;
 use Illuminate\Support\Facades\Log;
 
 class ProofUploadModal extends Component
 {
+    public $taskId;
 
-    #[On('open-modal')] 
+    #[On('open-proof-modal')] 
     public function onOpenModal($modalId, $taskId)
     {
-
-        Log::info($modalId);
-        Log::info($taskId);
+        $this->taskId = $taskId;
+        $this->dispatch('open-modal', id: $modalId);
 
     }
 
