@@ -1,9 +1,9 @@
 <?php
 
-use App\Livewire\Global\Search;
-use Livewire\Livewire;
+use Livewire\Volt\Volt;
 
-it('renders successfully', function () {
-    Livewire::test(Search::class)
-        ->assertStatus(200);
+it('can render', function () {
+    $component = Volt::test('global.search');
+
+    $component->assertSee('');
 });
