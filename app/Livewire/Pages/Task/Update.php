@@ -48,7 +48,7 @@ class Update extends Component
 
     public $deadline;
 
-    public $needToCheck = true;
+    public $needToCheck = false;
 
     public $needToConfirm = false;
 
