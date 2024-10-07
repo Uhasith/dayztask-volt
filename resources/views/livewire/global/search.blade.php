@@ -93,14 +93,22 @@ new class extends Component {
         }
     },
     commandSearchItems() {
+        // Ensure tasks and projects are defined to prevent errors
+        const tasks = this.commandItems.tasks || [];
+        const projects = this.commandItems.projects || [];
+
         let searchTerm = this.commandSearch.toLowerCase();
-        this.commandItemsFiltered = this.commandSearchIsEmpty() ? [...this.commandItems.tasks.filter(item => item.default), ...this.commandItems.projects.filter(item => item.default)] : [...this.commandItems.tasks.filter(item => item.title.toLowerCase().includes(searchTerm)),
-            ...this.commandItems.projects.filter(item => item.title.toLowerCase().includes(searchTerm))
-        ];
+
+        this.commandItemsFiltered = this.commandSearchIsEmpty() ?
+            [...tasks.filter(item => item.default), ...projects.filter(item => item.default)] :
+            [...tasks.filter(item => item.title.toLowerCase().includes(searchTerm)),
+                ...projects.filter(item => item.title.toLowerCase().includes(searchTerm))
+            ];
+
         this.commandItemActive = this.commandItemsFiltered[0] || null;
     },
     commandShowCategory(item, index) {
-        return index === 0 || item.category !== this.commandItemsFiltered[index - 1].category;
+        return index === 0 || item?.category !== this.commandItemsFiltered[index - 1]?.category;
     },
     commandCategoryCapitalize(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -122,6 +130,7 @@ $watch('commandItemSelected', item => {
 });" @keydown.escape.window="commandOpen = false"
     @keydown.down.window="commandItemActiveNext()" @keydown.up.window="commandItemActivePrevious()"
     @keydown.enter.window="commandItemSelected = commandItemActive"
+    @keydown.window="if ((event.metaKey || event.ctrlKey) && event.key === 'k') { commandOpen = true; }"
     @command-input-focus.window="$refs.commandInput.focus();" x-cloak>
     <!-- Input Field -->
     <div class="relative w-full">
@@ -130,7 +139,7 @@ $watch('commandItemSelected', item => {
         </div>
         <input type="text" id="simple-search" @click="commandOpen = true"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Search for tasks" />
+            placeholder="Search (Cmd+K)" />
     </div>
 
     <!-- Command List -->
@@ -160,7 +169,7 @@ $watch('commandItemSelected', item => {
                         </svg>
                         <input type="text" x-ref="commandInput" x-model="commandSearch"
                             class="flex w-full px-2 py-3 text-sm bg-transparent border-0 rounded-md outline-none focus:outline-none focus:ring-0 focus:border-0 placeholder:text-neutral-400 h-11"
-                            placeholder="Type a command or search..." autocomplete="off" autocorrect="off"
+                            placeholder="Type a keyword to search..." autocomplete="off" autocorrect="off"
                             spellcheck="false">
                     </div>
                     <div x-ref="commandItemsList" class="max-h-[320px] overflow-y-auto overflow-x-hidden">
@@ -169,7 +178,7 @@ $watch('commandItemSelected', item => {
                                 <template x-if="commandShowCategory(item, index)">
                                     <div class="px-1 overflow-hidden text-gray-700">
                                         <div class="px-2 py-1 my-1 text-xs font-medium text-neutral-500"
-                                            x-text="commandCategoryCapitalize(item.category)"></div>
+                                            x-text="commandCategoryCapitalize(item?.category)"></div>
                                     </div>
                                 </template>
                                 <div class="px-1">

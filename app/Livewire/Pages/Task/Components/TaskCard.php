@@ -47,6 +47,11 @@ class TaskCard extends Component
     public function mount($taskId)
     {
         $this->taskId = $taskId;
+        $this->fetchData();
+    }
+
+    public function fetchData()
+    {
         $this->task = Task::where('id', $this->taskId)->with('users', 'subtasks')->first();
         $this->taskStatus = $this->task->status;
         $this->project = $this->task->project;
@@ -120,7 +125,7 @@ class TaskCard extends Component
                     'accept' => [
                         'label' => 'Yes, upload proof',
                         'method' => 'openUploadProofModal',
-                        'params' => ''.$this->taskId.'',
+                        'params' => '' . $this->taskId . '',
                     ],
                 ]);
 
@@ -209,7 +214,7 @@ class TaskCard extends Component
             'accept' => [
                 'label' => 'Yes, delete it',
                 'method' => 'deleteTask',
-                'params' => ''.$uuid.'',
+                'params' => '' . $uuid . '',
             ],
         ]);
     }

@@ -1,5 +1,5 @@
 <div>
-    <x-wui-card rounded="3xl" class="cursor-pointer">
+    <x-wui-card rounded="3xl" class="cursor-pointer" wire:poll.10s="fetchData">
         <div class="flex items-center justify-between">
             <div class="max-w-[80%]">
                 <p class="text-lg font-semibold truncate">{{ $task['name'] }}</p>

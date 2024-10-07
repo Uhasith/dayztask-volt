@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Pages\Task\Components;
 
-use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class ProofUploadModal extends Component
 {
+    use WithFileUploads;
+
     public $taskId;
+    public $attachments = [];
 
     #[On('open-proof-modal')]
     public function onOpenModal($modalId, $taskId)
