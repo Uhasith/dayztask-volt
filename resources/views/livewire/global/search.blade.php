@@ -65,52 +65,43 @@ new class extends Component {
     commandId: $id('command'),
     commandSearch: $wire.entangle('search').live || '',
     commandSearchIsEmpty() {
-        return !this.commandSearch || this.commandSearch.length == 0;
+        return !this.commandSearch || this.commandSearch.length === 0;
     },
     commandItemIsActive(item) {
-        return this.commandItemActive && this.commandItemActive.value == item.value;
+        return this.commandItemActive && this.commandItemActive.value === item.value;
+    },
+    updateActiveItem(index) {
+        this.commandItemActive = this.commandItemsFiltered[index];
+        this.commandScrollToActiveItem();
     },
     commandItemActiveNext() {
         let index = this.commandItemsFiltered.indexOf(this.commandItemActive);
         if (index < this.commandItemsFiltered.length - 1) {
-            this.commandItemActive = this.commandItemsFiltered[index + 1];
-            this.commandScrollToActiveItem();
+            this.updateActiveItem(index + 1);
         }
     },
     commandItemActivePrevious() {
         let index = this.commandItemsFiltered.indexOf(this.commandItemActive);
         if (index > 0) {
-            this.commandItemActive = this.commandItemsFiltered[index - 1];
-            this.commandScrollToActiveItem();
+            this.updateActiveItem(index - 1);
         }
     },
     commandScrollToActiveItem() {
         if (this.commandItemActive) {
             let activeElement = document.getElementById(this.commandItemActive.value + '-' + this.commandId);
-            if (!activeElement) return;
-
-            let newScrollPos = (activeElement.offsetTop + activeElement.offsetHeight) - this.$refs.commandItemsList.offsetHeight;
-            this.$refs.commandItemsList.scrollTop = newScrollPos > 0 ? newScrollPos : 0;
+            if (activeElement) {
+                let newScrollPos = (activeElement.offsetTop + activeElement.offsetHeight) - this.$refs.commandItemsList.offsetHeight;
+                this.$refs.commandItemsList.scrollTop = newScrollPos > 0 ? newScrollPos : 0;
+            }
         }
     },
     commandSearchItems() {
-        if (!this.commandItems || !this.commandItems.tasks || !this.commandItems.projects) {
-            this.commandItemsFiltered = [];
-            return;
-        }
-        let searchTerm = this.commandSearch ? this.commandSearch.toLowerCase() : '';
-        if (!this.commandSearchIsEmpty()) {
-            this.commandItemsFiltered = [
-                ...this.commandItems.tasks.filter(item => item.title.toLowerCase().includes(searchTerm)),
-                ...this.commandItems.projects.filter(item => item.title.toLowerCase().includes(searchTerm))
-            ];
-        } else {
-            this.commandItemsFiltered = [
-                ...this.commandItems.tasks.filter(item => item.default),
-                ...this.commandItems.projects.filter(item => item.default)
-            ];
-        }
-        this.commandItemActive = this.commandItemsFiltered[0];
+        let searchTerm = this.commandSearch.toLowerCase();
+        this.commandItemsFiltered = this.commandSearchIsEmpty()
+            ? [...this.commandItems.tasks.filter(item => item.default), ...this.commandItems.projects.filter(item => item.default)]
+            : [...this.commandItems.tasks.filter(item => item.title.toLowerCase().includes(searchTerm)),
+               ...this.commandItems.projects.filter(item => item.title.toLowerCase().includes(searchTerm))];
+        this.commandItemActive = this.commandItemsFiltered[0] || null;
     },
     commandShowCategory(item, index) {
         return index === 0 || item.category !== this.commandItemsFiltered[index - 1].category;
@@ -118,27 +109,29 @@ new class extends Component {
     commandCategoryCapitalize(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
-}" x-init="$watch('commandItems', () => commandSearchItems());
-$watch('commandSearch', () => commandSearchItems());
-$watch('commandOpen', function(value) {
-    if (value === true) {
-        document.body.classList.add('overflow-hidden');
-        $nextTick(() => { window.dispatchEvent(new CustomEvent('command-input-focus', {})); });
-    } else {
-        document.body.classList.remove('overflow-hidden');
-    }
-});
-commandItemsFiltered = commandItems;
-commandItemActive = commandItems[0];
-$watch('commandItemSelected', function(item) {
-    if (item && item.url) {
-        // Redirect based on category
-        window.location.href = item.url;
-    }
-});" @keydown.escape.window="commandOpen = false"
-    @keydown.down="event.preventDefault(); commandItemActiveNext();"
-    @keydown.up="event.preventDefault(); commandItemActivePrevious()"
-    @keydown.enter="commandItemSelected=commandItemActive;" @command-input-focus.window="$refs.commandInput.focus();">
+}" 
+x-init="
+    $watch('commandItems', () => commandSearchItems());
+    $watch('commandSearch', () => commandSearchItems());
+    commandItemsFiltered = commandItems;
+    commandItemActive = commandItems[0];
+    $watch('commandItemSelected', item => {
+        if (item?.url) window.location.href = item.url;
+    });
+    $watch('commandOpen', value => {
+        if (value) {
+            document.body.classList.add('overflow-hidden');
+            $nextTick(() => { window.dispatchEvent(new CustomEvent('command-input-focus', {})); });
+        } else {
+            document.body.classList.remove('overflow-hidden');
+        }
+    });
+" 
+@keydown.escape.window="commandOpen = false" 
+@keydown.down.window="commandItemActiveNext()" 
+@keydown.up.window="commandItemActivePrevious()" 
+@keydown.enter.window="commandItemSelected = commandItemActive" 
+@command-input-focus.window="$refs.commandInput.focus();">
     <!-- Input Field -->
     <div class="relative w-full">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -154,54 +147,35 @@ $watch('commandItemSelected', function(item) {
         <template x-teleport="body">
             <div x-show="commandOpen"
                 class="fixed top-0 left-0 z-[99] flex items-center justify-center w-screen h-screen" x-cloak>
-                <div x-show="commandOpen" x-transition:enter="ease-out duration-300"
-                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                    x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0" @click="commandOpen = false"
-                    class="absolute inset-0 w-full h-full bg-black bg-opacity-40">
-                </div>
-                <div x-show="commandOpen" x-trap.inert.noscroll="commandOpen" x-transition:enter="ease-out duration-300"
-                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                    x-transition:leave="ease-in duration-200"
-                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    class="flex min-h-[370px] justify-center w-full max-w-xl items-start relative" x-cloak>
-                    <div
-                        class="box-border flex flex-col w-full h-full overflow-hidden bg-white rounded-md shadow-md bg-opacity-90 drop-shadow-md backdrop-blur-sm">
+                <div x-show="commandOpen" @click="commandOpen = false" class="absolute inset-0 w-full h-full bg-black bg-opacity-40"></div>
+                <div x-show="commandOpen" x-trap.inert.noscroll="commandOpen" class="flex min-h-[370px] justify-center w-full max-w-xl items-start relative" x-cloak>
+                    <div class="box-border flex flex-col w-full h-full overflow-hidden bg-white rounded-md shadow-md bg-opacity-90 drop-shadow-md backdrop-blur-sm">
                         <div class="flex items-center px-3 border-b border-gray-300">
-                            <svg class="w-4 h-4 mr-0 text-neutral-400 shrink-0" xmlns="http://www.w3.org/2000/svg"
-                                width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-4 h-4 mr-0 text-neutral-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
                             </svg>
                             <input type="text" x-ref="commandInput" x-model="commandSearch"
-                                class="flex w-full px-2 py-3 text-sm bg-transparent border-0 rounded-md outline-none focus:outline-none focus:ring-0 focus:border-0 placeholder:text-neutral-400 h-11 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="Type a command or search..." autocomplete="off" autocorrect="off"
-                                spellcheck="false">
+                                class="flex w-full px-2 py-3 text-sm bg-transparent border-0 rounded-md outline-none focus:outline-none focus:ring-0 focus:border-0 placeholder:text-neutral-400 h-11"
+                                placeholder="Type a command or search..." autocomplete="off" autocorrect="off" spellcheck="false">
                         </div>
                         <div x-ref="commandItemsList" class="max-h-[320px] overflow-y-auto overflow-x-hidden">
                             <template x-for="(item, index) in commandItemsFiltered" :key="'item-' + index">
                                 <div class="pb-1 space-y-1">
                                     <template x-if="commandShowCategory(item, index)">
                                         <div class="px-1 overflow-hidden text-gray-700">
-                                            <div class="px-2 py-1 my-1 text-xs font-medium text-neutral-500"
-                                                x-text="commandCategoryCapitalize(item.category)"></div>
+                                            <div class="px-2 py-1 my-1 text-xs font-medium text-neutral-500" x-text="commandCategoryCapitalize(item.category)"></div>
                                         </div>
                                     </template>
-
-                                    <template x-if="!commandSearchIsEmpty() || item.default">
-                                        <div class="px-1">
-                                            <div :id="item.value + '-' + commandId" @click="commandItemSelected=item"
-                                                @mousemove="commandItemActive=item"
-                                                :class="{ 'bg-blue-600 text-white': commandItemIsActive(item) }"
-                                                class="relative flex gap-2 cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
-                                                <span x-html="item.icon"></span>
-                                                <span x-text="item.title"></span>
-                                            </div>
+                                    <div class="px-1">
+                                        <div :id="item.value + '-' + commandId" @click="commandItemSelected = item"
+                                            @mousemove="commandItemActive = item"
+                                            :class="{ 'bg-blue-600 text-white': commandItemIsActive(item) }"
+                                            class="relative flex gap-2 cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none">
+                                            <span x-html="item.icon"></span>
+                                            <span x-text="item.title"></span>
                                         </div>
-                                    </template>
+                                    </div>
                                 </div>
                             </template>
                         </div>

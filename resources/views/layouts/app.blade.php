@@ -63,7 +63,7 @@
         </x-slot:content>
     </x-mary-main>
 
-    <x-mary-spotlight search-text="Find Projects, Assigned tasks or Users" no-results-text="Ops! Nothing here." />
+    {{-- <x-mary-spotlight search-text="Find Projects, Assigned tasks or Users" no-results-text="Ops! Nothing here." /> --}}
 
     <x-wui-dialog />
 
