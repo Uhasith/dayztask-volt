@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Global;
 
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class Workspace extends Component
 {
@@ -34,6 +34,15 @@ class Workspace extends Component
             // If the current_workspace_id is valid, set it
             $this->workspaceId = $user->current_workspace_id;
         }
+    }
+
+    public function updatedWorkspaceId($value)
+    {
+        /** @var \App\Models\User */
+        $user = Auth::user();
+        $user->current_workspace_id = $value;
+        $user->save();
+        return $this->redirectRoute('dashboard');
     }
 
     public function render()

@@ -4,9 +4,9 @@
             <x-wui-select.option label="{{ $workspace['name'] }}" value="{{ $workspace['id'] }}" />
         @endforeach
     </x-wui-select> --}}
-    <x-wui-native-select placeholder="Select a workspace" wire:model="workspaceId">
+    <x-wui-native-select placeholder="Select a workspace" wire:model.live="workspaceId">
         @foreach ($workspaces as $workspace)
-            <option value="{{ $workspace['id'] }}">{{ $workspace['name'] }}</option>
+            <option value="{{ $workspace['id'] }}" wire:key="'option-workspace-'{{ $workspace['id'] }}">{{ $workspace['name'] }}</option>
         @endforeach
     </x-wui-native-select>
 </div>
