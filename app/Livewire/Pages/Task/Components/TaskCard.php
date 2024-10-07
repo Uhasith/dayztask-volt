@@ -120,9 +120,10 @@ class TaskCard extends Component
                     'accept' => [
                         'label' => 'Yes, upload proof',
                         'method' => 'openUploadProofModal',
-                        'params' => '' . $this->taskId. '',
+                        'params' => ''.$this->taskId.'',
                     ],
                 ]);
+
                 return;
             }
             $updatedTask = $taskService->updateTaskStatus($this->taskId, 'done');
