@@ -108,15 +108,14 @@ class TaskService extends Component
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
-                    $originalFileName = $attachment->getClientOriginalName();
-                    $path = $attachment->storeAs('TaskAttachments', $originalFileName);
-                    $absolutePath = storage_path('app/'.$path);
+                    // $originalFileName = $attachment->getClientOriginalName();
+                    $path = $attachment->getRealPath();
 
                     // Optimize the image
-                    $optimizerChain->optimize($absolutePath);
+                    $optimizerChain->optimize($path);
 
                     // Add to media collection
-                    $task->addMedia($absolutePath)
+                    $task->addMedia($path)
                         ->toMediaCollection('attachments');
                 }
             }
@@ -132,14 +131,14 @@ class TaskService extends Component
             foreach ($assignedUsers as $user) {
                 if ($user->id !== Auth::id()) {
                     $title = 'Task Assigned';
-                    $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+                    $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
 
                     app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
 
                     $mailData = [
                         'email' => $user->email,
                         'email_subject' => 'New Task.',
-                        'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                        'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                         'task' => $task,
                         'user' => $user,
                         'caused_by' => Auth::user(),
@@ -211,15 +210,14 @@ class TaskService extends Component
                 $optimizerChain = OptimizerChainFactory::create();
 
                 foreach ($validatedData['attachments'] as $attachment) {
-                    $originalFileName = $attachment->getClientOriginalName();
-                    $path = $attachment->storeAs('TaskAttachments', $originalFileName);
-                    $absolutePath = storage_path('app/'.$path);
+                    // $originalFileName = $attachment->getClientOriginalName();
+                    $path = $attachment->getRealPath();
 
                     // Optimize the image
-                    $optimizerChain->optimize($absolutePath);
+                    $optimizerChain->optimize($path);
 
                     // Add to media collection
-                    $task->addMedia($absolutePath)
+                    $task->addMedia($path)
                         ->toMediaCollection('attachments');
                 }
             }
@@ -249,14 +247,14 @@ class TaskService extends Component
                     $user = User::find($userId);
                     if ($user && $user->id !== Auth::id()) {
                         $title = 'Task Assigned';
-                        $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+                        $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
 
                         app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
 
                         $mailData = [
                             'email' => $user->email,
                             'email_subject' => 'New Task.',
-                            'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                            'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                             'task' => $task,
                             'user' => $user,
                             'caused_by' => Auth::user(),
@@ -312,7 +310,7 @@ class TaskService extends Component
                 $task->save();
 
                 $title = 'Please check your checklist';
-                $body = 'Fantastic news! '.$user->name.' has successfully completed '.$task->name.'. Please review it on your checklist to appreciate the achievement.';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . '. Please review it on your checklist to appreciate the achievement.';
                 $checkByUser = User::find($task->check_by_user_id);
 
                 if ($checkByUser) {
@@ -336,7 +334,7 @@ class TaskService extends Component
                 $task->save();
 
                 $title = 'Please check your checklist';
-                $body = 'Fantastic news! '.$user->name.' has successfully completed '.$task->name.'. Please review it on your checklist to appreciate the achievement.';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . '. Please review it on your checklist to appreciate the achievement.';
                 $checkByUser = User::find($task->check_by_user_id);
 
                 if ($checkByUser && Auth::user()->id != $task->check_by_user_id) {
@@ -360,7 +358,7 @@ class TaskService extends Component
                 $taskOrder = $lastTask ? $lastTask->page_order + 1 : 0;
 
                 $followUpTask = Task::create([
-                    'name' => $task->follow_up_message ? $task->follow_up_message : $task->name.' Follow Up',
+                    'name' => $task->follow_up_message ? $task->follow_up_message : $task->name . ' Follow Up',
                     'user_id' => $user->id,
                     'parent_task_id' => $task->id,
                     'order' => $taskOrder,
@@ -372,7 +370,7 @@ class TaskService extends Component
                 $followUpTask->users()->attach($task->follow_up_user_id);
 
                 $title = 'New Follow Up Task';
-                $body = 'Fantastic news! '.$user->name.' has successfully completed '.$task->name.'. You are assigned to a Follow Up Task named '.$followUpTask->name.'. Please review it on your task list.';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . '. You are assigned to a Follow Up Task named ' . $followUpTask->name . '. Please review it on your task list.';
                 $followUpUser = User::find($task->follow_up_user_id);
 
                 if ($followUpUser) {

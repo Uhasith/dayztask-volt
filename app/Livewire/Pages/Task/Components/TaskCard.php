@@ -125,7 +125,7 @@ class TaskCard extends Component
                     'accept' => [
                         'label' => 'Yes, upload proof',
                         'method' => 'openUploadProofModal',
-                        'params' => '' . $this->taskId . '',
+                        'params' => ''.$this->taskId.'',
                     ],
                 ]);
 
@@ -214,7 +214,7 @@ class TaskCard extends Component
             'accept' => [
                 'label' => 'Yes, delete it',
                 'method' => 'deleteTask',
-                'params' => '' . $uuid . '',
+                'params' => ''.$uuid.'',
             ],
         ]);
     }

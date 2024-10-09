@@ -29,7 +29,6 @@
         "wireui/wireui": "^2.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.13",
         "barryvdh/laravel-ide-helper": "^3.1",
         "fakerphp/faker": "^1.23",
         "getsolaris/laravel-make-service": "^1.1",

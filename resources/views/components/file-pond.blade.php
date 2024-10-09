@@ -51,3 +51,26 @@
 }" x-init="initFilePond()" wire:ignore>
     <input id="file" type="file" x-ref="input" />
 </div>
+
+
+@script
+    <script>
+        document.addEventListener('FilePond:removefile', (e) => {
+            const fileId = e.detail.file.getMetadata('id');
+            const old = e.detail.file.getMetadata('old');
+
+            if (old !== undefined && old !== null && old === true) {
+                $wire.dispatch('remove-upload', {
+                    params: {
+                        id: fileId
+                    }
+                });
+            }
+
+        });
+
+        document.addEventListener('FilePond:activatefile', (e) => {
+            console.log(e.detail.file.getMetadata('id'));
+        });
+    </script>
+@endscript

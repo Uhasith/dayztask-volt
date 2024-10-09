@@ -7,6 +7,5 @@ return [
     App\Providers\ObserverServiceProvider::class,
     App\Providers\VoltServiceProvider::class,
     App\Providers\ObserverServiceProvider::class,
-    Barryvdh\Debugbar\ServiceProvider::class,
 
 ];
