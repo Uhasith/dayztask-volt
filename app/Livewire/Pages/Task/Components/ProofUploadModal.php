@@ -70,10 +70,10 @@ class ProofUploadModal extends Component
 
             // Determine the collection name based on the proof method
             $collectionName = match ($this->task->proof_method) {
-                'screenshot' => 'screenshot',
-                'multiple_screenshots' => 'multiple_screenshots',
-                'file' => 'file',
-                default => 'screenshot', // Default value if needed
+                'screenshot' => 'proof_screenshot',
+                'multiple_screenshots' => 'proof_multiple_screenshots',
+                'file' => 'proof_file',
+                default => 'proof_screenshot', // Default value if needed
             };
 
             // Add the file to the media collection

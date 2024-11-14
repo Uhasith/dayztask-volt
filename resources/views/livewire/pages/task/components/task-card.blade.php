@@ -23,12 +23,12 @@
                     @if ($taskStatus == 'todo')
                         <div>
                             <x-wui-button 2xs positive label="Mark as done"
-                                x-tooltip.placement.top.raw="Mark as completed" wire:click="markAsDone" />
+                                x-tooltip.placement.top.raw="Mark as completed" wire:click="markAsDoneConfirm" />
                         </div>
                     @elseif ($taskStatus == 'done')
                         <div>
                             <x-wui-button 2xs orange label="Revert as todo" x-tooltip.placement.top.raw="Revert as todo"
-                                wire:click="revertToTodo" />
+                                wire:click="revertToTodoConfirm" />
                         </div>
                     @endif
 

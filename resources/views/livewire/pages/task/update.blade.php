@@ -41,7 +41,7 @@
 
                 <div class="md:mt-8 px-1">
                     <div>
-                        <x-wui-toggle id="needToCheck" x-bind:checked="check"
+                        <x-wui-toggle id="needToCheck" x-model="check"
                             left-label="Does this task need to be checked once done ?"
                             x-on:click="check = !check; if (check === false) { confirm = false; $wire.set('check_by_user_id', null);
                         $wire.set('confirm_by_user_id', null); $wire.set('proof_method', null); proof = false; }"
@@ -61,7 +61,7 @@
                             </x-wui-select>
 
                             <div class="mt-4 md:mt-8">
-                                <x-wui-toggle id="needProof" x-bind:checked="proof" left-label="Need proof ?"
+                                <x-wui-toggle id="needProof" x-model="proof" left-label="Need proof ?"
                                     x-on:click="proof = !proof; if (proof === false) { $wire.set('proof_method', null); }"
                                     name="needProof" />
                             </div>
@@ -81,7 +81,7 @@
                             </div>
 
                             <div class="mt-4 md:mt-8">
-                                <x-wui-toggle id="needToConfirm" x-bind:checked="confirm"
+                                <x-wui-toggle id="needToConfirm" x-model="confirm"
                                     left-label="Does this card need to be checked again ?"
                                     x-on:click="confirm = !confirm; if (confirm === false) { $wire.set('confirm_by_user_id', null); }"
                                     name="needToConfirm" />
@@ -108,7 +108,7 @@
 
                     <div>
                         <div class="mt-4 md:mt-8">
-                            <x-wui-toggle id="needFollowUp" x-bind:checked="followup"
+                            <x-wui-toggle id="needFollowUp" x-model="followup"
                                 left-label="Is there a follow up on this task ?"
                                 x-on:click="followup = !followup; if (followup === false) { $wire.set('follow_up_user_id', null);
                         $wire.set('confirm_by_user_id', null); $wire.set('proof_method', null); }"
@@ -135,7 +135,7 @@
 
                     <div>
                         <div class="mt-4 md:mt-8">
-                            <x-wui-toggle id="isBillable" x-bind:checked="billable" left-label="Is this Billable ?"
+                            <x-wui-toggle id="isBillable" x-model="billable" left-label="Is this Billable ?"
                                 x-on:click="billable = !billable; if (billable === false) { $wire.set('invoice_reference', null); }"
                                 name="isBillable" />
                         </div>

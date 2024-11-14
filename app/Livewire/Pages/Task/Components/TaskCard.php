@@ -111,6 +111,31 @@ class TaskCard extends Component
         return $time;
     }
 
+    public function markAsDoneConfirm(){
+        $this->dialog()->confirm([
+            'title' => 'Mark Task as Done ?',
+            'description' => 'Do You want to mark this Task as Done ?',
+            'icon' => 'warning',
+            'accept' => [
+                'label' => 'Yes',
+                'method' => 'markAsDone',
+            ],
+        ]);
+    }
+
+    public function revertToTodoConfirm()
+    {
+        $this->dialog()->confirm([
+            'title' => 'Mark Task as Todo ?',
+            'description' => 'Do You want to revert this Task ?',
+            'icon' => 'warning',
+            'accept' => [
+                'label' => 'Yes',
+                'method' => 'revertToTodo',
+            ],
+        ]);
+    }
+
     public function markAsDone()
     {
         try {
