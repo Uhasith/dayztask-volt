@@ -40,6 +40,7 @@ class InviteTeamMember
                 $team->users()->attach($existingUser->id, ['role' => $role]);
 
                 $existingUser->current_team_id = $team->id;
+                $existingUser->current_workspace_id = $team->workspaces()->first()->id;
                 $existingUser->save();
 
                 $mailData = [
@@ -62,6 +63,7 @@ class InviteTeamMember
                 'email' => $email,
                 'password' => Hash::make($password),
                 'current_team_id' => $team->id,
+                'current_workspace_id' => $team->workspaces()->first()->id
             ]);
 
             // Attach the new user to the team

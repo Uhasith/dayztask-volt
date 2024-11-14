@@ -76,10 +76,10 @@ class User extends AuthUser
         return $this->belongsTo(Workspace::class, 'current_workspace_id');
     }
 
-    public function workspaces(): HasMany
-    {
-        return $this->hasMany(Workspace::class);
-    }
+    // public function workspaces(): HasMany
+    // {
+    //     return $this->hasMany(Workspace::class);
+    // }
 
     public function projects(): HasMany
     {

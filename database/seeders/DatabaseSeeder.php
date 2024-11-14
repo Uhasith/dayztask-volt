@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('elakiri123'),
         ]);
 
-        User::factory(100)->create();
-        Project::factory(100)->create(['user_id' => 1, 'workspace_id' => 2]);
+        // User::factory(100)->create();
+        // Project::factory(100)->create(['user_id' => 1, 'workspace_id' => 2]);
         // Task::factory(100)->create(['project_id' => 1]);
         // Task::factory(100)->create(['project_id' => 2]);
         // Task::factory(100)->create(['project_id' => 3]);
