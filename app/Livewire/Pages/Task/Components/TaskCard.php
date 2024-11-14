@@ -111,7 +111,8 @@ class TaskCard extends Component
         return $time;
     }
 
-    public function markAsDoneConfirm(){
+    public function markAsDoneConfirm()
+    {
         $this->dialog()->confirm([
             'title' => 'Mark Task as Done ?',
             'description' => 'Do You want to mark this Task as Done ?',

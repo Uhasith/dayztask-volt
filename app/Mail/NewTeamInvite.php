@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -42,6 +41,7 @@ class NewTeamInvite extends Mailable
         $email = $this->mailData['email'];
         $password = $this->mailData['password'];
         $loginUrl = $this->mailData['loginUrl'];
+
         return new Content(
             view: 'emails.new-member-invitation',
             with: ['username' => $username, 'email' => $email, 'password' => $password, 'loginUrl' => $loginUrl]

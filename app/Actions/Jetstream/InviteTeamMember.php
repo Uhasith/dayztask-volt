@@ -2,21 +2,21 @@
 
 namespace App\Actions\Jetstream;
 
-use Closure;
-use App\Models\Team;
-use App\Models\User;
 use App\Mail\NewTeamInvite;
 use App\Mail\OldTeamInvite;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Rules\Role;
+use App\Models\Team;
+use App\Models\User;
+use Closure;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Laravel\Jetstream\Events\InvitingTeamMember;
+use Laravel\Jetstream\Jetstream;
+use Laravel\Jetstream\Rules\Role;
 
 class InviteTeamMember
 {
@@ -35,7 +35,7 @@ class InviteTeamMember
 
         if ($existingUser) {
             // Check if the user is already part of the team
-            if (!$existingUser->belongsToTeam($team)) {
+            if (! $existingUser->belongsToTeam($team)) {
                 // Attach user to the team with the specified role
                 $team->users()->attach($existingUser->id, ['role' => $role]);
 
@@ -48,7 +48,7 @@ class InviteTeamMember
                     'team' => $team,
                     'user' => $existingUser,
                     'username' => $existingUser->name,
-                    'loginUrl' => env('APP_URL') . '/auth/login', 
+                    'loginUrl' => env('APP_URL').'/auth/login',
                     'email_subject' => __('You have been invited to join the :team team!', ['team' => $team->name]),
                 ];
 
@@ -59,11 +59,11 @@ class InviteTeamMember
             $password = Str::random(10);  // Generate a random password
 
             $newUser = User::create([
-                'name' => 'New User ' . substr($email, 0, strpos($email, '@')),  // Handle name as required
+                'name' => 'New User '.substr($email, 0, strpos($email, '@')),  // Handle name as required
                 'email' => $email,
                 'password' => Hash::make($password),
                 'current_team_id' => $team->id,
-                'current_workspace_id' => $team->workspaces()->first()->id
+                'current_workspace_id' => $team->workspaces()->first()->id,
             ]);
 
             // Attach the new user to the team
@@ -75,7 +75,7 @@ class InviteTeamMember
                 'team' => $team,
                 'user' => $newUser,
                 'username' => $newUser->name,
-                'loginUrl' => env('APP_URL') . '/auth/login', 
+                'loginUrl' => env('APP_URL').'/auth/login',
                 'email_subject' => __('You have been invited to join the :team team!', ['team' => $team->name]),
             ];
 

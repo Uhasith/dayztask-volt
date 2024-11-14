@@ -3,13 +3,13 @@
 namespace App\Livewire\Pages\Task\Components;
 
 use App\Models\Task;
-use Livewire\Component;
-use Livewire\Attributes\On;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Locked;
-use Illuminate\Support\Facades\Log;
-use Spatie\ImageOptimizer\OptimizerChainFactory;
 use App\Services\Notifications\NotificationService;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class ProofUploadModal extends Component
 {
@@ -17,9 +17,13 @@ class ProofUploadModal extends Component
 
     #[Locked]
     public $taskId;
+
     public $task;
+
     public $proof_video_link;
+
     public $proof_comment;
+
     public $attachments = [];
 
     public function rules(): array
@@ -53,7 +57,6 @@ class ProofUploadModal extends Component
 
         return $rules;
     }
-
 
     public function updatedAttachments()
     {

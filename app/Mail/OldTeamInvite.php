@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -40,6 +39,7 @@ class OldTeamInvite extends Mailable
     {
         $username = $this->mailData['username'];
         $loginUrl = $this->mailData['loginUrl'];
+
         return new Content(
             view: 'emails.old-member-invitation',
             with: ['username' => $username, 'loginUrl' => $loginUrl]
