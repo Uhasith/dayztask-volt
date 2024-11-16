@@ -39,6 +39,7 @@ new class extends Component {
 
     public function updatedStartDate()
     {
+        $this->end_date = null;
         $this->dispatch('startDateUpdated', $this->start_date);
     }
 
@@ -77,8 +78,6 @@ new class extends Component {
                     wire:key="{{ 'project-option-' . $key }}" />
             @endforeach
         </x-wui-select>
-    </div>
-    <div class="flex items-center justify-end gap-6 mt-4">
         @if ($type === 'Single')
             <x-wui-button xs primary label="Range" class="mt-6"
                 x-on:click="$wire.set('type', 'Range'); $wire.set('end_date', null);" />
@@ -86,10 +85,10 @@ new class extends Component {
             <x-wui-button xs primary label="Single" class="mt-6" wire:click="resetDate" />
         @endif
         <x-wui-datetime-picker wire:model.live="start_date" label="Start Date" placeholder="Start Date"
-            class="max-w-[20%]" without-time without-timezone :clearable="false" />
+            class="max-w-[15%]" without-time without-timezone :clearable="false" />
         @if ($type === 'Range')
             <x-wui-datetime-picker wire:model.live="end_date" label="End Date" placeholder="End Date"
-                class="max-w-[20%]" without-time without-timezone :clearable="false" />
+                class="max-w-[15%]" without-time without-timezone :clearable="false" />
         @endif
     </div>
     <div class="my-8">

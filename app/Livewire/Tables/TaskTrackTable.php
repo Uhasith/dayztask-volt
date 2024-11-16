@@ -25,6 +25,8 @@ final class TaskTrackTable extends PowerGridComponent
 
     public $end_date;
 
+    public string $totalWorkedTime;
+
     #[On('startDateUpdated')]
     public function startDateUpdated($param): void
     {
@@ -60,7 +62,8 @@ final class TaskTrackTable extends PowerGridComponent
 
         return [
             PowerGrid::header()
-                ->showSearchInput(),
+                ->showSearchInput()
+                ->includeViewOnTop('components.task-tracking-table-header'),
             PowerGrid::footer()
                 ->showPerPage(perPage: 25, perPageValues: [25, 50, 100])
                 ->showRecordCount(),
@@ -113,6 +116,19 @@ final class TaskTrackTable extends PowerGridComponent
                 $query->where('task_trackings.created_at', '<=', $endDate);
             }
         }
+
+        // Calculate the total worked time
+        $totalMinutes = $query->get()->sum(function ($record) {
+            $startTime = Carbon::parse($record->start_time);
+            $endTime = $record->end_time ? Carbon::parse($record->end_time) : Carbon::now();
+
+            return $startTime->diffInMinutes($endTime);
+        });
+
+        // Format the total time into hours and minutes
+        $hours = floor($totalMinutes / 60);
+        $minutes = $totalMinutes % 60;
+        $this->totalWorkedTime = "{$hours} hours {$minutes} minutes";
 
         return $query;
     }
