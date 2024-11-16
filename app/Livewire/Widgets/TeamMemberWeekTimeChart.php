@@ -19,7 +19,7 @@ class TeamMemberWeekTimeChart extends ChartWidget
 
     protected static ?string $maxHeight = '35vh';
 
-    public ?string $filter = 'today';
+    public ?string $filter = 'week';
 
     protected function getFilters(): ?array
     {
@@ -84,25 +84,26 @@ class TeamMemberWeekTimeChart extends ChartWidget
         $projectIds = Project::where('workspace_id', Auth::user()->current_workspace_id)->pluck('id');
         $taskIds = Task::whereIn('project_id', $projectIds)->pluck('id');
 
-        // Get task tracking records for the current week
-        $data = TaskTracking::where('user_id', Auth::id())->whereIn('task_id', $taskIds)
-            ->whereBetween('created_at', [$startDate, $endDate])
+        // Get task tracking records for the specified date range
+        $data = TaskTracking::where('user_id', Auth::id())
+            ->whereIn('task_id', $taskIds)
+            ->whereBetween('start_time', [$startDate, $endDate])
             ->get()
             ->groupBy(function ($record) {
-                return Carbon::parse($record->created_at)->format('l'); // Group by day of the week (e.g., Monday)
+                return Carbon::parse($record->start_time)->format('l'); // Group by day of the week (e.g., Monday)
             })
             ->map(function ($day) {
                 // Sum the total tracked time for each day
                 return $day->sum(function ($record) {
-                    $startTime = Carbon::parse($record->created_at);
-                    $endTime = $record->end_time ? Carbon::parse($record->updated_at) : Carbon::now();
+                    $startTime = Carbon::parse($record->start_time);
+                    $endTime = $record->end_time ? Carbon::parse($record->end_time) : Carbon::now();
 
                     return round($startTime->diffInHours($endTime), 2);
                 });
             });
 
         // Ensure all days of the week are included, even if there is no data for them
-        $daysOfWeek = collect(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']);
+        $daysOfWeek = collect(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
         $data = $daysOfWeek->mapWithKeys(function ($day) use ($data) {
             return [$day => $data->get($day, 0)];
         });

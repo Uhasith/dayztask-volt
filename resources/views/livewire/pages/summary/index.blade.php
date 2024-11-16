@@ -5,6 +5,7 @@ use App\Services\Task\TaskService;
 use App\Services\Team\TeamService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 new class extends Component {
     public $teamMembers = [];
@@ -12,6 +13,9 @@ new class extends Component {
 
     public $user_id;
     public $project_id = 'All';
+    public $start_date;
+    public $end_date;
+    public $type = 'Single';
 
     public function mount()
     {
@@ -23,6 +27,24 @@ new class extends Component {
             ->get()
             ->toArray();
         $this->user_id = (string) Auth::user()->id;
+        $this->start_date = Carbon::now()->format('Y-m-d');
+    }
+
+    public function resetDate()
+    {
+        $this->type = 'Single';
+        $this->start_date = Carbon::now()->format('Y-m-d');
+        $this->end_date = null;
+    }
+
+    public function updatedStartDate()
+    {
+        $this->dispatch('startDateUpdated', $this->start_date);
+    }
+
+    public function updatedEndDate()
+    {
+        $this->dispatch('endDateUpdated', $this->end_date);
     }
 
     public function updatedProjectId()
@@ -56,7 +78,21 @@ new class extends Component {
             @endforeach
         </x-wui-select>
     </div>
+    <div class="flex items-center justify-end gap-6 mt-4">
+        @if ($type === 'Single')
+            <x-wui-button xs primary label="Range" class="mt-6"
+                x-on:click="$wire.set('type', 'Range'); $wire.set('end_date', null);" />
+        @else
+            <x-wui-button xs primary label="Single" class="mt-6" wire:click="resetDate" />
+        @endif
+        <x-wui-datetime-picker wire:model.live="start_date" label="Start Date" placeholder="Start Date"
+            class="max-w-[20%]" without-time without-timezone :clearable="false" />
+        @if ($type === 'Range')
+            <x-wui-datetime-picker wire:model.live="end_date" label="End Date" placeholder="End Date"
+                class="max-w-[20%]" without-time without-timezone :clearable="false" />
+        @endif
+    </div>
     <div class="my-8">
-        <livewire:tables.task-track-table :user_id="$user_id" :project_id="$project_id" />
+        <livewire:tables.task-track-table :user_id="$user_id" :project_id="$project_id" :start_date="$start_date" :end_date="$end_date" />
     </div>
 </div>

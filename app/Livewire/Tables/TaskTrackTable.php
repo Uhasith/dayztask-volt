@@ -21,18 +21,37 @@ final class TaskTrackTable extends PowerGridComponent
 
     public $project_id;
 
+    public $start_date;
+
+    public $end_date;
+
+    #[On('startDateUpdated')]
+    public function startDateUpdated($param): void
+    {
+        $this->start_date = $param;
+        $this->end_date = null;
+        $this->dispatch('pg:eventRefresh-TaskTrackTable');
+    }
+
+    #[On('endDateUpdated')]
+    public function endDateUpdated($param): void
+    {
+        $this->end_date = $param;
+        $this->dispatch('pg:eventRefresh-TaskTrackTable');
+    }
+
     #[On('userUpdated')]
     public function userUpdated($param): void
     {
         $this->user_id = $param;
-        $this->dispatch('pg:eventRefresh-DishTable');
+        $this->dispatch('pg:eventRefresh-TaskTrackTable');
     }
 
     #[On('projectUpdated')]
     public function projectUpdated($param): void
     {
         $this->project_id = $param;
-        $this->dispatch('pg:eventRefresh-DishTable');
+        $this->dispatch('pg:eventRefresh-TaskTrackTable');
     }
 
     public function setUp(): array
@@ -59,12 +78,12 @@ final class TaskTrackTable extends PowerGridComponent
                 'projects.title as project_title',
             ]);
 
-        // Check if "All" users or a specific user
+        // Filter by user ID if not "All"
         if ($this->user_id !== 'All') {
             $query->where('task_trackings.user_id', $this->user_id);
         }
 
-        // Check if "All" projects or a specific project
+        // Filter by project ID if not "All"
         if ($this->project_id !== 'All') {
             $projectObj = Project::with('tasks')->where('id', $this->project_id)->first();
 
@@ -73,6 +92,25 @@ final class TaskTrackTable extends PowerGridComponent
                 $query->whereIn('task_trackings.task_id', $taskIds);
             } else {
                 $query->whereRaw('1 = 0'); // Forces an empty result set if project does not exist
+            }
+        }
+
+        // Apply date filtering
+        if (! empty($this->start_date) || ! empty($this->end_date)) {
+            // Parse dates using Carbon and format to 'Y-m-d'
+            $startDate = $this->start_date ? Carbon::parse($this->start_date)->startOfDay() : null;
+            $endDate = $this->end_date ? Carbon::parse($this->end_date)->endOfDay() : Carbon::parse($this->start_date)->endOfDay();
+
+            // Apply date range filters based on available dates
+            if ($startDate && $endDate) {
+                // Use whereBetween if both start and end dates are provided
+                $query->whereBetween('task_trackings.created_at', [$startDate, $endDate]);
+            } elseif ($startDate) {
+                // Use where if only start date is provided
+                $query->whereBetween('task_trackings.created_at', [$startDate, $endDate]);
+            } elseif ($endDate) {
+                // Use where if only end date is provided
+                $query->where('task_trackings.created_at', '<=', $endDate);
             }
         }
 
@@ -99,17 +137,14 @@ final class TaskTrackTable extends PowerGridComponent
                 $end = Carbon::parse($record->end_time) ?? Carbon::now();
 
                 $totalMinutes = $start->diffInMinutes($end); // Total difference in minutes
-                $hours = floor($totalMinutes / 60); // Calculate hours
+                $hours = floor($totalMinutes / 60); // Calculate hours as an integer
                 $minutes = $totalMinutes % 60; // Remaining minutes after hours
 
-                $hoursFormatted = number_format($hours, 2);  // Format hours to two digits if hours are shown
-                $minutesFormatted = $minutes; // No formatting for minutes
-
                 if ($hours > 0) {
-                    return "{$hoursFormatted} hour".($hours == 1 ? '' : 's')." {$minutesFormatted} minute".($minutes == 1 ? '' : 's');
+                    return "{$hours} hour".($hours == 1 ? '' : 's')." {$minutes} minute".($minutes == 1 ? '' : 's');
                 }
 
-                return "{$minutesFormatted} minute".($minutes == 1 ? '' : 's');
+                return "{$minutes} minute".($minutes == 1 ? '' : 's');
             })
             ->add('end_time');
     }
