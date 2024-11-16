@@ -12,10 +12,15 @@ new class extends Component {
     public function updatedSearch()
     {
         // Fetch tasks and projects based on search, limit each to 5 results
-        $tasks = Task::where('name', 'like', '%' . $this->search . '%')
+        $tasks = Task::whereIn('project_id', Auth::user()->currentTeam->owner->projects->pluck('id')->toArray())
+            ->where('name', 'like', '%' . $this->search . '%')
             ->limit(5)
             ->get();
-        $projects = Project::where('title', 'like', '%' . $this->search . '%')
+        $projects = Auth::user()
+            ->currentTeam->owner->projects()
+            ->where('workspace_id', Auth::user()->current_workspace_id)
+            ->orderBy('created_at', 'asc')
+            ->where('title', 'like', '%' . $this->search . '%')
             ->limit(5)
             ->get();
 
@@ -99,11 +104,9 @@ new class extends Component {
 
         let searchTerm = this.commandSearch.toLowerCase();
 
-        this.commandItemsFiltered = this.commandSearchIsEmpty() ?
-            [...tasks.filter(item => item.default), ...projects.filter(item => item.default)] :
-            [...tasks.filter(item => item.title.toLowerCase().includes(searchTerm)),
-                ...projects.filter(item => item.title.toLowerCase().includes(searchTerm))
-            ];
+        this.commandItemsFiltered = this.commandSearchIsEmpty() ? [...tasks.filter(item => item.default), ...projects.filter(item => item.default)] : [...tasks.filter(item => item.title.toLowerCase().includes(searchTerm)),
+            ...projects.filter(item => item.title.toLowerCase().includes(searchTerm))
+        ];
 
         this.commandItemActive = this.commandItemsFiltered[0] || null;
     },
