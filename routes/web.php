@@ -1,17 +1,22 @@
 <?php
 
+use Livewire\Volt\Volt;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
-use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
-use App\Livewire\Pages\Project\Index as ProjectIndex;
-use App\Livewire\Pages\Project\Show as ProjectShow;
-use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
 use App\Livewire\Pages\Task\Create as TaskCreate;
 use App\Livewire\Pages\Task\Update as TaskUpdate;
-use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
+use App\Livewire\Pages\Project\Show as ProjectShow;
+use App\Livewire\Pages\Project\Index as ProjectIndex;
+use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
+use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()->route('login');
 });
 
 Route::middleware([
@@ -33,5 +38,4 @@ Route::middleware([
 
     // User's Current Workspace Changing route when user's team is changed
     Route::get('/update-user-team-workspace/{uuid}', [TaskController::class, 'updateUserTeamAndWorkspace'])->name('update.user.team.workspace');
-
 });

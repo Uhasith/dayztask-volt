@@ -5,8 +5,8 @@
  */
 return [
     'login' => [
-        'page_title' => 'Sign in',
-        'headline' => 'Sign in',
+        'page_title' => 'Log in',
+        'headline' => 'Log in',
         'subheadline' => 'Login to your account below',
         'show_subheadline' => true,
         'email_address' => 'Email Address',
@@ -28,7 +28,7 @@ return [
         'email_address' => 'Email Address',
         'password' => 'Password',
         'already_have_an_account' => 'Already have an account?',
-        'sign_in' => 'Sign in',
+        'sign_in' => 'Log in',
         'button' => 'Continue',
     ],
     'verify' => [
