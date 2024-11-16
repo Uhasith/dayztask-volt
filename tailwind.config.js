@@ -3,11 +3,12 @@ import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
 import wireuiConfig from "./vendor/wireui/wireui/tailwind.config.js";
 import filamentConfig from "./vendor/filament/support/tailwind.config.preset";
+import powergridConfig from "./vendor/power-components/livewire-powergrid/tailwind.config.js";
 const colors = require("tailwindcss/colors");
 
 /** @type {import('tailwindcss').Config} */
 export default {
-    presets: [wireuiConfig, filamentConfig],
+    presets: [wireuiConfig, filamentConfig, powergridConfig],
     darkMode: "class",
     content: [
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
@@ -25,10 +26,14 @@ export default {
         "./vendor/wireui/wireui/ts/**/*.ts",
         "./vendor/wireui/wireui/src/WireUi/**/*.php",
         "./vendor/wireui/wireui/src/Components/**/*.php",
+        "./app/Livewire/**/*Table.php",
+        "./vendor/power-components/livewire-powergrid/resources/views/**/*.php",
+        "./vendor/power-components/livewire-powergrid/src/Themes/Tailwind.php",
     ],
     theme: {
         extend: {
             colors: {
+                "pg-primary": colors.gray,
                 primary: colors.amber,
                 secondary: colors.gray,
                 positive: colors.emerald,

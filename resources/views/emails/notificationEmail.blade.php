@@ -1,73 +1,120 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;1,600&family=Roboto+Slab:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>Dayztasks - Notification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        .montserrat {
-            font-family: 'Montserrat', sans-serif !important;
+        body {
+            font-family: 'Figtree', sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
         }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .responsive-container {
-                width: 80%;
-            }
+        .container {
+            width: 680px;
+            margin: 20px auto;
+        }
+        .header {
+            background: #E1F29680;
+            padding: 16px 80px;
+            text-align: center;
+        }
+        .header img {
+            width: 144px;
+            height: 24px;
+        }
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+            color: black;
+            margin: 10px 0 5px 0;
+        }
+        .header p {
+            color: black;
+            font-size: 12px;
+            margin: 0;
+        }
+        .content {
+            padding: 24px;
+            color: black;
+        }
+        .content p {
+            font-size: 14px;
+            margin: 0;
+            color: black;
+        }
+        .button {
+            background: #5BB98A;
+            border-radius: 20px;
+            padding: 10px 20px;
+            text-align: center;
+            display: inline-block;
+            margin: 20px auto;
+            text-decoration: none;
+            color: white;
+        }
+        .button-container {
+            max-width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content h2 {
+            font-size: 24px;
+            color: black;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #343A3F;
+        }
+        .sub-content p {
+            color: #343A3F;
+            font-size: 14px;
         }
     </style>
 </head>
-
 <body>
-    <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; background-color: #b3e0ff; margin: auto; padding: 20px;">
-        <div class="responsive-container" style="max-width: 1024px; margin: auto;">
-            <!-- add dayz logo when putting it to live -->
-            <img style="width: 100%; max-width: 250px;" src="{{ asset('assets/images/logo.png') }}" alt="email_logo">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>{{ $email_subject }}</h1>
+            <p>Notification from Dayztasks</p>
         </div>
-        <div class="responsive-container email-content" style="margin: auto; flex-direction: column; border: 3px solid #1a75ff; border-radius: 12px; background-color: #ffffff; padding: 20px;">
-            <div style="display: flex; flex-direction: column; align-items: center; ">
 
-                <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
-                    <!-- add dayz logo when putting it to live -->
-                    <img style="width: 100%; max-width: 150px; padding: 25px;" src="{{ asset('assets/images/emailLogo.png') }}" alt="email_logo">
-                    <h1 class="montserrat" style="margin: 10px 0; font-weight: 700; text-align: center; font-size: 24px;">{!! $email_subject !!}</h1>
-                    <hr style="width: 100%;">
-                </div>
+        <!-- Content -->
+        <div class="content">
+            <h2>Hello {{ explode(' ', $user->name)[0] }},</h2>
+            <p>{!! $email_body !!}</p>
 
-                <div>
-                    <h1 class="montserrat" style="margin-bottom: 5px; font-weight: 500; text-align: center; font-size: 20px;">Hello {{ explode(' ', $user->name)[0] }}</h1>
-                    <p class="montserrat" style="text-align: center; font-size: 18px;">{!! $email_body !!}</p>
-                </div>
+            <p class="mt-4">To view and manage your task, click the link below:</p>
 
-                <p class="montserrat" style="text-align: center; font-size: 14px;">Go to your Task by <a href="https://dayztasks.com/tasks/edit/{{$task->uuid}}" style="text-decoration: underline; color: #2463EB;">Clicking here.</a></p>
+            <!-- Link Button -->
+            <div class="button-container">
+                <a href="{{ $taskUrl }}" class="button">Go to Task</a>
+            </div>
+
+            <div class="sub-content">
+                <p>If you have any questions or need assistance, feel free to reach out. We're here to help make your Dayztasks experience seamless and productive!</p>
+                <p style="margin-top: 5px">Best Regards,</p>
+                <p style="font-weight: 600; margin-top:4px">Dayztasks Team</p>
             </div>
         </div>
 
-        <div class="responsive-container" style="margin: 20px auto; border: 3px solid #1a75ff; border-radius: 12px; background-color: #ffffff; padding: 20px;">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <div class="social-icons" style="display: flex; gap: 1.5rem;">
-                    <!-- Social media icons -->
-                    <!-- Add your social media icons here -->
-                </div>
+        <div style="width: 100%; height: 1px; background: #F2F4F8; margin: 20px 0;"></div>
 
-                <div style="display: flex; padding: 10px; justify-content: center; align-items: center;">
-                    <p class="montserrat" style="font-weight: 500; text-align: center; font-size: 14px;">
-                        Don't want these mails anymore? Change your settings <a href="#">Click here.</a>
-                    </p>
-                </div>
-
-                <div style="display: flex; justify-content: center; align-items: center;">
-                    <p class="montserrat" style="font-weight: 400; text-align: center; font-size: 14px;">
-                        © Dayz Solutions || 2024
-                    </p>
-                </div>
+        <!-- Footer Links -->
+        <div class="footer">
+            <p>&copy; 2024 Dayz Solutions. All rights reserved.</p>
+            <div>
+                <a href="{{ url('/html/privacy.html') }}" style="color: #016553; text-decoration: none;" target="_blank">Privacy policy</a> •
+                <a href="{{ url('/html/terms-and-conditions.html') }}" style="color: #016553; text-decoration: none;" target="_blank">Terms of service</a> •
+                <a href="#" style="color: #016553; text-decoration: none;">Help center</a> •
+                <a href="#" style="color: #016553; text-decoration: none;">Unsubscribe</a>
             </div>
         </div>
     </div>
 </body>
-
 </html>

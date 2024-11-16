@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b20a601c6aa28c959fa5c2924cdc1fdb",
+    "content-hash": "8f7d1e889de9440e413d2ef5175fdf12",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -6010,6 +6010,85 @@
             "time": "2024-09-16T03:06:04+00:00"
         },
         {
+            "name": "power-components/livewire-powergrid",
+            "version": "v6.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Power-Components/livewire-powergrid.git",
+                "reference": "ac29ea82e6881cae268a74027f8c3018882a0b47"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Power-Components/livewire-powergrid/zipball/ac29ea82e6881cae268a74027f8c3018882a0b47",
+                "reference": "ac29ea82e6881cae268a74027f8c3018882a0b47",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/prompts": "*",
+                "livewire/livewire": "^3.5.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "composer/composer": "^2.7.9",
+                "laradumps/laradumps": "^3.2",
+                "laradumps/laradumps-core": "^2.2.2",
+                "larastan/larastan": "^2.9.8",
+                "laravel/pint": "1.17",
+                "laravel/scout": "^10.11.3",
+                "openspout/openspout": "^4.24.5",
+                "orchestra/testbench": "^9.4",
+                "pestphp/pest": "^2.35.1"
+            },
+            "suggest": {
+                "openspout/openspout": "Required to export XLS and CSV"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "PowerComponents\\LivewirePowerGrid\\Providers\\PowerGridServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "PowerComponents\\LivewirePowerGrid\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Luan Freitas",
+                    "email": "luanfreitas10@protonmail.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "DanSysAnalyst",
+                    "email": "daniel@sysanalyst.eu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PowerGrid generates Advanced Datatables using Laravel Livewire.",
+            "homepage": "https://github.com/power-components/livewire-powergrid",
+            "support": {
+                "issues": "https://github.com/Power-Components/livewire-powergrid/issues",
+                "source": "https://github.com/Power-Components/livewire-powergrid/tree/v6.1.4"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/luanfreitasdev",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-11-15T12:38:57+00:00"
+        },
+        {
             "name": "pragmarx/google2fa",
             "version": "v8.0.3",
             "source": {
@@ -10815,6 +10894,63 @@
     ],
     "packages-dev": [
         {
+            "name": "aaronfrancis/solo",
+            "version": "v0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aarondfrancis/solo.git",
+                "reference": "6d32f59c0aec6df5bca025f7a91e6efca6d67ef0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aarondfrancis/solo/zipball/6d32f59c0aec6df5bca025f7a91e6efca6d67ef0",
+                "reference": "6d32f59c0aec6df5bca025f7a91e6efca6d67ef0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcntl": "*",
+                "illuminate/console": "^10|^11",
+                "illuminate/process": "^10|^11",
+                "illuminate/support": "^10|^11",
+                "joetannenbaum/chewie": "^0.1.8",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "illuminate/database": "^10|^11",
+                "orchestra/testbench": "^8|^9",
+                "phpunit/phpunit": "^10.5|^11"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AaronFrancis\\Solo\\Providers\\SoloServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AaronFrancis\\Solo\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Francis",
+                    "email": "aarondfrancis@gmail.com"
+                }
+            ],
+            "description": "A Laravel package to run multiple commands at once, to aid in local development.",
+            "support": {
+                "issues": "https://github.com/aarondfrancis/solo/issues",
+                "source": "https://github.com/aarondfrancis/solo/tree/v0.1.2"
+            },
+            "time": "2024-11-08T18:49:30+00:00"
+        },
+        {
             "name": "barryvdh/laravel-ide-helper",
             "version": "v3.2.2",
             "source": {
@@ -11571,6 +11707,43 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.0.6"
             },
             "time": "2024-03-08T09:58:59+00:00"
+        },
+        {
+            "name": "joetannenbaum/chewie",
+            "version": "0.1.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joetannenbaum/chewie.git",
+                "reference": "84ebd41ccc708651634e125a404e866cc996b991"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joetannenbaum/chewie/zipball/84ebd41ccc708651634e125a404e866cc996b991",
+                "reference": "84ebd41ccc708651634e125a404e866cc996b991",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/prompts": "0.x"
+            },
+            "require-dev": {
+                "pestphp/pest": "^2.33",
+                "tightenco/duster": "^2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Chewie\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/joetannenbaum/chewie/issues",
+                "source": "https://github.com/joetannenbaum/chewie/tree/0.1.9"
+            },
+            "time": "2024-11-12T14:35:49+00:00"
         },
         {
             "name": "larastan/larastan",

@@ -51,6 +51,8 @@
                 <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" />
                 <x-mary-menu-item title="Projects" icon="o-presentation-chart-line"
                     link="{{ route('projects.index') }}" />
+                <x-mary-menu-item title="Summary" icon="o-chart-bar"
+                    link="{{ route('summary.index') }}" />
                 {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-mary-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-mary-menu-item title="Archives" icon="o-archive-box" link="####" />

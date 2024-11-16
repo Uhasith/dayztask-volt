@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "flatpickr/dist/flatpickr.min.css";
+@import "~tom-select/dist/scss/tom-select.bootstrap5";
 
 /* Customize filament dark mode color to match wireui */
 .dark .filament-wui-dark {

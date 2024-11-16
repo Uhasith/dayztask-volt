@@ -60,11 +60,17 @@ class UserFactory extends Factory
 
         return $this->has(
             Team::factory()
-                ->state(fn (array $attributes, User $user) => [
-                    'name' => $user->name.'\'s Team',
+                ->state(fn(array $attributes, User $user) => [
+                    'name' => $user->name . '\'s Team',
                     'user_id' => $user->id,
                     'personal_team' => true,
                 ])
+                ->afterCreating(function (Team $team, User $user) {
+                    $user->forceFill([
+                        'current_team_id' => $team->id,
+                        'current_workspace_id' => $team->workspaces()->first()->id,
+                    ])->save();
+                })
                 ->when(is_callable($callback), $callback),
             'ownedTeams'
         );

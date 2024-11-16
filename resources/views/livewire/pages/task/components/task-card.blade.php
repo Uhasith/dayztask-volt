@@ -72,7 +72,7 @@
             </div>
         </div>
         <div class="flex items-center justify-between py-1">
-            <p class="text-xs font-semibold">Deadline : 2024/06/30</p>
+            <p class="text-xs font-semibold">Deadline : {{ $task['deadline'] ?$task['deadline']->format('Y-m-d') : 'No Deadline' }}</p>
             <div class="flex gap-2 items-center">
                 @foreach ($task['users'] as $user)
                     <x-wui-avatar 2xs

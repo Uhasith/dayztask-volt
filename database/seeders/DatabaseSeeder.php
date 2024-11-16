@@ -17,11 +17,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'info@dayzsolutions.com',
-            'password' => Hash::make('elakiri123'),
-        ]);
+        // User::factory()
+        // ->withPersonalTeam()
+        // ->create([
+        //     'name' => 'Test User',
+        //     'email' => 'info@dayzsolutions.com',
+        //     'password' => Hash::make('elakiri123'),
+        // ]);
 
         // User::factory(100)->create();
         // Project::factory(100)->create(['user_id' => 1, 'workspace_id' => 2]);
