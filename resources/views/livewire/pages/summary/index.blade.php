@@ -39,7 +39,7 @@ new class extends Component {
 <div class="w-full mx-auto p-5 lg:px-10 lg:py-5">
     <div class="flex items-center justify-end gap-6">
         <x-wui-select id="user" icon="user" label="Select an user" placeholder="Select an user" class="max-w-[20%]"
-            wire:model.live="user_id">
+            wire:model.live="user_id" :clearable="false">
             <x-wui-select.option label="All Users" value="All" />
             @foreach ($teamMembers as $key => $member)
                 <x-wui-select.user-option
@@ -48,7 +48,7 @@ new class extends Component {
             @endforeach
         </x-wui-select>
         <x-wui-select id="project" icon="user" label="Select a project" placeholder="Select a project"
-            class="max-w-[20%]" wire:model.live="project_id">
+            class="max-w-[20%]" wire:model.live="project_id" :clearable="false">
             <x-wui-select.option label="All Projects" value="All" />
             @foreach ($projects as $key => $project)
                 <x-wui-select.option label="{{ $project['title'] }}" value="{{ $project['id'] }}"

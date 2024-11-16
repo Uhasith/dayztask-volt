@@ -106,10 +106,10 @@ final class TaskTrackTable extends PowerGridComponent
                 $minutesFormatted = $minutes; // No formatting for minutes
 
                 if ($hours > 0) {
-                    return "{$hoursFormatted} hour" . ($hours == 1 ? '' : 's') . " {$minutesFormatted} minute" . ($minutes == 1 ? '' : 's');
+                    return "{$hoursFormatted} hour".($hours == 1 ? '' : 's')." {$minutesFormatted} minute".($minutes == 1 ? '' : 's');
                 }
 
-                return "{$minutesFormatted} minute" . ($minutes == 1 ? '' : 's');
+                return "{$minutesFormatted} minute".($minutes == 1 ? '' : 's');
             })
             ->add('end_time');
     }

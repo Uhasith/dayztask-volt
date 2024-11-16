@@ -1,12 +1,14 @@
 <div class="w-full mx-auto p-5 lg:px-10 lg:py-5">
     <div>
-        <div class="text-end">
-            <x-filament::button type="button" class="my-4" wire:click="$dispatch('openProjectCreateDrawer')">
-                Create New Project
-            </x-filament::button>
+        <div class="text-end my-4">
+            @if (auth()->user()->currentTeam->owner->id == auth()->user()->id)
+                <x-filament::button type="button" wire:click="$dispatch('openProjectCreateDrawer')">
+                    Create New Project
+                </x-filament::button>
+            @endif
         </div>
 
-        <div class="max-w-lg mx-auto mt-4 md:-mt-14">
+        <div class="max-w-lg mx-auto mt-4 md:mt-8">
             <x-wui-card shadow="xl" rounded="3xl"
                 class="px-4 !bg-[#eaddd7] !dark:bg-[#eaddd7] transform hover:scale-105 transition duration-700 ease-in-out">
                 <a href="{{ route('projects.show.all') }}" wire:navigate>
