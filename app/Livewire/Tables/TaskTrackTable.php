@@ -9,12 +9,16 @@ use Illuminate\Support\Carbon;
 use Livewire\Attributes\On;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
+use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
+use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
 final class TaskTrackTable extends PowerGridComponent
 {
+    use WithExport;
+
     public string $tableName = 'TaskTrackTable';
 
     public $user_id;
@@ -58,15 +62,17 @@ final class TaskTrackTable extends PowerGridComponent
 
     public function setUp(): array
     {
-        // $this->showCheckBox();
+        $this->showCheckBox();
 
         return [
             PowerGrid::header()
                 ->showSearchInput()
                 ->includeViewOnTop('components.task-tracking-table-header'),
             PowerGrid::footer()
-                ->showPerPage(perPage: 25, perPageValues: [25, 50, 100])
+                ->showPerPage(perPage: 25, perPageValues: [0, 25, 50, 75, 100])
                 ->showRecordCount(),
+            PowerGrid::exportable(fileName: 'task_trackings')
+                ->type(Exportable::TYPE_CSV),
         ];
     }
 
