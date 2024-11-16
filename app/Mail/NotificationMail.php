@@ -41,7 +41,7 @@ class NotificationMail extends Mailable
         $task = $this->mailData['task'];
         $user = $this->mailData['user'];
         $email_subject = $this->mailData['email_subject'];
-        $taskUrl = env('APP_URL'). '/projects/tasks/update/'.$task->uuid;
+        $taskUrl = env('APP_URL').'/projects/tasks/update/'.$task->uuid;
 
         return new Content(
             view: 'emails.notificationEmail',

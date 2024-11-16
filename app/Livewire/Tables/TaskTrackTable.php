@@ -3,17 +3,15 @@
 namespace App\Livewire\Tables;
 
 use App\Models\Project;
-use Livewire\Attributes\On;
 use App\Models\TaskTracking;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use Livewire\Attributes\On;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
-use PowerComponents\LivewirePowerGrid\Facades\Filter;
-use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
+use PowerComponents\LivewirePowerGrid\PowerGridFields;
 
 final class TaskTrackTable extends PowerGridComponent
 {
@@ -23,7 +21,7 @@ final class TaskTrackTable extends PowerGridComponent
 
     public $project_id;
 
-    #[On('userUpdated')] 
+    #[On('userUpdated')]
     public function userUpdated($param): void
     {
         $this->user_id = $param;
@@ -99,10 +97,10 @@ final class TaskTrackTable extends PowerGridComponent
                 $minutesFormatted = $minutes; // No formatting for minutes
 
                 if ($hours > 0) {
-                    return "{$hoursFormatted} hour" . ($hours == 1 ? '' : 's') . " {$minutesFormatted} minute" . ($minutes == 1 ? '' : 's');
+                    return "{$hoursFormatted} hour".($hours == 1 ? '' : 's')." {$minutesFormatted} minute".($minutes == 1 ? '' : 's');
                 }
 
-                return "{$minutesFormatted} minute" . ($minutes == 1 ? '' : 's');
+                return "{$minutesFormatted} minute".($minutes == 1 ? '' : 's');
             })
             ->add('end_time');
     }
