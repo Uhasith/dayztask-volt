@@ -50,11 +50,18 @@ final class TaskTrackTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        $query = TaskTracking::query()->with('task', 'project');
+        $query = TaskTracking::query()
+            ->join('tasks', 'task_trackings.task_id', '=', 'tasks.id')
+            ->join('projects', 'tasks.project_id', '=', 'projects.id')
+            ->select([
+                'task_trackings.*',
+                'tasks.name as task_name',
+                'projects.title as project_title',
+            ]);
 
         // Check if "All" users or a specific user
         if ($this->user_id !== 'All') {
-            $query->where('user_id', $this->user_id);
+            $query->where('task_trackings.user_id', $this->user_id);
         }
 
         // Check if "All" projects or a specific project
@@ -63,10 +70,9 @@ final class TaskTrackTable extends PowerGridComponent
 
             if ($projectObj) {
                 $taskIds = $projectObj->tasks->pluck('id');
-                $query->whereIn('task_id', $taskIds);
+                $query->whereIn('task_trackings.task_id', $taskIds);
             } else {
-                // If project does not exist, return an empty result
-                $query->whereRaw('1 = 0'); // Forces an empty result set
+                $query->whereRaw('1 = 0'); // Forces an empty result set if project does not exist
             }
         }
 
@@ -75,15 +81,18 @@ final class TaskTrackTable extends PowerGridComponent
 
     public function relationSearch(): array
     {
-        return [];
+        return [
+            'task' => ['name'],
+            'project' => ['title'],
+        ];
     }
 
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
             ->add('id')
-            ->add('task.name')
-            ->add('project.title')
+            ->add('task_name')
+            ->add('project_title')
             ->add('start_time')
             ->add('total_time', function ($record) {
                 $start = Carbon::parse($record->start_time);
@@ -97,10 +106,10 @@ final class TaskTrackTable extends PowerGridComponent
                 $minutesFormatted = $minutes; // No formatting for minutes
 
                 if ($hours > 0) {
-                    return "{$hoursFormatted} hour".($hours == 1 ? '' : 's')." {$minutesFormatted} minute".($minutes == 1 ? '' : 's');
+                    return "{$hoursFormatted} hour" . ($hours == 1 ? '' : 's') . " {$minutesFormatted} minute" . ($minutes == 1 ? '' : 's');
                 }
 
-                return "{$minutesFormatted} minute".($minutes == 1 ? '' : 's');
+                return "{$minutesFormatted} minute" . ($minutes == 1 ? '' : 's');
             })
             ->add('end_time');
     }
@@ -109,11 +118,15 @@ final class TaskTrackTable extends PowerGridComponent
     {
         return [
             Column::make('Id', 'id'),
-            Column::make('Task Name', 'task.name')->sortable()->searchable(),
-            Column::make('Project Name', 'project.title')->sortable()->searchable(),
+            Column::make('Task Name', 'task_name', 'tasks.name')
+                ->searchable()
+                ->sortable(),
+            Column::make('Project Title', 'project_title', 'projects.title')
+                ->searchable()
+                ->sortable(),
             Column::make('Start Time', 'start_time')->sortable()->searchable(),
             Column::make('End Time', 'end_time')->sortable()->searchable(),
-            Column::make('Total Time', 'total_time')->sortable()->searchable(),
+            Column::make('Total Time', 'total_time'),
             // Column::action('Action')
         ];
     }

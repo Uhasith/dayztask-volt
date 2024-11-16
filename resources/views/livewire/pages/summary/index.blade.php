@@ -22,9 +22,6 @@ new class extends Component {
             ->orderBy('created_at', 'asc')
             ->get()
             ->toArray();
-
-        Log::info($this->projects);
-
         $this->user_id = (string) Auth::user()->id;
     }
 
