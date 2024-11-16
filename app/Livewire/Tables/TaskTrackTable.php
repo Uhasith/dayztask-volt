@@ -87,7 +87,7 @@ final class TaskTrackTable extends PowerGridComponent
             ->add('start_time')
             ->add('total_time', function ($record) {
                 $start = Carbon::parse($record->start_time);
-                $end = Carbon::parse($record->end_time);
+                $end = Carbon::parse($record->end_time) ?? Carbon::now();
 
                 $totalMinutes = $start->diffInMinutes($end); // Total difference in minutes
                 $hours = floor($totalMinutes / 60); // Calculate hours
