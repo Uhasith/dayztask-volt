@@ -84,6 +84,7 @@ final class TaskTrackTable extends PowerGridComponent
             ->select([
                 'task_trackings.*',
                 'tasks.name as task_name',
+                'tasks.invoice_reference as invoice_reference',
                 'projects.title as project_title',
             ]);
 
@@ -142,7 +143,7 @@ final class TaskTrackTable extends PowerGridComponent
     public function relationSearch(): array
     {
         return [
-            'task' => ['name'],
+            'task' => ['name', 'invoice_reference'],
             'project' => ['title'],
         ];
     }
@@ -163,11 +164,12 @@ final class TaskTrackTable extends PowerGridComponent
                 $minutes = $totalMinutes % 60; // Remaining minutes after hours
 
                 if ($hours > 0) {
-                    return "{$hours} hour".($hours == 1 ? '' : 's')." {$minutes} minute".($minutes == 1 ? '' : 's');
+                    return "{$hours} hour" . ($hours == 1 ? '' : 's') . " {$minutes} minute" . ($minutes == 1 ? '' : 's');
                 }
 
-                return "{$minutes} minute".($minutes == 1 ? '' : 's');
+                return "{$minutes} minute" . ($minutes == 1 ? '' : 's');
             })
+            ->add('invoice_reference')
             ->add('end_time');
     }
 
@@ -184,6 +186,7 @@ final class TaskTrackTable extends PowerGridComponent
             Column::make('Start Time', 'start_time')->sortable()->searchable(),
             Column::make('End Time', 'end_time')->sortable()->searchable(),
             Column::make('Total Time', 'total_time'),
+            Column::make('Invoice Reference', 'invoice_reference')->searchable(),
             // Column::action('Action')
         ];
     }
