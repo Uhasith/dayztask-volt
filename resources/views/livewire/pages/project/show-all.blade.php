@@ -8,7 +8,7 @@
             <x-wui-select placeholder="Filter By" class="w-[50%]" wire:model.live="filterBy">
                 @foreach ($teamMembers as $key => $member)
                     <x-wui-select.user-option
-                        src="{{ !empty($member['profile_photo_path']) ? asset($member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
+                        src="{{ !empty($member['profile_photo_path']) ? asset('storage/' . $member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
                         label="{{ $member['name'] }}" value="{{ $member['id'] }}"
                         wire:key="{{ 'filter-option-' . $key }}" />
                 @endforeach
@@ -57,4 +57,3 @@
         <x-filament::pagination :paginator="$tasks" extreme-links />
     </div>
 </div>
-

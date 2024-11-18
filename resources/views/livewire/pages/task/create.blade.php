@@ -15,7 +15,7 @@
                         wire:model="assigned_users" multiselect>
                         @foreach ($teamMembers as $key => $member)
                             <x-wui-select.user-option
-                                src="{{ !empty($member['profile_photo_path']) ? asset($member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
+                                src="{{ !empty($member['profile_photo_path']) ? asset('storage/' . $member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
                                 label="{{ $member['name'] }}" value="{{ $member['id'] }}"
                                 wire:key="{{ 'filter-option-' . $key }}" />
                         @endforeach
@@ -53,7 +53,7 @@
                                 placeholder="Should checked by" wire:model="check_by_user_id">
                                 @foreach ($teamMembers as $key => $member)
                                     <x-wui-select.user-option
-                                        src="{{ !empty($member['profile_photo_path']) ? asset($member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
+                                        src="{{ !empty($member['profile_photo_path']) ? asset('storage/' . $member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
                                         label="{{ $member['name'] }}" value="{{ $member['id'] }}"
                                         wire:key="{{ 'filter-option-' . $key }}" />
                                 @endforeach
@@ -91,7 +91,7 @@
                                     placeholder="Should confirmed by" wire:model="confirm_by_user_id">
                                     @foreach ($teamMembers as $key => $member)
                                         <x-wui-select.user-option
-                                            src="{{ !empty($member['profile_photo_path']) ? asset($member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
+                                            src="{{ !empty($member['profile_photo_path']) ? asset('storage/' . $member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
                                             label="{{ $member['name'] }}" value="{{ $member['id'] }}"
                                             wire:key="{{ 'filter-option-' . $key }}" />
                                     @endforeach
@@ -120,7 +120,7 @@
                                     placeholder="Who should follow up ?" wire:model="follow_up_user_id">
                                     @foreach ($teamMembers as $key => $member)
                                         <x-wui-select.user-option
-                                            src="{{ !empty($member['profile_photo_path']) ? asset($member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
+                                            src="{{ !empty($member['profile_photo_path']) ? asset('storage/' . $member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
                                             label="{{ $member['name'] }}" value="{{ $member['id'] }}"
                                             wire:key="{{ 'filter-option-' . $key }}" />
                                     @endforeach

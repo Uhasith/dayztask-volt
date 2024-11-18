@@ -66,7 +66,7 @@ new class extends Component {
             <x-wui-select.option label="All Users" value="All" />
             @foreach ($teamMembers as $key => $member)
                 <x-wui-select.user-option
-                    src="{{ !empty($member['profile_photo_path']) ? asset($member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
+                    src="{{ !empty($member['profile_photo_path']) ? asset('storage/' . $member['profile_photo_path']) : asset('assets/images/no-user-image.png') }}"
                     label="{{ $member['name'] }}" value="{{ $member['id'] }}" wire:key="{{ 'user-option-' . $key }}" />
             @endforeach
         </x-wui-select>
