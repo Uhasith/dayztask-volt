@@ -72,11 +72,12 @@
             </div>
         </div>
         <div class="flex items-center justify-between py-1">
-            <p class="text-xs font-semibold">Deadline : {{ $task['deadline'] ?$task['deadline']->format('Y-m-d') : 'No Deadline' }}</p>
+            <p class="text-xs font-semibold">Deadline :
+                {{ $task['deadline'] ? $task['deadline']->format('Y-m-d') : 'No Deadline' }}</p>
             <div class="flex gap-2 items-center">
                 @foreach ($task['users'] as $user)
                     <x-wui-avatar 2xs
-                        src="{{ !empty($user['profile_photo_path']) ? asset($user['profile_photo_path']) : asset('assets/images/no-user-image.png') }}" />
+                        src="{{ !empty($user['profile_photo_path']) ? asset('storage/' . $user['profile_photo_path']) : asset('assets/images/no-user-image.png') }}" />
                 @endforeach
             </div>
             <div class="px-1">
@@ -101,7 +102,7 @@
                         wire:key="userTimer-{{ $task['uuid'] }}-{{ $user['uuid'] }}">
                         <div class="flex items-center gap-2">
                             <x-wui-avatar 2xs
-                                src="{{ !empty($user['profile_photo_path']) ? asset($user['profile_photo_path']) : asset('assets/images/no-user-image.png') }}" />
+                                src="{{ !empty($user['profile_photo_path']) ? asset('storage/' . $user['profile_photo_path']) : asset('assets/images/no-user-image.png') }}" />
                             <p class="text-xs font-semibold leading-none text-gray-900 dark:text-white">
                                 {{ $user['name'] }}
                             </p>
