@@ -38,4 +38,7 @@ Route::middleware([
 
     // User's Current Workspace Changing route when user's team is changed
     Route::get('/update-user-team-workspace/{uuid}', [TaskController::class, 'updateUserTeamAndWorkspace'])->name('update.user.team.workspace');
+
+    // Chat Room
+    Volt::route('messenger', 'pages.chat.messenger')->name('messenger');
 });
