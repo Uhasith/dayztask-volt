@@ -8,19 +8,25 @@ use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Log;
 
 new class extends Component {
-    public $message = '', $messages, $chat_tab_users;
+    public $message = '', $messages, $chat_tab_users, $unread_counts = [];
     public User $user;
     public $friend_id;
     
     function mount() : void {
+        $this->messages = collect();
         $this->user = auth()->user();
         $this->chat_tab_users = ChatMessage::where('sender_id', $this->user->id)->orWhere('receiver_id', $this->user->id)->get()->map(function($chat){
             return $chat->sender_id == $this->user->id ? $chat->receiver : $chat->sender;
         })->reject(function($chat_tab_user){
-            return $chat_tab_user->id == $this->user->id;
-        })->unique();
+            return $chat_tab_user->id == $this->user->id && $chat_tab_user->belongsToTeam($this->user->currentTeam);
+        })->unique()->each(function($user){
+            $unread_count = ChatMessage::where('receiver_id', $this->user->id)->where('sender_id', $user->id)->where('seen', 0)->count();
+            $this->unread_counts[$user->id] = $unread_count ?? 0;
+        });
 
-        $this->loadChat($this->chat_tab_users->first()->id);
+        if(!$this->chat_tab_users->isEmpty()){
+            $this->loadChat($this->chat_tab_users->first()->id);
+        }
     }
 
     public function getListeners()
@@ -46,7 +52,15 @@ new class extends Component {
     }
 
     function chatReceived(ChatMessage $message) : void {
-        $this->messages->push($message);
+        if(empty($this->friend_id)){ //if no chatbox is selected, auto jump to the incoming chat - this is happening only when fresh chats are being receive
+            $this->loadChat($message->sender_id);
+        }elseif(!$this->messages->where('sender_id', $message->sender_id)->isEmpty()){ //push only if the current chat box is with the sender
+            $this->messages->push($message);
+        }else{
+            $this->dispatch('play-notification-sound', sound: asset('assets/sounds/notification.mp3'));
+        }
+        $this->unread_counts[$message->sender_id] = $this->unread_counts[$message->sender_id] + 1;
+        // $this->chat_tab_users->where('id', $message->sender_id)->first()->unread = $this->chat_tab_users->where('id', $message->sender_id)->first()->unread + 1;
     }
 
     function loadChat($user_id) : void {
@@ -58,11 +72,23 @@ new class extends Component {
             $query->where('sender_id', $friend_id)
                 ->where('receiver_id', auth()->id());
         })->with(['sender', 'receiver'])->orderBy('id', 'asc')->get();
+
+        if($this->chat_tab_users->where('id', $user_id)->isEmpty()){
+            $this->chat_tab_users->push(User::find($user_id));
+        }
+    }
+
+    function messageMarkSeen(ChatMessage $message) : void {
+        if($this->user->id !== $message->sender_id && !$message->seen){
+            $message->seen = 1;
+            $message->save();
+            $this->unread_counts[$message->sender_id] = $this->unread_counts[$message->sender_id] - 1;
+        }
     }
 }; ?>
-<div>
-    <div class="flex h-full antialiased text-gray-800" x-data="setHeight()" x-init="adjustHeight" x-resize="adjustHeight">
-        <div class="flex flex-row h-full w-full overflow-x-hidden" x-ref="content">
+<div class="overflow-y-hidden max-h-screen">
+    <div class="flex antialiased text-gray-800">
+        <div class="flex flex-row w-full overflow-x-hidden">
             <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
                 <div class="flex flex-row items-center justify-center h-12 w-full">
                     <div class="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10">
@@ -73,7 +99,7 @@ new class extends Component {
                             </path>
                         </svg>
                     </div>
-                    <div class="ml-2 font-bold text-2xl">Dayz Chat</div>
+                    <div class="ml-2 font-bold text-2xl">Dayz Messenger</div>
                 </div>
                 <div
                     class="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">
@@ -113,40 +139,64 @@ new class extends Component {
                         <span class="font-bold">Active Conversations</span>
                         <span class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{{count($chat_tab_users)}}</span>
                     </div>
+                    <div class="mt-4">
+                        <x-wui-select
+                            placeholder="Select some user"
+                            :async-data="route('messenger.search-member')"
+                            option-label="name"
+                            option-value="id"
+                            x-on:selected="$wire.loadChat($event.detail.value)"
+                        />
+                    </div>
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
                         @foreach ($chat_tab_users as $chat_tab_user)
-                            <button wire:click="loadChat({{$chat_tab_user->id}})" class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
+                            <button wire:click="loadChat({{$chat_tab_user->id}})" class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 border {{$friend_id == $chat_tab_user->id ? 'border-green-300' : ''}}" wire:key="chatroom-{{$chat_tab_user->id}}">
                                 <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
                                     <img class="h-8 w-8 rounded-full object-cover"
                                         src="{{ $chat_tab_user->profile_photo_url }}" alt="{{ $chat_tab_user->name }}" />
                                 </div>
                                 <div class="ml-2 text-sm font-semibold">{{$chat_tab_user->name}}</div>
+                                @if ($unread_counts[$chat_tab_user->id] > 0)
+                                    <span class="inline-flex items-center justify-center w-6 h-6 ms-5 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
+                                        {{$unread_counts[$chat_tab_user->id]}}
+                                    </span>
+                                @endif
                             </button>
                         @endforeach
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col flex-auto h-full p-6">
-                <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-                    <div class="flex flex-col h-full overflow-x-auto mb-4" x-data="{ scroll: () => { $el.scrollTo(0, $el.scrollHeight); }}" x-init="scroll()">
-                        <div class="flex flex-col h-full">
-                            <div class="grid grid-cols-12 gap-y-2">
+            <div class="flex flex-col flex-auto p-6">
+                <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 p-4">
+                    @persist('scrollbar')
+
+                    <div class="flex flex-col overflow-x-auto mb-4" > <!--x-data="{ scroll: () => { $el.scrollTo(0, $el.scrollHeight); }}" x-init="scroll()"-->
+                        <div class="flex flex-col" x-data="setHeight()" x-init="adjustHeight" x-resize="adjustHeight">
+                            <div class="grid grid-cols-12" x-ref="content">
                                 @foreach ($messages as $message)
                                 @if ($message->sender_id == $user->id)
-                                <div class="col-start-6 col-end-13 p-3 rounded-lg">
+                                <div class="col-start-6 col-end-13 px-3 py-1 rounded-lg" wire:key="message-box-{{$message->id}}">
                                     <div class="flex items-center justify-start flex-row-reverse">
                                         <img class="h-10 w-10 rounded-full object-cover" src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" />
-                                        <div class="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
+                                        <div class="relative mr-3 text-sm bg-indigo-100 py-1 px-4 shadow rounded-xl" data-tooltip-target="message-time-{{$message->id}}">
                                             <div>{{$message->text}}</div>
+                                        </div>
+                                        <div id="message-time-{{$message->id}}" role="tooltip" class="absolute z-10 text-xs invisible inline-block px-3 py-1 font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                            {{$message->created_at}}
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
                                         </div>
                                     </div>
                                 </div>
                                 @else
-                                <div class="col-start-1 col-end-8 p-3 rounded-lg">
+                                <div class="col-start-1 col-end-8 px-3 py-1 rounded-lg" x-intersect.full.once="$wire.messageMarkSeen({{$message}})" wire:key="message-box-{{$message->id}}">
                                     <div class="flex flex-row items-center">
                                         <img class="h-10 w-10 rounded-full object-cover" src="{{ $message->sender->profile_photo_url }}" alt="{{ $message->sender->name }}" />
-                                        <div class="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
+                                        <div class="relative ml-3 text-sm bg-white py-1 px-4 shadow rounded-xl" data-tooltip-target="message-time-{{$message->id}}">
                                             <div>{{$message->text}}</div>
+                                        </div>
+                                        <div id="message-time-{{$message->id}}" role="tooltip" class="absolute z-10 text-xs invisible inline-block px-3 py-1 font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                            {{$message->created_at}}
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
                                         </div>
                                     </div>
                                 </div>
@@ -195,6 +245,8 @@ new class extends Component {
                             </button>
                         </div>
                     </div>
+                    @endpersist
+
                 </div>
             </div>
         </div>
@@ -204,7 +256,7 @@ new class extends Component {
             return {
                 adjustHeight() {
                     const content = this.$refs.content;
-                    content.style.height = `${window.innerHeight - 70}px`;
+                    content.style.height = `${window.innerHeight - 200}px`;
                 }
             };
         }

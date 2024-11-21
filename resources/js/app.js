@@ -10,3 +10,10 @@ window.TomSelect = TomSelect;
 document.addEventListener("livewire:navigated", () => {
     initFlowbite();
 });
+
+document.addEventListener('livewire:init', () => {
+    console.log('livewire init')
+    Livewire.on('play-notification-sound', (event) => {
+        new Audio(event.sound).play();
+    });
+ });

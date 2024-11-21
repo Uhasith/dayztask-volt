@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MessengerController;
 use App\Http\Controllers\TaskController;
 use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
 use App\Livewire\Pages\Project\Index as ProjectIndex;
@@ -41,4 +42,5 @@ Route::middleware([
 
     // Chat Room
     Volt::route('messenger', 'pages.chat.messenger')->name('messenger');
+    Route::get('/messenger/search-member', [MessengerController::class, 'search_member'])->name('messenger.search-member');
 });
