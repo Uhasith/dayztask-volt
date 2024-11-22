@@ -52,6 +52,105 @@ class TaskService extends Component
         }
     }
 
+    public function approveTask($taskUuid)
+    {
+        DB::beginTransaction();
+
+        try {
+            $task = Task::where('uuid', $taskUuid)->first();
+
+            if (! $task) {
+                app(NotificationService::class)->sendExeptionNotification();
+
+                return;
+            }
+
+            if (Auth::user()->id == $task->check_by_user_id && $task->is_checked == false) {
+                $task->update(['is_checked' => true]);
+            }
+
+            if (Auth::user()->id == $task->confirm_by_user_id && $task->is_confirmed == false) {
+                $task->update(['is_confirmed' => true]);
+            }
+            $assignedUsers = $task->users;
+            foreach ($assignedUsers as $user) {
+                if ($user->id !== Auth::id()) {
+                    $title = 'Task Approved';
+                    $body = 'Submitted  ' . $task->name . ' task is approved by ' . Auth::user()->name . '.';
+
+                    app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
+
+                    $mailData = [
+                        'email' => $user->email,
+                        'email_subject' => 'Task Approved',
+                        'email_body' => 'Submitted  ' . $task->name . ' task is approved by ' . Auth::user()->name . '.',
+                        'task' => $task,
+                        'user' => $user,
+                        'caused_by' => Auth::user(),
+                    ];
+
+                    Mail::to($user->email)->queue(new NotificationMail($mailData));
+                }
+            }
+
+            $updatedTask = $task->fresh();
+            DB::commit();
+
+            return $updatedTask;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            app(NotificationService::class)->sendExeptionNotification();
+            throw $e;
+        }
+    }
+
+    public function rejectTask($taskUuid, $rejectionReason)
+    {
+        DB::beginTransaction();
+
+        try {
+            $task = Task::where('uuid', $taskUuid)->first();
+
+            if (! $task) {
+                app(NotificationService::class)->sendExeptionNotification();
+
+                return;
+            }
+
+            $task->update(['is_checked' => false, 'is_confirmed' => false, 'status' => 'todo']);
+
+            $assignedUsers = $task->users;
+            foreach ($assignedUsers as $user) {
+                if ($user->id !== Auth::id()) {
+                    $title = 'Task Rejected';
+                    $body = '' . $task->name . ' task is rejected by ' . Auth::user()->name . '.' . '<br>' . 'Reason: ' . '<strong>' . $rejectionReason . '</strong>';
+
+                    app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
+
+                    $mailData = [
+                        'email' => $user->email,
+                        'email_subject' => 'Task Approved',
+                        'email_body' => '' . $task->name . ' task is rejected by ' . Auth::user()->name . '.' . '<br>' . 'Reason: ' . '<strong>' . $rejectionReason . '</strong>',
+                        'task' => $task,
+                        'user' => $user,
+                        'caused_by' => Auth::user(),
+                    ];
+
+                    Mail::to($user->email)->queue(new NotificationMail($mailData));
+                }
+            }
+
+            $updatedTask = $task->fresh();
+            DB::commit();
+
+            return $updatedTask;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            app(NotificationService::class)->sendExeptionNotification();
+            throw $e;
+        }
+    }
+
     public function revertToTodo($taskId)
     {
         DB::beginTransaction();
@@ -131,14 +230,14 @@ class TaskService extends Component
             foreach ($assignedUsers as $user) {
                 if ($user->id !== Auth::id()) {
                     $title = 'Task Assigned';
-                    $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+                    $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
 
                     app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
 
                     $mailData = [
                         'email' => $user->email,
                         'email_subject' => 'New Task.',
-                        'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                        'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                         'task' => $task,
                         'user' => $user,
                         'caused_by' => Auth::user(),
@@ -247,14 +346,14 @@ class TaskService extends Component
                     $user = User::find($userId);
                     if ($user && $user->id !== Auth::id()) {
                         $title = 'Task Assigned';
-                        $body = 'You were Assigned to task '.$task->name.' by '.Auth::user()->name.'.';
+                        $body = 'You were Assigned to task ' . $task->name . ' by ' . Auth::user()->name . '.';
 
                         app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
 
                         $mailData = [
                             'email' => $user->email,
                             'email_subject' => 'New Task.',
-                            'email_body' => 'We are excited to inform you that '.Auth::user()->name.' has just assigned you the task '.$task->name.'. Your expertise and skills are valued, and we trust you will excel in this assignment.',
+                            'email_body' => 'We are excited to inform you that ' . Auth::user()->name . ' has just assigned you the task ' . $task->name . '. Your expertise and skills are valued, and we trust you will excel in this assignment.',
                             'task' => $task,
                             'user' => $user,
                             'caused_by' => Auth::user(),
@@ -305,16 +404,17 @@ class TaskService extends Component
             }
 
             if ($task->check_by_user_id && $task->status == 'done' && $roleName != 'owner') {
-                $task->is_checked = true;
                 $task->is_mark_as_done = true;
                 $task->save();
 
                 $title = 'Please check your checklist';
-                $body = 'Fantastic news! '.$user->name.' has successfully completed '.$task->name.'. Please review it on your checklist to appreciate the achievement.';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . ' task. Please review it on your checklist.';
                 $checkByUser = User::find($task->check_by_user_id);
 
                 if ($checkByUser) {
-                    app(NotificationService::class)->sendUserTaskDBNotification($checkByUser, $title, $body, $task->id);
+                    $route = route('checklist.index');
+                    $buttonText = 'View Checklist';
+                    app(NotificationService::class)->sendDBNotificationWithAction($checkByUser, $title, $body, $route, $buttonText, $task->id);
 
                     $mailData = [
                         'email' => $task->checkByUser->email,
@@ -334,11 +434,13 @@ class TaskService extends Component
                 $task->save();
 
                 $title = 'Please check your checklist';
-                $body = 'Fantastic news! '.$user->name.' has successfully completed '.$task->name.'. Please review it on your checklist to appreciate the achievement.';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . ' task. Please review it on your checklist.';
                 $checkByUser = User::find($task->check_by_user_id);
 
                 if ($checkByUser && Auth::user()->id != $task->check_by_user_id) {
-                    app(NotificationService::class)->sendUserTaskDBNotification($checkByUser, $title, $body, $task->id);
+                    $route = route('checklist.index');
+                    $buttonText = 'View Checklist';
+                    app(NotificationService::class)->sendDBNotificationWithAction($checkByUser, $title, $body, $route, $buttonText, $task->id);
 
                     $mailData = [
                         'email' => $task->checkByUser->email,
@@ -358,7 +460,7 @@ class TaskService extends Component
                 $taskOrder = $lastTask ? $lastTask->page_order + 1 : 0;
 
                 $followUpTask = Task::create([
-                    'name' => $task->follow_up_message ? $task->follow_up_message : $task->name.' Follow Up',
+                    'name' => $task->follow_up_message ? $task->follow_up_message : $task->name . ' Follow Up',
                     'user_id' => $user->id,
                     'parent_task_id' => $task->id,
                     'order' => $taskOrder,
@@ -370,7 +472,7 @@ class TaskService extends Component
                 $followUpTask->users()->attach($task->follow_up_user_id);
 
                 $title = 'New Follow Up Task';
-                $body = 'Fantastic news! '.$user->name.' has successfully completed '.$task->name.'. You are assigned to a Follow Up Task named '.$followUpTask->name.'. Please review it on your task list.';
+                $body = 'Fantastic news! ' . $user->name . ' has successfully completed ' . $task->name . '. You are assigned to a Follow Up Task named ' . $followUpTask->name . '. Please review it on your task list.';
                 $followUpUser = User::find($task->follow_up_user_id);
 
                 if ($followUpUser) {

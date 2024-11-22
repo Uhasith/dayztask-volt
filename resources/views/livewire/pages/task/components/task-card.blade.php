@@ -1,4 +1,4 @@
-<div>
+<div x-init="initFlowbite();">
     <x-wui-card rounded="3xl" class="cursor-pointer" wire:poll.10s="fetchData">
         <div class="flex items-center justify-between">
             <div class="max-w-[80%]">

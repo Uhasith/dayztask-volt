@@ -53,11 +53,8 @@
                     link="{{ route('projects.index') }}" />
                 @if (auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
                     <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}" />
+                    <livewire:pages.checklist.components.checklist-sidebar-icon />
                 @endif
-                {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
-                    <x-mary-menu-item title="Wifi" icon="o-wifi" link="####" />
-                    <x-mary-menu-item title="Archives" icon="o-archive-box" link="####" />
-                </x-mary-menu-sub> --}}
             </x-mary-menu>
         </x-slot:sidebar>
 
@@ -65,8 +62,6 @@
             {{ $slot }}
         </x-slot:content>
     </x-mary-main>
-
-    {{-- <x-mary-spotlight search-text="Find Projects, Assigned tasks or Users" no-results-text="Ops! Nothing here." /> --}}
 
     <x-wui-dialog />
 
