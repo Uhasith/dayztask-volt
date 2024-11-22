@@ -417,15 +417,15 @@ class TaskService extends Component
                     app(NotificationService::class)->sendDBNotificationWithAction($checkByUser, $title, $body, $route, $buttonText, $task->id);
 
                     $mailData = [
-                        'email' => $task->checkByUser->email,
+                        'email' => $checkByUser->email,
                         'email_subject' => $title,
                         'email_body' => $body,
                         'task' => $task,
-                        'user' => $task->checkByUser,
+                        'user' => $checkByUser,
                         'caused_by' => $user,
                     ];
 
-                    Mail::to($user->email)->queue(new NotificationMail($mailData));
+                    Mail::to($checkByUser->email)->queue(new NotificationMail($mailData));
                 }
             } elseif ($task->check_by_user_id && $task->status == 'done' && $roleName == 'owner') {
                 $task->is_checked = true;
@@ -443,15 +443,15 @@ class TaskService extends Component
                     app(NotificationService::class)->sendDBNotificationWithAction($checkByUser, $title, $body, $route, $buttonText, $task->id);
 
                     $mailData = [
-                        'email' => $task->checkByUser->email,
+                        'email' => $checkByUser->email,
                         'email_subject' => $title,
                         'email_body' => $body,
                         'task' => $task,
-                        'user' => $task->checkByUser,
+                        'user' => $checkByUser,
                         'caused_by' => $user,
                     ];
 
-                    Mail::to($user->email)->queue(new NotificationMail($mailData));
+                    Mail::to($checkByUser->email)->queue(new NotificationMail($mailData));
                 }
             }
 
@@ -479,14 +479,14 @@ class TaskService extends Component
                     app(NotificationService::class)->sendUserTaskDBNotification($followUpUser, $title, $body, $followUpTask->id);
 
                     $mailData = [
-                        'email' => $task->followUpUser->email,
+                        'email' => $followUpUser->email,
                         'email_subject' => $title,
                         'email_body' => $body,
                         'task' => $task,
-                        'user' => $task->followUpUser,
+                        'user' => $followUpUser,
                     ];
 
-                    Mail::to($user->email)->queue(new NotificationMail($mailData));
+                    Mail::to($followUpUser->email)->queue(new NotificationMail($mailData));
                 }
             }
 
