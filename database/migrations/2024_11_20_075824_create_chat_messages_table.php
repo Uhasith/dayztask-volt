@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('group_id')->nullable();
             $table->text('text');
             $table->json('attachments')->nullable();
-            $table->boolean('seen')->default(0);
+            $table->dateTime('seen_at')->default(null)->nullable();
             $table->timestamps();
         });
     }
