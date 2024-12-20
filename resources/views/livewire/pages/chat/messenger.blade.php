@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 new class extends Component {
     public $message = '', $messages, $chat_tab_users, $unread_counts = [];
     public User $user;
+public $user_id;
     public $friend_id;
     
     function mount() : void {
@@ -27,6 +28,8 @@ new class extends Component {
         if(!$this->chat_tab_users->isEmpty()){
             $this->loadChat($this->chat_tab_users->first()->id);
         }
+
+        $this->user_id = $this->user->id;
     }
 
     public function getListeners()
@@ -89,7 +92,25 @@ new class extends Component {
         }
     }
 }; ?>
-<div class="h-full">
+<div class="h-full" x-data="{ height: 0, messagesEle: document.getElementById('messages'), user_id: $wire.entangle('user_id').live, friend_id: $wire.entangle('friend_id').live, adjustHeight() {
+    const content = this.$refs.content;
+    content.style.height = `${window.innerHeight - 175}px`;
+    content.scrollTop = content.scrollHeight;
+},
+isTyping: false
+}" x-init="
+adjustHeight();
+
+height = messagesEle.scrollHeight;
+$nextTick(() => messagesEle.scrollTop = height);
+chatChannel = Echo.private(`chat.${user_id}`);
+chatChannel.listenForWhisper('typing', (e) => {
+    if(e.id == friend_id){
+        isTyping = true;
+        setTimeout( () => { isTyping = false }, 5000)
+    }
+});
+">
     <div class="flex h-full antialiased text-gray-800">
         <div class="flex flex-row w-full m-4 gap-4 overflow-x-hidden">
             <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
@@ -168,25 +189,15 @@ new class extends Component {
                     </div>
                 </div>
             </div>
-            
+
             <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 p-4 relative"
-                x-data="{ height: 0, messagesEle: document.getElementById('messages'), adjustHeight() {
-                    const content = this.$refs.content;
-                    content.style.height = `${window.innerHeight - 175}px`;
-                    content.scrollTop = content.scrollHeight
-                    console.log(content.scrollHeight)
+                x-resize="adjustHeight" @message-sent.window="$nextTick(() => messagesEle.scrollTop = height)">
 
-        }}" x-init="
-                adjustHeight();
-                height = messagesEle.scrollHeight;
-                console.log(messagesEle)
-                $nextTick(() => messagesEle.scrollTop = height)
-            " x-resize="adjustHeight" @message-sent.window="$nextTick(() => messagesEle.scrollTop = height)" >
-
-                <div class=" grid grid-cols-12 overflow-y-scroll pb-10" id="messages" x-ref="content" >
+                <div class=" grid grid-cols-12 overflow-y-scroll pb-10" id="messages" x-ref="content">
                     @foreach ($messages as $message)
                     @if ($message->sender_id == $user->id)
-                    <div class="col-start-6 col-end-13 px-3 py-1 rounded-lg relative" wire:key="message-box-{{$message->id}}">
+                    <div class="col-start-6 col-end-13 px-3 py-1 rounded-lg relative"
+                        wire:key="message-box-{{$message->id}}">
                         <div class="flex items-center justify-start flex-row-reverse">
                             <img class="h-10 w-10 rounded-full object-cover" src="{{ $user->profile_photo_url }}"
                                 alt="{{ $user->name }}" />
@@ -225,8 +236,14 @@ new class extends Component {
                     </div>
                     @endif
                     @endforeach
+                    
                 </div>
-                <form wire:submit="sendMessage" class="absolute bottom-3 left-3 right-3 flex flex-row items-center h-16 rounded-xl bg-white w-auto px-4">
+                <div x-show="isTyping" class="absolute bottom-20 left-4 right-3">
+                    <span >typing....</span>
+                </div>
+                <form wire:submit="sendMessage"
+                    class="absolute bottom-3 left-3 right-3 flex flex-row items-center h-16 rounded-xl bg-white w-auto px-4">
+                    
                     <div>
                         <button class="flex items-center justify-center text-gray-400 hover:text-gray-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -239,8 +256,7 @@ new class extends Component {
                     </div>
                     <div class="flex-grow ml-4">
                         <div class="relative w-full">
-                            <input type="text" wire:model="message"
-                                class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10" />
+                            <input type="text" x-on:keydown="Echo.private(`chat.${friend_id}`).whisper('typing', { id: user_id })" wire:model="message" class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10" />
                             <button
                                 class="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -291,7 +307,7 @@ new class extends Component {
                 </div>
                 <h4 class="mt-3">+ New team chat</h4>
             </div>
-    
+
             <!-- Group Members -->
             <div class="bg-[#FBFBFB] w-[33%] flex flex-col justify-between items-center mt-[20px] p-5 rounded-t-[20px]">
                 <h2 class="font-montserrat font-semibold text-[16px] text-[#050914] mb-3">Group Members</h2>
@@ -304,10 +320,12 @@ new class extends Component {
                 </div>
                 <h4 class="mt-3">+ New Group chat</h4>
             </div>
-    
+
             <!-- Projects -->
             <div class="bg-[#FBFBFB] w-[33%] flex flex-col justify-center mt-[20px] p-5 rounded-t-[20px]">
-                <h2 class="font-montserrat font-semibold text-[16px] text-[#050914] mb-3 flex justify-center w-full self-start">Projects</h2>
+                <h2
+                    class="font-montserrat font-semibold text-[16px] text-[#050914] mb-3 flex justify-center w-full self-start">
+                    Projects</h2>
                 <div class="flex gap-4 justify-center self-center">
                     <img class="w-11 h-11 rounded-full" src="/assets/images/logo_circle.png" alt="Project Logo">
                     <img class="w-11 h-11 rounded-full" src="/assets/images/logo_circle.png" alt="Project Logo">
@@ -315,12 +333,13 @@ new class extends Component {
                 </div>
             </div>
         </div>
-    
+
         <div class="px-[30px]">
             <div class="bg-[#E7E7E7] px-[64px] py-[16px] flex justify-between">
                 <div class="flex gap-5">
                     <img class="w-12 h-12 rounded-full" src="/assets/images/logo_circle.png" alt="Profile">
-                    <h3 class="font-montserrat font-semibold text-[18px] text-center flex items-center text-[#050914]">Hannah Baker</h3>
+                    <h3 class="font-montserrat font-semibold text-[18px] text-center flex items-center text-[#050914]">
+                        Hannah Baker</h3>
                 </div>
                 <div class="w-[50%]">
                     <input type="text" placeholder="Search" class="w-full rounded-lg border-gray-300 p-2">
@@ -328,15 +347,21 @@ new class extends Component {
                 <div class="flex gap-5">
                     <button>
                         <svg width="30" height="30" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M24.224 1.58362H9.77565C4.74065 1.58362 1.58398 5.14862 1.58398 10.1936V23.807C1.58398 28.852 4.72565 32.417 9.77565 32.417H24.2223C29.274 32.417 32.4173 28.852 32.4173 23.807V10.1936C32.4173 5.14862 29.274 1.58362 24.224 1.58362Z" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M16.9912 23.6668V17.0001" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M16.9844 10.6739H17.001" stroke="#050914" stroke-width="3.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M24.224 1.58362H9.77565C4.74065 1.58362 1.58398 5.14862 1.58398 10.1936V23.807C1.58398 28.852 4.72565 32.417 9.77565 32.417H24.2223C29.274 32.417 32.4173 28.852 32.4173 23.807V10.1936C32.4173 5.14862 29.274 1.58362 24.224 1.58362Z"
+                                stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16.9912 23.6668V17.0001" stroke="#050914" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16.9844 10.6739H17.001" stroke="#050914" stroke-width="3.33333"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                     <button>
                         <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.216 27.6549H6.71484" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M21.9004 11.5007H32.4016" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17.216 27.6549H6.71484" stroke="#050914" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M21.9004 11.5007H32.4016" stroke="#050914" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                 </div>
@@ -347,24 +372,49 @@ new class extends Component {
         <div class="px-[30px]">
             <div class="bg-[#E7E7E7] px-[64px] py-[16px] flex justify-between">
                 <div class="flex gap-5">
-                    <n-avatar round :size="50" src="/assets/images/logo_circle.png"/>
-                    <h3 class="montserrat font-semibold text-[18px] text-center flex items-center text-[#050914]">Hannah Baker</h3>
+                    <n-avatar round :size="50" src="/assets/images/logo_circle.png" />
+                    <h3 class="montserrat font-semibold text-[18px] text-center flex items-center text-[#050914]">Hannah
+                        Baker</h3>
                 </div>
                 <div class="w-[50%]">
                     <!-- Search input -->
                     <n-input round placeholder="Search" size="large">
                         <template #suffix>
-                            <button class="flex items-center"><n-icon size="20"><search-icon /></n-icon></button>
+                            <button class="flex items-center">
+                                <n-icon size="20">
+                                    <search-icon />
+                                </n-icon>
+                            </button>
                         </template>
                     </n-input>
                     <!-- Search input -->
                 </div>
                 <div class="flex gap-5">
                     <button>
-                        <svg width="30" height="30" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M24.224 1.58362H9.77565C4.74065 1.58362 1.58398 5.14862 1.58398 10.1936V23.807C1.58398 28.852 4.72565 32.417 9.77565 32.417H24.2223C29.274 32.417 32.4173 28.852 32.4173 23.807V10.1936C32.4173 5.14862 29.274 1.58362 24.224 1.58362Z" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.9912 23.6668V17.0001" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.9844 10.6739H17.001" stroke="#050914" stroke-width="3.33333" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg width="30" height="30" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M24.224 1.58362H9.77565C4.74065 1.58362 1.58398 5.14862 1.58398 10.1936V23.807C1.58398 28.852 4.72565 32.417 9.77565 32.417H24.2223C29.274 32.417 32.4173 28.852 32.4173 23.807V10.1936C32.4173 5.14862 29.274 1.58362 24.224 1.58362Z"
+                                stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16.9912 23.6668V17.0001" stroke="#050914" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16.9844 10.6739H17.001" stroke="#050914" stroke-width="3.33333"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
                     </button>
 
-                    <button><svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.216 27.6549H6.71484" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.9004 11.5007H32.4016" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M14.5432 11.4104C14.5432 9.251 12.7796 7.5 10.6046 7.5C8.42962 7.5 6.66602 9.251 6.66602 11.4104C6.66602 13.5698 8.42962 15.3208 10.6046 15.3208C12.7796 15.3208 14.5432 13.5698 14.5432 11.4104Z" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M33.3322 27.5896C33.3322 25.4302 31.57 23.6792 29.395 23.6792C27.2187 23.6792 25.4551 25.4302 25.4551 27.5896C25.4551 29.749 27.2187 31.5 29.395 31.5C31.57 31.5 33.3322 29.749 33.3322 27.5896Z" stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <button><svg width="30" height="30" viewBox="0 0 40 40" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.216 27.6549H6.71484" stroke="#050914" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M21.9004 11.5007H32.4016" stroke="#050914" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M14.5432 11.4104C14.5432 9.251 12.7796 7.5 10.6046 7.5C8.42962 7.5 6.66602 9.251 6.66602 11.4104C6.66602 13.5698 8.42962 15.3208 10.6046 15.3208C12.7796 15.3208 14.5432 13.5698 14.5432 11.4104Z"
+                                stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M33.3322 27.5896C33.3322 25.4302 31.57 23.6792 29.395 23.6792C27.2187 23.6792 25.4551 25.4302 25.4551 27.5896C25.4551 29.749 27.2187 31.5 29.395 31.5C31.57 31.5 33.3322 29.749 33.3322 27.5896Z"
+                                stroke="#050914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></button>
                 </div>
             </div>
 
@@ -463,7 +513,10 @@ new class extends Component {
                                 </div>
                                 <div>
                                     <div class="online-indicator">
-                                        <svg fill="#2eb82e" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"/></svg>
+                                        <svg fill="#2eb82e" width="12" height="12" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 512 512">
+                                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
+                                        </svg>
                                     </div>
                                     <!-- <div class="offline-indicator">
                                         <svg fill="#ff0000" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"/></svg>
@@ -478,9 +531,11 @@ new class extends Component {
                 </div>
 
                 <div class="w-[60%]">
-                    <div class="bg-[#F1F1F1] w-full h-full px-16 py-8 flex-col justify-end items-center gap-2.5 inline-flex rounded-bl-[20px] rounded-br-[20px] max-h-[400px]">
+                    <div
+                        class="bg-[#F1F1F1] w-full h-full px-16 py-8 flex-col justify-end items-center gap-2.5 inline-flex rounded-bl-[20px] rounded-br-[20px] max-h-[400px]">
                         <div class="overflow-y-auto overflow-x-hidden flex flex-col items-center w-full">
-                            <div class="text-gray-400 text-sm font-medium montserrat break-words">12:00 am Sep 12, 2023</div>
+                            <div class="text-gray-400 text-sm font-medium montserrat break-words">12:00 am Sep 12, 2023
+                            </div>
                             <div class="self-stretch h-13 flex-col justify-center items-end gap-2.5 flex">
                                 <div
                                     class="px-[18px] py-[12px] bg-blue-600 rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[24px] overflow-hidden justify-center items-end gap-2.5 inline-flex">
@@ -511,10 +566,14 @@ new class extends Component {
                             </div>
                         </div>
                         <div class="w-full px-[18px] py-[12px] justify-start items-start gap-4 flex">
-                            <n-input v-model:value="value" type="input" placeholder="Type a message" class="!rounded-[12px]" />
+                            <n-input v-model:value="value" type="input" placeholder="Type a message"
+                                class="!rounded-[12px]" />
                             <n-button strong secondary circle type="success">
                                 <template #icon>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                        <path
+                                            d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
+                                    </svg>
                                 </template>
                             </n-button>
                         </div>
@@ -524,27 +583,4 @@ new class extends Component {
 
         </div>
     </div> --}}
-    
-
-    <script>
-        // document.addEventListener('alpine:initialized', () => {
-//     console.log('isksks')
-//     var root = document.documentElement;
-//             root.className += ' !overflow-y-hidden';
-//         });
-        // const el = document.getElementById('messages')
-        // el.scrollTop = el.scrollHeight
-        // console.log(el.scrollTop)
-        // function setHeight() {
-        //     return {
-        //         adjustHeight() {
-        //             const content = this.$refs.content;
-        //             content.style.height = `${window.innerHeight - 200}px`;
-        //             content.scrollTop = content.scrollHeight
-        //             console.log(content.scrollHeight)
-
-        //         }
-        //     };
-        // }
-    </script>
 </div>

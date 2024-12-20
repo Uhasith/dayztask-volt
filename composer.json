@@ -27,6 +27,7 @@
         "power-components/livewire-powergrid": "^6.1",
         "robsontenorio/mary": "^1.30",
         "spatie/image-optimizer": "^1.7",
+        "spatie/laravel-activitylog": "^4.9",
         "wireui/wireui": "^2.0"
     },
     "require-dev": {

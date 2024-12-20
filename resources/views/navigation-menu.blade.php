@@ -13,6 +13,9 @@
                 <div>
                     @livewire('global.workspace')
                 </div>
+                <div>
+                    @livewire('global.check-status')
+                </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
