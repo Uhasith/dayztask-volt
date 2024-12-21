@@ -57,6 +57,7 @@ class Update extends Component
     public $needFollowUp = false;
 
     public $isBillable = false;
+    public $addingComment = false;
 
     public $check_by_user_id;
 
@@ -101,7 +102,7 @@ class Update extends Component
     public function mount($uuid)
     {
         try {
-            $task = Task::with('project')->where('uuid', $uuid)->first();
+            $task = Task::with('project', 'comments.user')->where('uuid', $uuid)->first();
             if (! $task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
@@ -186,6 +187,12 @@ class Update extends Component
 
             return $this->redirectRoute('projects.index');
         }
+    }
+
+    #[On('commentAdded')]
+    public function updateShowComment()
+    {
+        $this->addingComment = false;
     }
 
     #[On('remove-upload')]

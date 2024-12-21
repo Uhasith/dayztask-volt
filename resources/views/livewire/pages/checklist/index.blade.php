@@ -90,7 +90,7 @@ new class extends Component {
 
 <div class="w-full mx-auto p-5 lg:px-10 lg:py-5">
     @foreach ($checkList as $item)
-        <div class="flex w-full p-4 flex-col rounded-lg bg-white shadow-sm border border-slate-200 my-6 cursor-pointer">
+        <div class="flex w-full p-4 flex-col rounded-lg bg-white shadow-sm border border-slate-200 my-6 cursor-pointer" wire:key="{{ 'checklist-item-' . $item->uuid }}">
             <div class="flex items-center justify-between">
                 <div class="flex -space-x-4 rtl:space-x-reverse">
                     @foreach ($item->users as $user)

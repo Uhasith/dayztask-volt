@@ -15,7 +15,7 @@ new class extends Component {
     public $project_id = 'All';
     public $start_date;
     public $end_date;
-    public $type = 'Single';
+    public $type = 'Range';
 
     public function mount()
     {
@@ -27,7 +27,8 @@ new class extends Component {
             ->get()
             ->toArray();
         $this->user_id = (string) Auth::user()->id;
-        $this->start_date = Carbon::now()->format('Y-m-d');
+        $this->start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $this->end_date = Carbon::now()->format('Y-m-d');
     }
 
     public function resetDate()
@@ -79,8 +80,12 @@ new class extends Component {
             @endforeach
         </x-wui-select>
         @if ($type === 'Single')
-            <x-wui-button xs primary label="Range" class="mt-6"
-                x-on:click="$wire.set('type', 'Range'); $wire.set('end_date', null);" />
+        <x-wui-button xs primary label="Range" class="mt-6"
+    x-on:click="
+        $wire.set('type', 'Range'); 
+        $wire.set('start_date', '{{ now()->startOfMonth()->format('Y-m-d') }}'); 
+        $wire.set('end_date', '{{ now()->format('Y-m-d') }}');
+    " />
         @else
             <x-wui-button xs primary label="Single" class="mt-6" wire:click="resetDate" />
         @endif
