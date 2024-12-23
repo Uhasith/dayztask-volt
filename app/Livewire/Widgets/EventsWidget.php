@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -27,7 +28,7 @@ class EventsWidget extends CalendarWidget
 
     function getEvents(array $fetchInfo = []): Collection|array
     {
-        return Event::whereNull('user_id')->orWhereIn('user_id', auth()->user()->currentTeam->allUsers()->pluck('id'))->get()->map(function($event){
+        return Event::whereNull('user_id')->orWhereIn('user_id', auth()->user()->currentTeam->allUsers()->pluck('id'))->where('is_approved', 1)->get()->map(function($event){
             $event['title'] = $event['description'];
             return $event;
         });
@@ -75,6 +76,7 @@ class EventsWidget extends CalendarWidget
     {
         return match ($model) {
             Event::class => [
+                Hidden::make('user_id')->default(auth()->user()->id)->required(),
                 Textarea::make('description')->label('Reason')->rows(5),
                 Group::make([
                     Radio::make('is_full_day')->label(false)->options(
