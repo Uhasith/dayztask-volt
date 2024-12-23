@@ -1,4 +1,7 @@
 <div class="p-6 mx-auto max-w-screen-xl lg:py-8 lg:px-4">
+    <div>
+        @livewire(\App\Livewire\Widgets\EventsWidget::class)
+    </div>
     <div class="grid gap-8 mb-4 lg:mb-8 md:grid-cols-2">
         @livewire(\App\Livewire\Widgets\TeamMemberWeekTimeChart::class)
         @livewire(\App\Livewire\Widgets\TeamMemberTaskStatusChart::class)

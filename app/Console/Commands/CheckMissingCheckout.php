@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Notifications\MissingCheckoutNotification;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Spatie\Activitylog\Models\Activity;
 
@@ -34,7 +35,6 @@ class CheckMissingCheckout extends Command
 
         // Find activities without a 'checkout' for the current day
         $missingCheckouts = Activity::where('event', 'checkin')
-            ->whereDate('properties->checkin', $today)
             ->whereNull('properties->checkout')
             ->get();
 
@@ -44,14 +44,20 @@ class CheckMissingCheckout extends Command
         }
 
         foreach ($missingCheckouts as $activity) {
-            $user = User::find($activity->causer_id);
+            $user = $activity->causer;
 
             if ($user) {
-                // Send email notification
                 Notification::send($user, new MissingCheckoutNotification($activity));
-
                 // Broadcast event
                 broadcast(new \App\Events\MissingCheckoutEvent($user, $activity));
+
+                $checkin_data = $activity->properties->toArray();
+                $checkin_data['checkout'] = now();
+                $checkin_data['update'] = 'Did not checked out for the day! This is an automated checkout by the system. HR must take action to fix the actual worked hours.';
+                $activity->properties = $checkin_data;
+                $activity->save();
+
+                Cache::forget('checkin'.$user->id);
             }
         }
 

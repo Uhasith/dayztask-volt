@@ -7,7 +7,7 @@ use Livewire\Attributes\Validate;
 
 new class extends Component {
 
-    public bool $checked_in, $dayEndModal;
+    public bool $checked_in;
     public $todayCheckin;
 
     #[Validate('required')] 
@@ -56,11 +56,11 @@ new class extends Component {
             $this->fetchTodaysCheckin();
             $this->updateCheckout();
         }
-        $this->dayEndModal = false;
+        $this->dispatch('close-modal', id: 'dayEndModal');
     }
 }; ?>
-<div x-cloak>
-    <div class="flex gap-3 items-center">
+<div x-cloak class="flex items-center">
+    <div class="flex gap-3 items-center h-full">
         <div x-data="{checkin:$wire.entangle('checked_in'), show: true}">
             <div x-show="!checkin">
                 <x-wui-button x-show="show" label="Check-in" x-on:click="show = !show" right-icon="finger-print"
@@ -73,7 +73,7 @@ new class extends Component {
                 </div>
             </div>
             <div x-show="checkin">
-                <x-wui-button label="Check-out" type="button" x-on:click="$openModal('dayEndModal')"
+                <x-wui-button label="Check-out" type="button" x-on:click="$dispatch('open-modal', { id: 'dayEndModal' })"
                     right-icon="finger-print" negative interaction="negative" />
             </div>
         </div>
@@ -86,7 +86,7 @@ new class extends Component {
     </div>
 
     @if (isset($todayCheckin?->properties['checkin']))
-    <x-wui-modal-card title="{{__('End the day')}}" name="dayEndModal" persistent wire:model.defer="dayEndModal" align="center">
+    <x-filament::modal id="dayEndModal" slide-over width="3xl">
         <form class="mb-6 p-4" wire:submit="updateCheckout">
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
@@ -115,11 +115,15 @@ new class extends Component {
                     placeholder="Write your notes" />
             </div>
         </form>
-        <x-slot name="footer" class="flex justify-between gap-x-4">
-            <x-wui-button flat warning label="Cancel" x-on:click="close" />
-            <x-wui-button negative label="{{__('Checkout')}}" wire:click="updateCheckout" />
+        <x-slot name="footer">
+            <div class="grid grid-cols-2 gap-x-4">
+                <x-wui-button class="w-full" solid slate label="Cancel" x-on:click="close" />
+                <x-wui-button class="w-full" solid negative label="{{__('Checkout')}}" wire:click="updateCheckout" />
+            </div>
         </x-slot>
-    </x-wui-modal-card>
+</x-filament::modal>
+
+
     @endif
 
 </div>
