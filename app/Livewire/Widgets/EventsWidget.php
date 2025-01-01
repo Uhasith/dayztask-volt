@@ -81,13 +81,13 @@ class EventsWidget extends CalendarWidget
             Log::info($this->getEventRecord()),
             Event::class => [
                 Hidden::make('user_id')->default(auth()->user()->id)->required(),
-                Textarea::make('description')->label('Reason')->rows(5)->disabled($this->getEventRecord()->user_id !== auth()->user()->id),
+                Textarea::make('description')->label('Reason')->rows(5)->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id),
                 Group::make([
                     Radio::make('is_full_day')->label(false)->options(
                         [1 => 'Full day',
                          0 => 'Half day']
                     )->reactive()
-                ])->disabled($this->getEventRecord()->user_id !== auth()->user()->id),
+                ])->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id),
                 Group::make([
                     DateTimePicker::make('start')
                         ->native(false)
@@ -100,7 +100,7 @@ class EventsWidget extends CalendarWidget
                         ->hidden(function (Get $get) {
                             return $get('is_full_day') == 0;
                         }),
-                ])->columns()->disabled($this->getEventRecord()->user_id !== auth()->user()->id)
+                ])->columns()->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id)
             ]
         };
     }
