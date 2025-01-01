@@ -50,6 +50,7 @@ class JetstreamServiceProvider extends ServiceProvider
             'read',
             'update',
             'delete',
+            'leave-approve'
         ])->description('Administrator users can perform any action.');
 
         Jetstream::role('member', 'Team Member', [

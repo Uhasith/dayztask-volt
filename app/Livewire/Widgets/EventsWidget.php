@@ -24,7 +24,11 @@ use Illuminate\Support\Facades\Log;
 class EventsWidget extends CalendarWidget
 {
     protected bool $eventClickEnabled = true;
+    protected bool $dateClickEnabled = true;
     // protected string $calendarView = 'resourceTimeGridDay';
+
+    protected ?string $defaultEventClickAction = 'edit';
+
 
     function getEvents(array $fetchInfo = []): Collection|array
     {
@@ -32,6 +36,11 @@ class EventsWidget extends CalendarWidget
             $event['title'] = $event['description'];
             return $event;
         });
+    }
+
+    function onDateClick(array $info = []): void
+    {
+        
     }
 
     public function getHeaderActions(): array
@@ -59,31 +68,26 @@ class EventsWidget extends CalendarWidget
         return [
             CreateAction::make('createLeaveRequest')
                 ->model(Event::class)->label('Request a leave')
-                ->mountUsing(function (Form $form, array $arguments) {
-                    $date = data_get($arguments, 'dateStr');
-
-                    if ($date) {
-                        $form->fill([
-                            'start' => Carbon::make($date)->setHour(12),
-                            'end' => Carbon::make($date)->setHour(13),
-                        ]);
-                    }
-                }),
+                ->mountUsing(fn ($arguments, $form) => $form->fill([
+                    'start' => data_get($arguments, 'dateStr'),
+                    'end' => data_get($arguments, 'dateStr'),
+                ]))
         ];
     }
 
     public function getSchema(?string $model = null): ?array
     {
         return match ($model) {
+            Log::info($this->getEventRecord()),
             Event::class => [
                 Hidden::make('user_id')->default(auth()->user()->id)->required(),
-                Textarea::make('description')->label('Reason')->rows(5),
+                Textarea::make('description')->label('Reason')->rows(5)->disabled($this->getEventRecord()->user_id !== auth()->user()->id),
                 Group::make([
                     Radio::make('is_full_day')->label(false)->options(
                         [1 => 'Full day',
                          0 => 'Half day']
                     )->reactive()
-                ]),
+                ])->disabled($this->getEventRecord()->user_id !== auth()->user()->id),
                 Group::make([
                     DateTimePicker::make('start')
                         ->native(false)
@@ -96,7 +100,7 @@ class EventsWidget extends CalendarWidget
                         ->hidden(function (Get $get) {
                             return $get('is_full_day') == 0;
                         }),
-                ])->columns()
+                ])->columns()->disabled($this->getEventRecord()->user_id !== auth()->user()->id)
             ]
         };
     }

@@ -28,7 +28,7 @@ class Event extends Model implements Eventable
         $event = CalendarEvent::make($this)
             ->title($title)
             ->start($this->start)
-            ->end($this->end ?? $this->start)->backgroundColor($color)->allDay($this->is_full_day ?? false);
+            ->end($this->end ?? $this->start)->backgroundColor($color)->allDay($this->is_full_day ?? false)->action('edit');
         return $event;
     }
 

@@ -52,8 +52,10 @@
                     link="{{ route('projects.index') }}" wire:navigate/>
                 @if (auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
                     <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}" wire:navigate/>
+                    <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range" link="{{ route('event-approvals') }}" wire:navigate/>
                 @endif
                 <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('messenger') }}" wire:navigate/>
+
                 {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-mary-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-mary-menu-item title="Archives" icon="o-archive-box" link="####" />

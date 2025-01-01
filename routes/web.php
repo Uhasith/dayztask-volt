@@ -43,4 +43,7 @@ Route::middleware([
     // Chat Room
     Volt::route('messenger', 'pages.chat.messenger')->name('messenger');
     Route::get('/messenger/search-member', [MessengerController::class, 'search_member'])->name('messenger.search-member');
+
+    // Team Owner
+    Volt::route('event-approvals', 'pages.team-owner.event-approvals')->name('event-approvals');
 });
