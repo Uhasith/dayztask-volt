@@ -20,8 +20,7 @@
 
     <!-- Filepond stylesheet -->
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-        rel="stylesheet" />
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
 
     <style>
         [x-cloak] {
@@ -48,13 +47,20 @@
         <x-slot:sidebar drawer="main-drawer" collapsible
             class="bg-base-200 dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700">
             <x-mary-menu activate-by-route>
-                <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" />
+                <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" wire:navigate />
                 <x-mary-menu-item title="Projects" icon="o-presentation-chart-line"
-                    link="{{ route('projects.index') }}" />
+                    link="{{ route('projects.index') }}" wire:navigate/>
                 @if (auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
-                    <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}" />
+                    <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}" wire:navigate/>
                     <livewire:pages.checklist.components.checklist-sidebar-icon />
+                    <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range" link="{{ route('event-approvals') }}" wire:navigate/>
                 @endif
+                <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('messenger') }}" wire:navigate/>
+
+                {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
+                    <x-mary-menu-item title="Wifi" icon="o-wifi" link="####" />
+                    <x-mary-menu-item title="Archives" icon="o-archive-box" link="####" />
+                </x-mary-menu-sub> --}}
             </x-mary-menu>
         </x-slot:sidebar>
 
@@ -79,6 +85,7 @@
     @filamentScripts
     @livewireScripts
     @stack('scripts')
+    <script src="https://unpkg.com/@victoryoalli/alpinejs-timeout@1.0.0/dist/timeout.min.js" defer></script>
 
     <!-- Include the Quill library -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>

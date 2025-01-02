@@ -8,8 +8,15 @@
     oldSubs: $wire.entangle('oldRemovedSubTasks'),
 }" class="w-full mx-auto p-5 lg:px-10 lg:py-5 min-h-[calc(100vh - 5rem)]">
     <form wire:submit="updateTask">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
             <div>
+                <div class="mb-4">
+                    @if ($task->status == 'todo')
+                        <x-wui-badge flat purple label="To Do" />
+                    @else
+                        <x-wui-badge flat green label="Done" />
+                    @endif
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
                     <x-wui-input icon="document-text" label="Task Name" placeholder="Task Name" wire:model="name" />
                     <x-wui-select id="assignTo" icon="user" label="Assign To" placeholder="Assign To" class="w-[50%]"

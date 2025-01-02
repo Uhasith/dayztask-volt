@@ -2,7 +2,7 @@
     <x-wui-card rounded="3xl" class="cursor-pointer" wire:poll.10s="fetchData">
         <div class="flex items-center justify-between">
             <div class="max-w-[80%]">
-                <p class="text-lg font-semibold truncate">{{ $task['name'] }}</p>
+                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-lg font-semibold truncate" wire:navigate>{{ $task['name'] }}</a>
             </div>
 
             <div class="flex items-center gap-4">
@@ -66,7 +66,7 @@
             </div>
         </div>
         <div class="flex items-center justify-between py-1">
-            <p class="text-md max-w-[50%] font-semibold truncate">Project : {{ $task['project']['title'] }}</p>
+            <a href="{{ route('projects.show', $task['project']['uuid']) }}" class="text-md max-w-[50%] font-semibold truncate" wire:navigate>Project : {{ $task['project']['title'] }}</a>
             <div class="px-1">
                 <livewire:global.timer :trackedTime="$trackedTime" :timerRunning="$timerRunning" :taskId="$taskId" :key="'authUserTimer-' . $task['uuid']" />
             </div>

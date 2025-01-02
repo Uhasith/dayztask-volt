@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MessengerController;
 use App\Http\Controllers\TaskController;
 use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
 use App\Livewire\Pages\Project\Index as ProjectIndex;
@@ -41,4 +42,11 @@ Route::middleware([
 
     // User's Current Workspace Changing route when user's team is changed
     Route::get('/update-user-team-workspace/{uuid}', [TaskController::class, 'updateUserTeamAndWorkspace'])->name('update.user.team.workspace');
+
+    // Chat Room
+    Volt::route('messenger', 'pages.chat.messenger')->name('messenger');
+    Route::get('/messenger/search-member', [MessengerController::class, 'search_member'])->name('messenger.search-member');
+
+    // Team Owner
+    Volt::route('event-approvals', 'pages.team-owner.event-approvals')->name('event-approvals');
 });
