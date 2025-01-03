@@ -15,7 +15,7 @@ class Index extends Component
 
     public function render()
     {
-        $projects = Project::where('workspace_id', Auth::user()->current_workspace_id)->orderBy('created_at', 'asc')->paginate(9);
+        $projects = Project::where('workspace_id', Auth::user()->current_workspace_id)->orderBy('created_at', 'asc')->paginate(12);
 
         return view('livewire.pages.project.index', [
             'projects' => $projects,

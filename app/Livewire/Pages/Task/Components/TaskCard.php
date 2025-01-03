@@ -211,8 +211,7 @@ class TaskCard extends Component
             });
 
             if (! $todayCheckin) {
-                app(NotificationService::class)->sendExeptionNotification("You need to checkin first before tracking time on task", "Checkin first");
-
+                app(NotificationService::class)->sendExeptionNotification("Opsie", __("It seems that you missed to checkin today, please checkin first"));
                 return;
             }
 
