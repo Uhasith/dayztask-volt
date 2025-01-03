@@ -121,13 +121,13 @@ new class extends Component {
     #[On('start-tracking')]
     public function listenStartTracking($id)
     {
-        $this->getTrackingDetails();
+        $this->mount();
     }
 
     #[On('end-tracking')]
     public function listenEndTracking($id)
     {
-        $this->getTrackingDetails();
+         $this->mount();
     }
 
     public function calculateTotalTrackedTimeOnTask($taskId, $userId)
@@ -141,7 +141,7 @@ new class extends Component {
 
 <div>
     @if ($show)
-        <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2" wire:key="userWorkingTimer-{{ $user['uuid'] }}">
+        <div class="flex items-center justify-between bg-white border-teal-300 border rounded-lg px-3 py-2" wire:key="userWorkingTimer-{{ $user['uuid'] }}">
             <div class="flex items-center gap-2">
                 <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-sm font-semibold"
                     wire:navigate>
@@ -157,8 +157,8 @@ new class extends Component {
                             wire:click="startTracking('{{ $task['uuid'] }}')" />
                 @endif
             </div>
-            <div class="ml-3">
-                <livewire:global.timer :key="'userGlobalTimer-' . $user['uuid']" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']" :taskId="$taskId" />
+            <div class="ml-3 h-full">
+                <livewire:global.timer class="" :key="'userGlobalTimer-' . $taskId" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']" :taskId="$taskId" />
             </div>
         </div>
     @endif

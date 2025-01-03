@@ -37,6 +37,7 @@ class Update extends Component
     public $attachments = [];
 
     public $subtasks = [];
+    public $oldSubtasks = [];
 
     public $description;
 
@@ -96,6 +97,7 @@ class Update extends Component
             'attachments' => 'max:102400',
             'recurring_period' => 'nullable|numeric',
             'subtasks' => 'nullable|array',
+            'oldSubtasks' => 'nullable|array',
         ];
     }
 
@@ -169,7 +171,9 @@ class Update extends Component
                 }
             }
 
-            $subtasks = $task->subTasks->map(function ($subtask) {
+            $oldSubTasks = $task->subTasks ?? [];
+
+            $formattedSubtasks = $oldSubTasks->map(function ($subtask) {
 
                 return [
                     'id' => $subtask->id,
@@ -179,8 +183,7 @@ class Update extends Component
                 ];
             });
 
-            $this->subtasks = $subtasks;
-
+            $this->oldSubtasks = $formattedSubtasks;
         } catch (Exception $e) {
             Log::error("Failed to find task: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -210,7 +213,7 @@ class Update extends Component
         $uuid = $this->project->uuid;
 
         if (! empty($validatedData['estimate_time'])) {
-            $validatedData['estimate_time'] = $validatedData['estimate_time'].' '.$this->range;
+            $validatedData['estimate_time'] = $validatedData['estimate_time'] . ' ' . $this->range;
         }
 
         try {
