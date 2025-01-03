@@ -42,7 +42,8 @@ new class extends Component {
         } else {
             // Retrieve the last tracked task
             $lastTrackedTask = TaskTracking::where('user_id', $this->user->id)
-                ->latest()->first();
+                ->latest()
+                ->first();
 
             if ($lastTrackedTask) {
                 $this->taskId = $lastTrackedTask->task_id;
@@ -144,7 +145,7 @@ new class extends Component {
             <div class="flex items-center gap-2">
                 <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-lg font-semibold truncate"
                     wire:navigate>
-                    <p class="text-xs font-semibold leading-none text-gray-900 dark:text-white">
+                    <p class="text-xs font-semibold leading-none text-gray-900 dark:text-white truncate max-w-[150px]">
                         {{ $task['name'] }}
                     </p>
                 </a>
