@@ -53,8 +53,9 @@ new class extends Component {
             $todayCheckin->save();
             $this->checked_in = false;
         }else{
-            $this->fetchTodaysCheckin();
-            $this->updateCheckout();
+            if($this->fetchTodaysCheckin()){
+                $this->updateCheckout();
+            }
         }
         $this->dispatch('close-modal', id: 'dayEndModal');
     }
