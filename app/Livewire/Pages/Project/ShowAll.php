@@ -3,13 +3,13 @@
 namespace App\Livewire\Pages\Project;
 
 use App\Models\Task;
-use App\Models\Project;
-use Livewire\Component;
 use App\Models\TaskTracking;
-use Livewire\WithPagination;
-use WireUi\Traits\WireUiActions;
 use App\Services\Team\TeamService;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+use Livewire\WithPagination;
+use WireUi\Traits\WireUiActions;
+use App\Models\Project;
 
 class ShowAll extends Component
 {

@@ -3,14 +3,14 @@
 use Livewire\Volt\Component;
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
-use Livewire\Attributes\Validate; 
+use Livewire\Attributes\Validate;
 
 new class extends Component {
 
     public bool $checked_in;
     public $todayCheckin;
 
-    #[Validate('required')] 
+    #[Validate('required')]
     public $day_end_update = '';
 
     function mount() : void {
@@ -42,7 +42,7 @@ new class extends Component {
     }
 
     function updateCheckout() : void {
-        $this->validate(); 
+        $this->validate();
         $user = auth()->user();
         $todayCheckin = Cache::pull('checkin'.$user->id);
         if($todayCheckin){
@@ -82,6 +82,7 @@ new class extends Component {
             <span class="text-xs">{{__('Checked in: ') . date('Y-m-d h:i:sa',
                 strtotime($todayCheckin?->properties['checkin']))}}</span>
             @endif
+            <livewire:global.working-task-timer />
         </div>
     </div>
 

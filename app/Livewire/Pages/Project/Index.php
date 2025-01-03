@@ -21,7 +21,6 @@ class Index extends Component
         // Attach the first logo URL to each project
         foreach ($projects as $project) {
             $firstMediaUrl = $project->getFirstMediaUrl('company_logo');
-            Log::info($firstMediaUrl ?: 'No logo found'); // Log the result
             $project->company_logo = $firstMediaUrl ?: null; // Assign null if no logo is found
         }
 
