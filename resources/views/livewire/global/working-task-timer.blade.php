@@ -141,29 +141,23 @@ new class extends Component {
 
 <div>
     @if ($show)
-        <div class="flex items-center justify-between" wire:key="userWorkingTimer-{{ $user['uuid'] }}">
+        <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2" wire:key="userWorkingTimer-{{ $user['uuid'] }}">
             <div class="flex items-center gap-2">
-                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-lg font-semibold truncate"
+                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-sm font-semibold"
                     wire:navigate>
-                    <p class="text-xs font-semibold leading-none text-gray-900 dark:text-white truncate max-w-[150px]">
-                        {{ $task['name'] }}
-                    </p>
+                    {{ $task['name'] }}
                 </a>
                 @if ($user->userAlreadyTrackingThisTask)
-                    <div>
-                        <x-mary-icon name="m-pause" xs class=" text-blue-400 hover:text-blue-600 cursor-pointer w-4 h-4"
+                    <x-mary-icon name="m-pause" xs class=" text-blue-400 hover:text-blue-600 cursor-pointer w-5 h-5"
                             x-tooltip.placement.top.raw="Stop Tracking"
                             wire:click="stopTracking('{{ $task['uuid'] }}')" />
-                    </div>
                 @else
-                    <div>
-                        <x-mary-icon name="m-play" class=" text-blue-400 hover:text-blue-600 cursor-pointer w-4 h-4"
+                    <x-mary-icon name="m-play" class=" text-blue-400 hover:text-blue-600 cursor-pointer w-5 h-5"
                             x-tooltip.placement.top.raw="Start Tracking"
                             wire:click="startTracking('{{ $task['uuid'] }}')" />
-                    </div>
                 @endif
             </div>
-            <div>
+            <div class="ml-3">
                 <livewire:global.timer :key="'userGlobalTimer-' . $user['uuid']" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']" :taskId="$taskId" />
             </div>
         </div>

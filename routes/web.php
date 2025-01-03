@@ -34,6 +34,10 @@ Route::middleware([
     Route::get('/projects/tasks/create/{uuid}', TaskCreate::class)->name('projects.tasks.create');
     Route::get('/projects/tasks/update/{uuid}', TaskUpdate::class)->name('projects.tasks.update');
 
+    Route::get('/projects/user/search', 'App\Http\Controllers\API\ProjectController@webGetProjects')->name('projects.search');
+    Route::get('/tasks/user/search', 'App\Http\Controllers\API\TaskController@getTeamTasks')->name('tasks.search');
+
+
     Volt::route('/summary', 'pages.summary.index')
         ->name('summary.index');
 
@@ -49,4 +53,5 @@ Route::middleware([
 
     // Team Owner
     Volt::route('event-approvals', 'pages.team-owner.event-approvals')->name('event-approvals');
+    Volt::route('screenshots', 'pages.team-owner.screenshots')->name('screenshots');
 });

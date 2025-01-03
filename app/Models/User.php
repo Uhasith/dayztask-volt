@@ -89,12 +89,14 @@ class User extends AuthUser
 
     public function tasks(): BelongsToMany
     {
-        return $this->belongsToMany(Task::class, 'tasks_users', 'user_id', 'task_id');
+        return $this->belongsToMany(Task::class, 'tasks_users', 'user_id', 'task_id')->whereHas('project', function ($query) {
+            $query->where('workspace_id', auth()->user()->current_workspace_id);
+        });
     }
 
     public function userProjects(): Builder
     {
-        return Project::whereHas('tasks', function ($query) {
+        return Project::where('workspace_id', auth()->user()->current_workspace_id)->whereHas('tasks', function ($query) {
             $query->whereHas('users', function ($query) {
                 $query->where('user_id', $this->id);
             });

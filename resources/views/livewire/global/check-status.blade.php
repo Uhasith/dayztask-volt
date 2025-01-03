@@ -74,8 +74,9 @@ new class extends Component {
                 </div>
             </div>
             <div x-show="checkin">
-                <x-wui-button label="Check-out" type="button" x-on:click="$dispatch('open-modal', { id: 'dayEndModal' })"
-                    right-icon="finger-print" negative interaction="negative" />
+                <x-wui-button label="Check-out" type="button"
+                    x-on:click="$dispatch('open-modal', { id: 'dayEndModal' })" right-icon="finger-print" negative
+                    interaction="negative" />
             </div>
         </div>
         <div>
@@ -83,7 +84,6 @@ new class extends Component {
             <span class="text-xs">{{__('Checked in: ') . date('Y-m-d h:i:sa',
                 strtotime($todayCheckin?->properties['checkin']))}}</span>
             @endif
-            <livewire:global.working-task-timer />
         </div>
     </div>
 
@@ -123,7 +123,7 @@ new class extends Component {
                 <x-wui-button class="w-full" solid negative label="{{__('Checkout')}}" wire:click="updateCheckout" />
             </div>
         </x-slot>
-</x-filament::modal>
+    </x-filament::modal>
 
 
     @endif

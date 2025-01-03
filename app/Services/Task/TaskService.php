@@ -609,6 +609,7 @@ class TaskService extends Component
                 'taskId' => $taskId,
                 'alreadyTrackingDifferentTask' => $alreadyTrackingDifferentTask,
                 'updatedTask' => $updatedTask,
+                'taskTracking' => $taskTracking,
             ];
         } catch (Exception $e) {
             DB::rollBack();

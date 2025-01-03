@@ -54,6 +54,7 @@
                     <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}" wire:navigate/>
                     <livewire:pages.checklist.components.checklist-sidebar-icon />
                     <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range" link="{{ route('event-approvals') }}" wire:navigate/>
+                    <x-mary-menu-item title="Screenshots" icon="o-computer-desktop" link="{{ route('screenshots') }}" wire:navigate/>
                 @endif
                 <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('messenger') }}" wire:navigate/>
 
