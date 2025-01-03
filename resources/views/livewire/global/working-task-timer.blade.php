@@ -42,9 +42,7 @@ new class extends Component {
         } else {
             // Retrieve the last tracked task
             $lastTrackedTask = TaskTracking::where('user_id', $this->user->id)
-                ->whereNotNull('end_time')
-                ->orderBy('end_time', 'desc')
-                ->first();
+                ->latest()->first();
 
             if ($lastTrackedTask) {
                 $this->taskId = $lastTrackedTask->task_id;
