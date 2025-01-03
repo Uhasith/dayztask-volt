@@ -52,7 +52,6 @@ new class extends Component {
             $todayCheckin->properties = $checkin_data;
             $todayCheckin->save();
             $this->checked_in = false;
-            Cache::forget('checkin'.$user->id);
         }else{
             if($this->fetchTodaysCheckin()){
                 $this->updateCheckout();
