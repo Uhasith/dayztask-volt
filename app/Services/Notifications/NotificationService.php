@@ -60,12 +60,12 @@ class NotificationService
         event(new DatabaseNotificationsSent($user));
     }
 
-    public function sendExeptionNotification()
+    public function sendExeptionNotification($message = 'Something Went Wrong', $description = 'Please contact support team to resolve this issue.')
     {
         FilamentNotification::make()
-            ->title('Something Went Wrong')
+            ->title($message)
             ->danger()
-            ->body('Please contact support team to resolve this issue.')
+            ->body($description)
             ->send();
 
     }
