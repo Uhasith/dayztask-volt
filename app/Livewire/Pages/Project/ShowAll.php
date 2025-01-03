@@ -3,12 +3,13 @@
 namespace App\Livewire\Pages\Project;
 
 use App\Models\Task;
-use App\Models\TaskTracking;
-use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Project;
 use Livewire\Component;
+use App\Models\TaskTracking;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\Auth;
 
 class ShowAll extends Component
 {
@@ -66,7 +67,7 @@ class ShowAll extends Component
 
     public function render()
     {
-        $projectIds = Auth::user()->currentTeam->owner->projects->where('workspace_id', Auth::user()->current_workspace_id)->pluck('id')->toArray();
+        $projectIds = Project::where('workspace_id', Auth::user()->current_workspace_id)->pluck('id')->toArray();
 
         if ($this->searchTerm) {
             // Perform the search with Scout and get the IDs of matching tasks
