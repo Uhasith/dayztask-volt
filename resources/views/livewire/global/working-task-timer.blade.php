@@ -121,13 +121,13 @@ new class extends Component {
     #[On('start-tracking')]
     public function listenStartTracking($id)
     {
-        $this->getTrackingDetails();
+        $this->mount();
     }
 
     #[On('end-tracking')]
     public function listenEndTracking($id)
     {
-        $this->getTrackingDetails();
+         $this->mount();
     }
 
     public function calculateTotalTrackedTimeOnTask($taskId, $userId)
@@ -164,7 +164,7 @@ new class extends Component {
                 @endif
             </div>
             <div>
-                <livewire:global.timer :key="'userGlobalTimer-' . $user['uuid']" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']" :taskId="$taskId" />
+                <livewire:global.timer :key="'userGlobalTimer-' . $taskId" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']" :taskId="$taskId" />
             </div>
         </div>
     @endif

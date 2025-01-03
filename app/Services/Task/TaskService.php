@@ -272,6 +272,22 @@ class TaskService extends Component
             // Handle subtasks
             if (! empty($validatedData['subtasks'])) {
                 foreach ($validatedData['subtasks'] as $subtask) {
+                    // Add or update subtasks
+                    if (! empty($subtask['subTask'])) {
+                        SubTask::updateOrCreate(
+                            ['id' => $subtask['id'] ?? null],
+                            [
+                                'name' => $subtask['subTask'],
+                                'task_id' => $task->id,
+                                'is_completed' => $subtask['is_completed'] ?? false,
+                            ]
+                        );
+                    }
+                }
+            }
+
+            if (! empty($validatedData['oldSubtasks'])) {
+                foreach ($validatedData['oldSubtasks'] as $subtask) {
                     // Check if the subtask is old and removed
                     if (isset($subtask['old'])) {
                         $existingSubtask = SubTask::find($subtask['id']);
@@ -280,18 +296,6 @@ class TaskService extends Component
                                 'name' => $subtask['subTask'] ?? $existingSubtask->name,
                                 'is_completed' => $subtask['is_completed'] ?? $existingSubtask->is_completed,
                             ]);
-                        }
-                    } else {
-                        // Add or update subtasks
-                        if (! empty($subtask['subTask'])) {
-                            SubTask::updateOrCreate(
-                                ['id' => $subtask['id'] ?? null],
-                                [
-                                    'name' => $subtask['subTask'],
-                                    'task_id' => $task->id,
-                                    'is_completed' => $subtask['is_completed'] ?? false,
-                                ]
-                            );
                         }
                     }
                 }
