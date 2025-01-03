@@ -20,9 +20,7 @@
                     @if (isset($project['company_logo']))
                         <img class="w-32 max-h-12 rounded-md" src="{{ $project['company_logo'] }}" alt="project-logo" />
                     @else
-                        <div class="w-32 h-12 bg-gray-200 rounded-md flex items-center justify-center">
-                            <span class="text-gray-400 text-sm">No Logo</span>
-                        </div>
+                        <img class="w-32 max-h-12 rounded-md" src="{{ asset('assets/images/logo.png') }}" alt="project-logo" />
                     @endif
                 </div>
             </div>
