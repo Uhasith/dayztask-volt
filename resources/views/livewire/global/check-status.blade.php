@@ -19,6 +19,7 @@ new class extends Component {
 
     function fetchTodaysCheckin() : bool {
         $user = Auth::user();
+        // Retrieve today's checkin activity or store it in cache
         $this->todayCheckin = Cache::remember('checkin'.$user->id, 3600*24, function() use ($user){
             $today = Carbon::today()->toDateString(); // Get today's date in 'Y-m-d' format
             return Activity::where('causer_id', $user->id)
@@ -53,7 +54,7 @@ new class extends Component {
             $todayCheckin->save();
             $this->checked_in = false;
         }else{
-            if($this->fetchTodaysCheckin()){
+            if($this->fetchTodaysCheckin() && $this->checked_in){
                 $this->updateCheckout();
             }
         }
