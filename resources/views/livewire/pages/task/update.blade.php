@@ -13,6 +13,8 @@
                 <div class="mb-4">
                     @if ($task->status == 'todo')
                         <x-wui-badge flat purple label="To Do" />
+                    @elseif ($task->status == 'doing')
+                        <x-wui-badge flat blue label="Doing" />
                     @else
                         <x-wui-badge flat green label="Done" />
                     @endif
