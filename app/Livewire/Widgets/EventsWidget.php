@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Guava\Calendar\Actions\CreateAction;
 use Filament\Forms\Form;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
@@ -89,11 +90,11 @@ class EventsWidget extends CalendarWidget
                     )->reactive()
                 ])->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id),
                 Group::make([
-                    DateTimePicker::make('start')
+                    DatePicker::make('start')
                         ->native(false)
                         ->seconds(false)
                         ->required()->minDate(Carbon::today()),
-                    DateTimePicker::make('end')
+                    DatePicker::make('end')
                         ->native(false)
                         ->seconds(false)
                         ->required()->minDate(Carbon::today()->addDay())
