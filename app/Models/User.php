@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Observers\UserObserver;
 use Devdojo\Auth\Models\User as AuthUser;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -88,11 +89,26 @@ class User extends AuthUser
 
     public function tasks(): BelongsToMany
     {
-        return $this->belongsToMany(Task::class, 'tasks_users', 'user_id', 'task_id');
+        return $this->belongsToMany(Task::class, 'tasks_users', 'user_id', 'task_id')->whereHas('project', function ($query) {
+            $query->where('workspace_id', auth()->user()->current_workspace_id);
+        });
+    }
+
+    public function userProjects(): Builder
+    {
+        return Project::where('workspace_id', auth()->user()->current_workspace_id)->whereHas('tasks', function ($query) {
+            $query->whereHas('users', function ($query) {
+                $query->where('user_id', $this->id);
+            });
+        });
     }
 
     public function trackingRecords(): BelongsToMany
     {
         return $this->belongsToMany(Task::class, 'task_trackings', 'user_id', 'task_id');
+    }
+
+    public function events() : HasMany {
+        return $this->hasMany(Event::class);
     }
 }

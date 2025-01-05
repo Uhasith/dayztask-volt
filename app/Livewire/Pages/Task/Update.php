@@ -37,6 +37,7 @@ class Update extends Component
     public $attachments = [];
 
     public $subtasks = [];
+    public $oldSubtasks = [];
 
     public $description;
 
@@ -57,6 +58,7 @@ class Update extends Component
     public $needFollowUp = false;
 
     public $isBillable = false;
+    public $addingComment = false;
 
     public $check_by_user_id;
 
@@ -95,13 +97,14 @@ class Update extends Component
             'attachments' => 'max:102400',
             'recurring_period' => 'nullable|numeric',
             'subtasks' => 'nullable|array',
+            'oldSubtasks' => 'nullable|array',
         ];
     }
 
     public function mount($uuid)
     {
         try {
-            $task = Task::with('project')->where('uuid', $uuid)->first();
+            $task = Task::with('project', 'comments.user')->where('uuid', $uuid)->first();
             if (! $task) {
                 app(NotificationService::class)->sendExeptionNotification();
 
@@ -168,7 +171,9 @@ class Update extends Component
                 }
             }
 
-            $subtasks = $task->subTasks->map(function ($subtask) {
+            $oldSubTasks = $task->subTasks ?? [];
+
+            $formattedSubtasks = $oldSubTasks->map(function ($subtask) {
 
                 return [
                     'id' => $subtask->id,
@@ -178,14 +183,19 @@ class Update extends Component
                 ];
             });
 
-            $this->subtasks = $subtasks;
-
+            $this->oldSubtasks = $formattedSubtasks;
         } catch (Exception $e) {
             Log::error("Failed to find task: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
 
             return $this->redirectRoute('projects.index');
         }
+    }
+
+    #[On('commentAdded')]
+    public function updateShowComment()
+    {
+        $this->addingComment = false;
     }
 
     #[On('remove-upload')]
@@ -203,7 +213,7 @@ class Update extends Component
         $uuid = $this->project->uuid;
 
         if (! empty($validatedData['estimate_time'])) {
-            $validatedData['estimate_time'] = $validatedData['estimate_time'].' '.$this->range;
+            $validatedData['estimate_time'] = $validatedData['estimate_time'] . ' ' . $this->range;
         }
 
         try {

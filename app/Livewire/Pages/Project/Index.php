@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Pages\Project;
 
-use Illuminate\Support\Facades\Auth;
+use App\Models\Project;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
@@ -14,7 +16,13 @@ class Index extends Component
 
     public function render()
     {
-        $projects = Auth::user()->currentTeam->owner->projects()->where('workspace_id', Auth::user()->current_workspace_id)->orderBy('created_at', 'asc')->paginate(9);
+        $projects = Project::where('workspace_id', Auth::user()->current_workspace_id)->orderBy('created_at', 'asc')->paginate(12);
+
+        // Attach the first logo URL to each project
+        foreach ($projects as $project) {
+            $firstMediaUrl = $project->getFirstMediaUrl('company_logo');
+            $project->company_logo = $firstMediaUrl ?: null; // Assign null if no logo is found
+        }
 
         return view('livewire.pages.project.index', [
             'projects' => $projects,

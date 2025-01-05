@@ -58,6 +58,12 @@ class Task extends Model implements HasMedia
             ->height(232);
     }
 
+    // Polymorphic relationship
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable')->orderBy('created_at', 'desc');
+    }
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);

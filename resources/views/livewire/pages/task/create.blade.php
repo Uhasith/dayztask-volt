@@ -28,7 +28,6 @@
                     </x-wui-select>
                     <x-wui-datetime-picker wire:model="deadline" label="Deadline" placeholder="Task Deadline"
                         without-time without-timezone :disable-past-dates="true" />
-
                     <x-wui-number label="Estimate Time" placeholder="0" min="1" wire:model="estimate_time" />
                     <x-wui-select icon="clock" label="Time Range" placeholder="Minutes" wire:model="range"
                         :clearable="false">
@@ -97,14 +96,12 @@
                                     @endforeach
                                 </x-wui-select>
                             </div>
-
                         </x-wui-card>
                     </div>
 
                 </div>
 
                 <div class="grid grid-col-1 md:grid-cols-2 gap-5">
-
                     <div>
                         <div class="mt-4 md:mt-8">
                             <x-wui-toggle id="needFollowUp" x-model="followup"
@@ -113,7 +110,6 @@
                         $wire.set('confirm_by_user_id', null); $wire.set('proof_method', null); }"
                                 name="needFollowUp" />
                         </div>
-
                         <div x-show="followup" x-transition>
                             <x-wui-card class="mt-3 md:mt-6" shadow="base">
                                 <x-wui-select id="followUpUser" icon="user" label="Who should follow up ?"
@@ -137,7 +133,6 @@
                                 x-on:click="billable = !billable; if (billable === false) { $wire.set('invoice_reference', null); }"
                                 name="isBillable" />
                         </div>
-
                         <div x-show="billable" x-transition>
                             <x-wui-card class="mt-3 md:mt-6" shadow="base">
                                 <x-wui-input icon="banknotes" label="Invoice Reference"
@@ -176,17 +171,10 @@
                             <h2 class="text-md md:text-lg font-medium text-gray-900 dark:text-gray-100">Add Sub Tasks
                             </h2>
                             <div class="flex item-center justify-center gap-5">
-                                {{-- <x-mary-loading wire:loading wire:target="addSubTask"
-                                    class="text-primary-500 loading-bars w-5 h-5 my-auto" /> --}}
                                 <x-wui-mini-button rounded secondary icon="plus"
                                     x-on:click="newSubs.push({ subTask: ''});"
                                     x-tooltip.placement.bottom.raw="Add Sub Task" />
                             </div>
-                            {{-- <x-wui-mini-button type="button" secondary rounded wire:loading.attr="disabled"
-                                x-tooltip.placement.bottom.raw="Add Sub Task" wire:click="addSubTask">
-                                <x-mary-icon wire:loading.remove wire:target="addSubTask" name="o-plus" />
-                                <x-mary-loading wire:loading wire:target="addSubTask" class="loading-ring" />
-                            </x-wui-mini-button> --}}
                         </div>
                         <template x-for="(sub, index) in newSubs" :key="'sub-task-' + index">
                             <div x-show="newSubs.length > 0" class="flex items-center justify-between py-2 gap-5">
@@ -198,8 +186,6 @@
                         </template>
                     </x-filament::section>
                 </div>
-
-
             </div>
         </div>
         <div class="text-center mt-5 md:mt-10">

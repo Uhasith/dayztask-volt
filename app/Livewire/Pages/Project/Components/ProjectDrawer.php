@@ -3,9 +3,10 @@
 namespace App\Livewire\Pages\Project\Components;
 
 use App\Models\Project;
-use App\Services\Notifications\NotificationService;
-use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Log;
+use App\Services\Notifications\NotificationService;
 
 class ProjectDrawer extends Component
 {

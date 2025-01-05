@@ -29,6 +29,7 @@ export default {
         "./app/Livewire/**/*Table.php",
         "./vendor/power-components/livewire-powergrid/resources/views/**/*.php",
         "./vendor/power-components/livewire-powergrid/src/Themes/Tailwind.php",
+        './vendor/guava/calendar/resources/**/*.blade.php',
     ],
     theme: {
         extend: {

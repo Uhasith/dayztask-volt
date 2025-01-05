@@ -2,17 +2,21 @@
 
 namespace App\Livewire\Pages\Task\Components;
 
-use App\Models\Task;
-use App\Models\TaskTracking;
-use App\Services\Notifications\NotificationService;
-use App\Services\Task\TaskService;
 use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
+use Carbon\Carbon;
+use App\Models\Task;
+use App\Models\User;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use App\Models\TaskTracking;
+use Livewire\Attributes\Locked;
 use WireUi\Traits\WireUiActions;
+use App\Services\Task\TaskService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\Models\Activity;
+use App\Services\Notifications\NotificationService;
 
 class TaskCard extends Component
 {
@@ -151,7 +155,7 @@ class TaskCard extends Component
                     'accept' => [
                         'label' => 'Yes, upload proof',
                         'method' => 'openUploadProofModal',
-                        'params' => ''.$this->taskId.'',
+                        'params' => '' . $this->taskId . '',
                     ],
                 ]);
 
@@ -195,6 +199,22 @@ class TaskCard extends Component
     public function startTracking($uuid)
     {
         try {
+            $user = Auth::user();
+            $todayCheckin = Cache::remember('checkin' . $user->id, 3600 * 24, function () use ($user) {
+                $today = Carbon::today()->toDateString(); // Get today's date in 'Y-m-d' format
+                return Activity::where('causer_id', $user->id)
+                    ->where('causer_type', User::class)
+                    ->where('event', 'checkin')
+                    ->whereDate('properties->checkin', $today)
+                    ->whereNull('properties->checkout')
+                    ->first();
+            });
+
+            if (! $todayCheckin) {
+                app(NotificationService::class)->sendExeptionNotification("Opsie", __("It seems that you missed to checkin today, please checkin first"));
+                return;
+            }
+
             $taskService = app(TaskService::class);
             $data = $taskService->startTracking($uuid);
 
@@ -240,7 +260,7 @@ class TaskCard extends Component
             'accept' => [
                 'label' => 'Yes, delete it',
                 'method' => 'deleteTask',
-                'params' => ''.$uuid.'',
+                'params' => '' . $uuid . '',
             ],
         ]);
     }
