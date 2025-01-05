@@ -26,7 +26,12 @@
         "@victoryoalli/alpinejs-timeout": "^1.0.0",
         "filepond-plugin-get-file": "^1.1.0",
         "flatpickr": "^4.6.13",
+<<<<<<< HEAD
+        "open": "^10.1.0",
+        "ssl": "^1.0.0",
+=======
         "moment": "^2.30.1",
+>>>>>>> 00f4ca0db0f652d8b740234f301e125e6603c899
         "tom-select": "^2.3.1"
     }
 }
