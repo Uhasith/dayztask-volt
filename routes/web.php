@@ -5,11 +5,14 @@ use App\Livewire\Pages\Dashboard\Index as DashboardIndex;
 use App\Livewire\Pages\Project\Index as ProjectIndex;
 use App\Livewire\Pages\Project\Show as ProjectShow;
 use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
+use App\Livewire\Pages\Task\Index as TaskIndex;
+use App\Livewire\Pages\MyTask\Index as MytaskIndex;
 use App\Livewire\Pages\Task\Create as TaskCreate;
 use App\Livewire\Pages\Task\Update as TaskUpdate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -22,11 +25,12 @@ Route::get('/', function () {
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified',
+    //'verified',
 ])->group(function () {
 
     // Full Page Components Routes
     Route::get('/dashboard', DashboardIndex::class)->name('dashboard');
+    Route::get('/mytask', taskIndex::class)->name('mytask');
     Route::get('/projects', ProjectIndex::class)->name('projects.index');
     Route::get('/projects/{uuid}', ProjectShow::class)->name('projects.show');
     Route::get('/projects/show/all', ProjectShowAll::class)->name('projects.show.all');

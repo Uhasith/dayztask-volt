@@ -49,6 +49,7 @@
             class="bg-base-200 dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700">
             <x-mary-menu activate-by-route>
                 <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" />
+                <x-mary-menu-item title="My Task" icon="o-home" link="{{ route('mytask') }}" />
                 <x-mary-menu-item title="Projects" icon="o-presentation-chart-line"
                     link="{{ route('projects.index') }}" />
                 @if (auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))

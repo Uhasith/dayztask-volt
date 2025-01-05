@@ -24,6 +24,8 @@
         "@ryangjchandler/alpine-tooltip": "^2.0.0",
         "filepond-plugin-get-file": "^1.1.0",
         "flatpickr": "^4.6.13",
+        "open": "^10.1.0",
+        "ssl": "^1.0.0",
         "tom-select": "^2.3.1"
     }
 }
