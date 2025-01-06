@@ -103,9 +103,9 @@ class User extends AuthUser
         });
     }
 
-    public function trackingRecords(): BelongsToMany
+    public function trackingRecords(): HasMany
     {
-        return $this->belongsToMany(Task::class, 'task_trackings', 'user_id', 'task_id');
+        return $this->hasMany(TaskTracking::class, 'user_id');
     }
 
     public function events() : HasMany {
