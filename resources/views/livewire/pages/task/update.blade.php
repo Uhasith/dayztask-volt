@@ -11,7 +11,7 @@
     <form wire:submit="updateTask">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
             <div>
-                <div class="mb-4">
+                <div class="mb-4 flex items-center gap-8">
                     @if ($task->status == 'todo')
                         <x-wui-badge flat purple label="To Do" />
                     @elseif ($task->status == 'doing')
@@ -19,6 +19,9 @@
                     @else
                         <x-wui-badge flat green label="Done" />
                     @endif
+                    <a href="{{ route('projects.show', $task->project->uuid) }}" wire:navigate>
+                        <x-wui-badge flat red label="Project : {{ $task->project->title }}" />
+                    </a>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
                     <x-wui-input icon="document-text" label="Task Name" placeholder="Task Name" wire:model="name" />
