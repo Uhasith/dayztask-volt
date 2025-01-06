@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
-use App\Observers\TaskObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use App\Observers\TaskObserver;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy([TaskObserver::class])]
 class Task extends Model implements HasMedia
@@ -74,9 +75,9 @@ class Task extends Model implements HasMedia
         return $this->belongsToMany(User::class, 'tasks_users', 'task_id', 'user_id');
     }
 
-    public function trackingRecords(): BelongsToMany
+    public function taskTrackings(): HasMany
     {
-        return $this->belongsToMany(TaskTracking::class, 'task_trackings', 'task_id', 'user_id');
+        return $this->hasMany(TaskTracking::class, 'task_id');
     }
 
     public function subTasks()
