@@ -47,16 +47,17 @@
         <x-slot:sidebar drawer="main-drawer" collapsible
             class="bg-base-200 dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700">
             <x-mary-menu activate-by-route>
-                <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" wire:navigate />
+                <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" wire:navigate x-tooltip.placement.right.raw="Dashboard" />
                 <x-mary-menu-item title="Projects" icon="o-presentation-chart-line"
-                    link="{{ route('projects.index') }}" wire:navigate/>
+                    link="{{ route('projects.index') }}" wire:navigate x-tooltip.placement.right.raw="Projects" />
                 @if (auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
-                    <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}" wire:navigate/>
+                    <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}" wire:navigate x-tooltip.placement.right.raw="Summary" />
                     <livewire:pages.checklist.components.checklist-sidebar-icon />
-                    <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range" link="{{ route('event-approvals') }}" wire:navigate/>
-                    <x-mary-menu-item title="Screenshots" icon="o-computer-desktop" link="{{ route('screenshots') }}" wire:navigate/>
+                    <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range" link="{{ route('event-approvals') }}" wire:navigate x-tooltip.placement.right.raw="Event Approvals" />
+                    <x-mary-menu-item title="Screenshots" icon="o-computer-desktop" link="{{ route('screenshots') }}" wire:navigate x-tooltip.placement.right.raw="Screenshots" />
                 @endif
                 <livewire:pages.chat.messenger-menu-icon />
+
                 {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-mary-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-mary-menu-item title="Archives" icon="o-archive-box" link="####" />

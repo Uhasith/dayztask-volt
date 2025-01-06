@@ -18,7 +18,7 @@ new class extends Component {
 }; ?>
 
 <div class="relative">
-    <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('messenger') }}" wire:navigate/>
+    <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('messenger') }}" wire:navigate x-tooltip.placement.right.raw="Messenger"/>
     @if ($this->count > 0)
         <x-mary-badge value="{{ $this->count }}" class="badge-error badge-sm absolute -right-1 top-0 rounded-full" />
     @endif
