@@ -19,12 +19,12 @@ new class extends Component {
                 ->toArray(),
         )
             ->where('name', 'like', '%' . $this->search . '%')
-            ->limit(5)
+            ->limit(15)
             ->get();
         $projects = Project::where('workspace_id', Auth::user()->current_workspace_id)
             ->orderBy('created_at', 'asc')
             ->where('title', 'like', '%' . $this->search . '%')
-            ->limit(5)
+            ->limit(15)
             ->get();
 
         // Format tasks and projects with icons
