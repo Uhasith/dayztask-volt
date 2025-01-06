@@ -56,8 +56,7 @@
                     <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range" link="{{ route('event-approvals') }}" wire:navigate/>
                     <x-mary-menu-item title="Screenshots" icon="o-computer-desktop" link="{{ route('screenshots') }}" wire:navigate/>
                 @endif
-                <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('messenger') }}" wire:navigate/>
-
+                <livewire:pages.chat.messenger-menu-icon />
                 {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-mary-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-mary-menu-item title="Archives" icon="o-archive-box" link="####" />

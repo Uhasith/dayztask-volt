@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 new class extends Component {
     public $message = '', $messages, $chat_tab_users, $unread_counts = [];
     public User $user;
-public $user_id;
+    public $user_id;
     public $friend_id;
     
     function mount() : void {
@@ -67,6 +67,7 @@ public $user_id;
         if($this->chat_tab_users->where('id', $message->sender_id)->isEmpty()){
             $this->chat_tab_users->push($message->sender);
         }
+        $this->dispatch('messengerUpdated');
     }
 
     function loadChat($user_id) : void {
@@ -236,14 +237,14 @@ chatChannel.listenForWhisper('typing', (e) => {
                     </div>
                     @endif
                     @endforeach
-                    
+
                 </div>
                 <div x-show="isTyping" class="absolute bottom-20 left-4 right-3">
-                    <span >typing....</span>
+                    <span>typing....</span>
                 </div>
                 <form wire:submit="sendMessage"
                     class="absolute bottom-3 left-3 right-3 flex flex-row items-center h-16 rounded-xl bg-white w-auto px-4">
-                    
+
                     <div>
                         <button class="flex items-center justify-center text-gray-400 hover:text-gray-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -256,7 +257,10 @@ chatChannel.listenForWhisper('typing', (e) => {
                     </div>
                     <div class="flex-grow ml-4">
                         <div class="relative w-full">
-                            <input type="text" x-on:keydown="Echo.private(`chat.${friend_id}`).whisper('typing', { id: user_id })" wire:model="message" class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10" />
+                            <input type="text"
+                                x-on:keydown="Echo.private(`chat.${friend_id}`).whisper('typing', { id: user_id })"
+                                wire:model="message"
+                                class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10" />
                             <button
                                 class="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
