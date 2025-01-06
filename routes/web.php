@@ -38,6 +38,8 @@ Route::middleware([
     Route::get('/projects/user/search', 'App\Http\Controllers\API\ProjectController@webGetProjects')->name('projects.search');
     Route::get('/tasks/user/search', 'App\Http\Controllers\API\TaskController@getTeamTasks')->name('tasks.search');
 
+    Volt::route('/status', 'pages.status.index')
+    ->name('status.index');
 
     Volt::route('/summary', 'pages.summary.index')
         ->name('summary.index');
@@ -55,15 +57,4 @@ Route::middleware([
     // Team Owner
     Volt::route('event-approvals', 'pages.team-owner.event-approvals')->name('event-approvals');
     Volt::route('screenshots', 'pages.team-owner.screenshots')->name('screenshots');
-
-    Route::get('test', function(){
-        $events = Event::whereNull('user_id')->orWhereIn('user_id', auth()->user()->currentTeam->allUsers()->pluck('id'))->where('is_approved', 1)->get()->map(function($event){
-            $event['title'] = $event['description'];
-            return $event;
-        });
-
-        echo '<pre>';
-        print_r($events->toArray());
-        echo '</pre>';
-    });
 });

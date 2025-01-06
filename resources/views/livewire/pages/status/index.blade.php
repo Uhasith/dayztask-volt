@@ -6,6 +6,6 @@ new class extends Component {
     //
 }; ?>
 
-<div>
+<div class="w-full mx-auto p-5 lg:px-10 lg:py-5">
     //
 </div>

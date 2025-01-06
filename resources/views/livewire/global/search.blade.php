@@ -12,16 +12,19 @@ new class extends Component {
     public function updatedSearch()
     {
         // Fetch tasks and projects based on search, limit each to 5 results
-        $tasks = Task::whereIn('project_id', Auth::user()->currentTeam->owner->projects->pluck('id')->toArray())
+        $tasks = Task::whereIn(
+            'project_id',
+            Project::where('workspace_id', Auth::user()->current_workspace_id)
+                ->pluck('id')
+                ->toArray(),
+        )
             ->where('name', 'like', '%' . $this->search . '%')
-            ->limit(5)
+            ->limit(10)
             ->get();
-        $projects = Auth::user()
-            ->currentTeam->owner->projects()
-            ->where('workspace_id', Auth::user()->current_workspace_id)
+        $projects = Project::where('workspace_id', Auth::user()->current_workspace_id)
             ->orderBy('created_at', 'asc')
             ->where('title', 'like', '%' . $this->search . '%')
-            ->limit(5)
+            ->limit(10)
             ->get();
 
         // Format tasks and projects with icons
