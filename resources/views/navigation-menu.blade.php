@@ -16,9 +16,6 @@
                 <div>
                     @livewire('global.check-status')
                 </div>
-                <div>
-                    <livewire:global.working-task-timer />
-                </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -27,7 +24,7 @@
                 <livewire:global.search />
 
                 <!-- Dark Mode Toggle -->
-                <x-mary-theme-toggle class="btn btn-sm mx-4 btn-circle btn-ghost" />
+                <x-mary-theme-toggle class="btn btn-sm mx-2 btn-circle btn-ghost" />
 
                 <!-- Notifications -->
                 <div>

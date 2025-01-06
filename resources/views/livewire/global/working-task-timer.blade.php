@@ -127,7 +127,7 @@ new class extends Component {
     #[On('end-tracking')]
     public function listenEndTracking($id)
     {
-         $this->mount();
+        $this->mount();
     }
 
     public function calculateTotalTrackedTimeOnTask($taskId, $userId)
@@ -141,24 +141,24 @@ new class extends Component {
 
 <div>
     @if ($show)
-        <div class="flex items-center justify-between bg-white border-teal-300 border rounded-lg px-3 py-2" wire:key="userWorkingTimer-{{ $user['uuid'] }}">
-            <div class="flex items-center gap-2">
-                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-sm font-semibold"
-                    wire:navigate>
+        <div class="flex items-center justify-between max-w-[250px] bg-white dark:bg-gray-800 border-teal-300 border rounded-lg px-1.5 py-1"
+            wire:key="userWorkingTimer-{{ $user['uuid'] }}">
+            <div class="truncate mb-1">
+                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-xs font-semibold" wire:navigate>
                     {{ $task['name'] }}
                 </a>
-                @if ($user->userAlreadyTrackingThisTask)
-                    <x-mary-icon name="m-pause" xs class=" text-blue-400 hover:text-blue-600 cursor-pointer w-5 h-5"
-                            x-tooltip.placement.top.raw="Stop Tracking"
-                            wire:click="stopTracking('{{ $task['uuid'] }}')" />
-                @else
-                    <x-mary-icon name="m-play" class=" text-blue-400 hover:text-blue-600 cursor-pointer w-5 h-5"
-                            x-tooltip.placement.top.raw="Start Tracking"
-                            wire:click="startTracking('{{ $task['uuid'] }}')" />
-                @endif
             </div>
-            <div class="ml-3 h-full">
-                <livewire:global.timer class="" :key="'userGlobalTimer-' . $taskId" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']" :taskId="$taskId" />
+            <div class="ml-3 h-full flex items-center gap-1 mb-0.5">
+                <livewire:global.timer class="" :key="'userGlobalTimer-' . $taskId" :trackedTime="$user['trackedTime']" :timerRunning="$user['timerRunning']"
+                    :taskId="$taskId" />
+                @if ($user->userAlreadyTrackingThisTask)
+                    <x-mary-icon name="m-pause" xs class=" text-blue-400 hover:text-blue-600 cursor-pointer w-4 h-4"
+                        x-tooltip.placement.top.raw="Stop Tracking" wire:click="stopTracking('{{ $task['uuid'] }}')" />
+                @else
+                    <x-mary-icon name="m-play" class=" text-blue-400 hover:text-blue-600 cursor-pointer w-4 h-4"
+                        x-tooltip.placement.top.raw="Start Tracking"
+                        wire:click="startTracking('{{ $task['uuid'] }}')" />
+                @endif
             </div>
         </div>
     @endif
