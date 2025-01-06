@@ -76,7 +76,7 @@ class Task extends Model implements HasMedia
 
     public function trackingRecords(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'task_trackings', 'task_id', 'user_id');
+        return $this->belongsToMany(TaskTracking::class, 'task_trackings', 'task_id', 'user_id');
     }
 
     public function subTasks()
