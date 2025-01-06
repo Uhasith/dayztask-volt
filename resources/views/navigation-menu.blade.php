@@ -24,7 +24,7 @@
                 <livewire:global.search />
 
                 <!-- Dark Mode Toggle -->
-                <x-mary-theme-toggle class="btn btn-sm mx-4 btn-circle btn-ghost" />
+                <x-mary-theme-toggle class="btn btn-sm mx-2 btn-circle btn-ghost" />
 
                 <!-- Notifications -->
                 <div>
