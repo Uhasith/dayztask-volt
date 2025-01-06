@@ -21,6 +21,10 @@ document.addEventListener("livewire:navigated", () => {
 document.addEventListener('livewire:init', () => {
     console.log('livewire init')
     Livewire.on('play-notification-sound', (event) => {
-        new Audio(event.sound).play();
+        console.log('playing notification')
+
+        // new Audio(event.sound).play();
+        const audio = document.getElementById('notification-sound');
+        audio.play();
     });
  });

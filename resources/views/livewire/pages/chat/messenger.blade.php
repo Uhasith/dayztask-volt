@@ -91,6 +91,7 @@ new class extends Component {
             $message->save();
             $this->unread_counts[$message->sender_id] = ($this->unread_counts[$message->sender_id] ?? 0) - 1;
         }
+        $this->dispatch('messengerUpdated');
     }
 }; ?>
 <div class="h-full" x-data="{ height: 0, messagesEle: document.getElementById('messages'), user_id: $wire.entangle('user_id').live, friend_id: $wire.entangle('friend_id').live, adjustHeight() {
