@@ -12,6 +12,7 @@ use App\Models\TaskTracking;
 use Livewire\Attributes\Locked;
 use WireUi\Traits\WireUiActions;
 use App\Services\Task\TaskService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -267,6 +268,7 @@ class TaskCard extends Component
 
     public function deleteTask($uuid)
     {
+        DB::beginTransaction();
         try {
             $task = $this->project->tasks()->where('uuid', $uuid)->first();
             if (! $task) {
@@ -275,8 +277,10 @@ class TaskCard extends Component
                 return $this->redirectRoute('projects.show', $this->projectId);
             }
             $task->delete();
+            DB::commit();
             app(NotificationService::class)->sendSuccessNotification('Task deleted successfully');
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error("Failed to delete task: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
 
