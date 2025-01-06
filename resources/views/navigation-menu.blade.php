@@ -16,9 +16,6 @@
                 <div>
                     @livewire('global.check-status')
                 </div>
-                <div>
-                    <livewire:global.working-task-timer />
-                </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
