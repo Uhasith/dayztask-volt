@@ -174,7 +174,7 @@ class TaskCard extends Component
                 return $this->redirectRoute('projects.show.all');
             }
 
-            return $this->redirectRoute('projects.show', ['project' => $this->projectId]);
+             $this->redirectRoute('projects.show', $this->projectId);
         } catch (Exception $e) {
             Log::error("Failed to mark task as done: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -195,7 +195,7 @@ class TaskCard extends Component
                 return $this->redirectRoute('projects.show.all');
             }
 
-            return $this->redirectRoute('projects.show', ['project' => $this->projectId]);
+             $this->redirectRoute('projects.show', $this->projectId);
         } catch (Exception $e) {
             Log::error("Failed to revert task to todo: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -309,7 +309,7 @@ class TaskCard extends Component
             return $this->redirectRoute('projects.show.all');
         }
 
-        return $this->redirectRoute('projects.show', ['project' => $this->projectId]);
+         $this->redirectRoute('projects.show', $this->projectId);
     }
 
     public function openUploadProofModal()
