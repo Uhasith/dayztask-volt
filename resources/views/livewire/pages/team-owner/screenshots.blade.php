@@ -80,7 +80,7 @@ new class extends Component {
         ->get()
         ->toBase()
         ->groupBy(function ($item) {
-            return Carbon\Carbon::parse($item->created_at)->format('H'); // Group by hour
+            return Carbon::parse($item->created_at)->format('H'); // Group by hour
         });
         $this->screenshots = $screenshots;
     }
@@ -121,7 +121,7 @@ new class extends Component {
             @foreach ($screenshots as $hour => $items)
                 <li class="mb-10 ms-4">
                     <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
-                    <p class="mb-3 text-base font-semibold leading-none text-gray-800 dark:text-gray-500 uppercase">{{ Carbon\Carbon::parse($hour . ':00')->format('h:i a') }} - {{ Carbon\Carbon::parse($hour . ':00')->addHours(1)->format('h:i a') }}</p>
+                    <p class="mb-3 text-base font-semibold leading-none text-gray-800 dark:text-gray-500 uppercase">{{ Carbon::parse($hour . ':00')->format('h:i a') }} - {{ Carbon::parse($hour . ':00')->addHours(1)->format('h:i a') }}</p>
                     <div class="grid grid-cols-6 gap-5">
                         @foreach ($items as $screenshot)
                             <div class="media-item">
