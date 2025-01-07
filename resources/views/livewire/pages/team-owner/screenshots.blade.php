@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Models\Task;
 use function Livewire\Volt\{with, usesPagination};
+use Carbon\Carbon;
 // use App\Contracts\Sorting;
 // use App\Concerns\WithSorting;
  
@@ -27,6 +28,7 @@ new class extends Component {
 
     function mount() : void {
         $this->user = auth()->user();
+        $this->selectedDate = Carbon::now()->format('Y-m-d');
         $this->setScreenshots();
     }
 
@@ -45,6 +47,12 @@ new class extends Component {
         $this->setScreenshots();
     }
 
+    function updatedSelectedDate($value) : void {
+        // $this->user = App\Models\User::find($value);
+        // Log::info($value);
+        $this->setScreenshots();
+    }
+
     function setScreenshots() : void {
         if(empty($this->user)){
             $this->user = auth()->user();
@@ -60,13 +68,15 @@ new class extends Component {
             $taskIDs = Task::whereIn('project_id', $this->selectedProjectIDs)->pluck('id');
         }
 
+
+
         $screenshots = Media::where('collection_name', 'screenshot')
         ->where('model_type', 'App\Models\Task')
         ->whereIn('model_id', $taskIDs)
         ->whereJsonContains('custom_properties', ['user_id' => $this->user->id])
         ->orderBy('created_at')
         ->with('model')
-        ->whereRaw('Date(created_at) = CURDATE()')
+        ->whereRaw('date(created_at) = ?', [Carbon::parse($this->selectedDate)->format('Y-m-d')] )
         ->get()
         ->toBase()
         ->groupBy(function ($item) {
@@ -99,6 +109,7 @@ new class extends Component {
                             wire:model.live="selectedDate"
                             label="Filter by Date"
                             placeholder="Select a Date"
+                            max="{{ Carbon::now()->format('Y-m-d') }}"
                             without-timezone
                             without-time
                         />
