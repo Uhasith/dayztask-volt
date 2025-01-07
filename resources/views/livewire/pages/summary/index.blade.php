@@ -6,6 +6,7 @@ use App\Services\Team\TeamService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Models\Project;
 
 new class extends Component {
     public $teamMembers = [];
