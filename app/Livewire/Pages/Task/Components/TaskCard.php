@@ -189,7 +189,13 @@ class TaskCard extends Component
             $this->taskStatus = $updatedTask->status;
             app(NotificationService::class)->sendSuccessNotification('Task marked as todo successfully');
 
-            $this->redirectRoute('projects.show', $this->projectId);
+            $currentRouteName = URL::livewireCurrentRoute();
+
+            if ($currentRouteName == 'projects.show.all') {
+                return $this->redirectRoute('projects.show.all');
+            }
+
+            return $this->redirectRoute('projects.show', ['project' => $this->projectId]);
         } catch (Exception $e) {
             Log::error("Failed to revert task to todo: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -285,7 +291,9 @@ class TaskCard extends Component
                 return $this->redirectRoute('projects.show', $this->projectId);
             }
             $task->delete();
+
             DB::commit();
+
             app(NotificationService::class)->sendSuccessNotification('Task deleted successfully');
         } catch (Exception $e) {
             DB::rollBack();
@@ -295,7 +303,13 @@ class TaskCard extends Component
             return $this->redirectRoute('projects.show', $this->projectId);
         }
 
-        return $this->redirectRoute('projects.show', $this->projectId);
+        $currentRouteName = URL::livewireCurrentRoute();
+
+        if ($currentRouteName == 'projects.show.all') {
+            return $this->redirectRoute('projects.show.all');
+        }
+
+        return $this->redirectRoute('projects.show', ['project' => $this->projectId]);
     }
 
     public function openUploadProofModal()
