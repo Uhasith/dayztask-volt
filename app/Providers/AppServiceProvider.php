@@ -2,12 +2,13 @@
 
 namespace App\Providers;
 
-use App\Services\Notifications\NotificationService;
 use App\Services\Task\TaskService;
-use Filament\Notifications\Livewire\DatabaseNotifications;
 use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Filament\Support\Facades\FilamentColor;
+use App\Services\Notifications\NotificationService;
+use Filament\Notifications\Livewire\DatabaseNotifications;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        URL::macro('livewireCurrentRoute', function () {
+            if (request()->route() && request()->route()->named('livewire.update')) {
+                // Get the previous URL using the URL facade
+                $previousUrl = URL::previous();
+
+                // Match the previous URL to a route
+                $previousRoute = app('router')->getRoutes()->match(
+                    request()->create($previousUrl)
+                );
+
+                // Return the previous route name
+                return optional($previousRoute)->getName();
+            } else {
+                // Return the current route name
+                return optional(request()->route())->getName();
+            }
+        });
     }
 }

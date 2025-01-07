@@ -18,7 +18,7 @@
                         </x-slot>
                     </x-wui-badge>
                 </div> --}}
-                @if ($task['users']->pluck('id')->contains(auth()->id()))
+                @if ($task['users']->pluck('id')->contains(auth()->id()) || auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
 
                     @if ($taskStatus == 'todo')
                         <div>
