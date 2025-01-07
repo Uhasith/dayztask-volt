@@ -32,6 +32,8 @@ Route::post('/user/logout', function (Request $request) {
     return response()->json(['message' => 'Logged out']);
 })->middleware('auth:sanctum');
 
+Route::get('/current-stats', 'App\Http\Controllers\API\GeneralController@fetchCurrentState')->middleware('auth:sanctum');
+
 Route::post('/checkin', 'App\Http\Controllers\API\CheckinController@checkin')->middleware('auth:sanctum');
 Route::get('/projects', 'App\Http\Controllers\API\ProjectController@getProjects')->middleware('auth:sanctum');
 Route::get('/projects/{project_id}/tasks', 'App\Http\Controllers\API\TaskController@getProjectTasks')->middleware('auth:sanctum');

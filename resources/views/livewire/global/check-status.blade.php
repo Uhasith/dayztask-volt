@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 use Livewire\Attributes\Validate;
+use App\Services\User\CheckInOutService;
 
 new class extends Component {
     public bool $checked_in;
@@ -14,54 +15,29 @@ new class extends Component {
 
     function mount(): void
     {
-        $this->checked_in = $this->fetchTodaysCheckin();
-    }
-
-    function fetchTodaysCheckin(): bool
-    {
         $user = Auth::user();
-        // Retrieve today's checkin activity or store it in cache
-        $this->todayCheckin = Cache::remember('checkin' . $user->id, 3600 * 24, function () use ($user) {
-            $today = Carbon::today()->toDateString(); // Get today's date in 'Y-m-d' format
-            return Activity::where('causer_id', $user->id)
-                ->where('causer_type', App\Models\User::class)
-                ->where('event', 'checkin')
-                ->whereDate('properties->checkin', $today)
-                ->whereNull('properties->checkout')
-                ->first();
-        });
-
-        return $this->todayCheckin ? true : false;
+        $this->todayCheckin = app(CheckInOutService::class)->fetchTodaysCheckin($user);
+        $this->checked_in = $this->todayCheckin ? true : false;
     }
 
     function setCheckStatus($location): void
     {
         $user = auth()->user();
-        $this->todayCheckin = Cache::remember('checkin' . $user->id, 3600 * 24, function () use ($user, $location) {
-            $activity = activity()
-                ->causedBy($user)
-                ->withProperties(['checkin' => now(), 'location' => $location])
-                ->event('checkin')
-                ->log('checkin');
-            return Activity::find($activity->id);
-        });
+        $this->todayCheckin = app(CheckInOutService::class)->setCheckStatus($location, $user);
         $this->checked_in = true;
     }
 
     function updateCheckout(): void
     {
         $this->validate();
+
         $user = auth()->user();
         $todayCheckin = Cache::pull('checkin' . $user->id);
         if ($todayCheckin) {
-            $checkin_data = $todayCheckin->properties->toArray();
-            $checkin_data['checkout'] = now();
-            $checkin_data['update'] = $this->day_end_update;
-            $todayCheckin->properties = $checkin_data;
-            $todayCheckin->save();
+            app(CheckInOutService::class)->updateCheckout($user, $todayCheckin, ['day_end_update' => $this->day_end_update]);
             $this->checked_in = false;
         } else {
-            if ($this->fetchTodaysCheckin() && $this->checked_in) {
+            if (app(CheckInOutService::class)->fetchTodaysCheckin($user) && $this->checked_in) {
                 $this->updateCheckout();
             }
         }

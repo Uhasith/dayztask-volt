@@ -32,11 +32,12 @@ class TaskController extends Controller
 
     function uploadScreenshot(Request $request, $task_id) : void {
         $screenshot = $request->file('screenshot');
+        Log::info($request->get('test'));
         $filename = "task-$task_id-" . Carbon::now()->format('Y-m-d, H:i:s') . '.' . $screenshot->getClientOriginalExtension();
         $stored_path = $screenshot->storeAs('uploads', $filename, 'public');
 
         $task = Task::find($task_id);
-        $task->addMedia(\Storage::disk('public')->path($stored_path))->withCustomProperties(['user_id' => $request->user()->id])->toMediaCollection('screenshot');
+        $task->addMedia(\Storage::disk('public')->path($stored_path))->withCustomProperties(['user_id' => $request->user()->id, 'display_index' => $request->get('display_index'), 'display_count' => $request->get('display_count')])->toMediaCollection('screenshot');
     }
 
     function getTeamTasks(Request $request) : Collection {

@@ -66,6 +66,7 @@ new class extends Component {
         ->whereJsonContains('custom_properties', ['user_id' => $this->user->id])
         ->orderBy('created_at')
         ->with('model')
+        ->whereRaw('Date(created_at) = CURDATE()')
         ->get()
         ->toBase()
         ->groupBy(function ($item) {
@@ -120,10 +121,20 @@ new class extends Component {
                                     <div class="flex gap-3 items-center justify-between">
                                     
                                     <a href="{{route('projects.tasks.update', $screenshot->model->uuid)}}" class="font-semibold text-gray-900 dark:text-white">{{$screenshot->model->name}}</a>
-                                    <x-wui-icon data-tooltip-target="tooltip-{{$screenshot->id}}" name="clock" class="w-5 h-5" solid />
+                                    
+                                    <div class="flex gap-1"><x-wui-icon data-tooltip-target="tooltip-{{$screenshot->id}}" name="clock" class="w-5 h-5" solid />
+                                        @if ($screenshot->getCustomProperty('display_count'))
+                                            <x-wui-icon data-tooltip-target="tooltip-displays-{{$screenshot->id}}" name="computer-desktop" class="w-5 h-5" solid />    
+                                        @endif
+                                    </div>
 
                                     <div id="tooltip-{{$screenshot->id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                                         {{$screenshot->created_at->format(config('tracker.datetime.format'))}}
+                                        <div class="tooltip-arrow" data-popper-arrow></div>
+                                    </div>
+
+                                    <div id="tooltip-displays-{{$screenshot->id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                        {{$screenshot->getCustomProperty('display_index') . ' of ' . $screenshot->getCustomProperty('display_count')}}
                                         <div class="tooltip-arrow" data-popper-arrow></div>
                                     </div>
                                 </div>
