@@ -8,8 +8,10 @@ use App\Livewire\Pages\Project\Show as ProjectShow;
 use App\Livewire\Pages\Project\ShowAll as ProjectShowAll;
 use App\Livewire\Pages\Task\Create as TaskCreate;
 use App\Livewire\Pages\Task\Update as TaskUpdate;
+use App\Mail\DayEndUpdate;
 use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -57,4 +59,17 @@ Route::middleware([
     // Team Owner
     Volt::route('event-approvals', 'pages.team-owner.event-approvals')->name('event-approvals');
     Volt::route('screenshots', 'pages.team-owner.screenshots')->name('screenshots');
+
+    Route::get('/test-mail', function () {
+        $data = [
+            'user' => Auth::user(),
+            'team' => Auth::user()->currentTeam,
+            'checkin' => now(),
+            'checkout' => now(),
+            'location' => 'Office',
+            'update' => 'Day End Update',
+        ];
+
+        echo Mail::to(Auth::user()->currentTeam->owner->email)->queue(new DayEndUpdate($data));
+    });
 });

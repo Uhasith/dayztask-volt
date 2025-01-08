@@ -2,11 +2,13 @@
 
 namespace App\Services\User;
 
+use App\Mail\DayEndUpdate;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Activitylog\Models\Activity;
 
 /**
@@ -53,6 +55,18 @@ class CheckInOutService
             $checkin_data['update'] = $data['day_end_update'];
             $todayCheckin->properties = $checkin_data;
             $todayCheckin->save();
+
+            $mailData = array(
+                'user' => $user,
+                'team' => $user->currentTeam,
+                'checkin' => $todayCheckin->properties['checkin'],
+                'checkout' => $todayCheckin->properties['checkout'],
+                'location' => $todayCheckin->properties['location'],
+                'update' => $todayCheckin->properties['update'],
+            );
+
+            Mail::to($user->currentTeam->owner)->queue(new DayEndUpdate($mailData));
+
             return true;
         }
         return false;
