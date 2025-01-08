@@ -14,8 +14,10 @@ use WireUi\Traits\WireUiActions;
 use App\Services\Task\TaskService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
 use Spatie\Activitylog\Models\Activity;
 use App\Services\Notifications\NotificationService;
 
@@ -166,7 +168,13 @@ class TaskCard extends Component
             $this->taskStatus = $updatedTask->status;
             app(NotificationService::class)->sendSuccessNotification('Task marked as done successfully');
 
-            $this->redirectRoute('projects.show', $this->projectId);
+            $currentRouteName = URL::livewireCurrentRoute();
+
+            if ($currentRouteName == 'projects.show.all') {
+                return $this->redirectRoute('projects.show.all');
+            }
+
+             $this->redirectRoute('projects.show', $this->projectId);
         } catch (Exception $e) {
             Log::error("Failed to mark task as done: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -181,7 +189,13 @@ class TaskCard extends Component
             $this->taskStatus = $updatedTask->status;
             app(NotificationService::class)->sendSuccessNotification('Task marked as todo successfully');
 
-            $this->redirectRoute('projects.show', $this->projectId);
+            $currentRouteName = URL::livewireCurrentRoute();
+
+            if ($currentRouteName == 'projects.show.all') {
+                return $this->redirectRoute('projects.show.all');
+            }
+
+             $this->redirectRoute('projects.show', $this->projectId);
         } catch (Exception $e) {
             Log::error("Failed to revert task to todo: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -277,7 +291,9 @@ class TaskCard extends Component
                 return $this->redirectRoute('projects.show', $this->projectId);
             }
             $task->delete();
+
             DB::commit();
+
             app(NotificationService::class)->sendSuccessNotification('Task deleted successfully');
         } catch (Exception $e) {
             DB::rollBack();
@@ -287,7 +303,13 @@ class TaskCard extends Component
             return $this->redirectRoute('projects.show', $this->projectId);
         }
 
-        return $this->redirectRoute('projects.show', $this->projectId);
+        $currentRouteName = URL::livewireCurrentRoute();
+
+        if ($currentRouteName == 'projects.show.all') {
+            return $this->redirectRoute('projects.show.all');
+        }
+
+         $this->redirectRoute('projects.show', $this->projectId);
     }
 
     public function openUploadProofModal()

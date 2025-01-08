@@ -6,6 +6,7 @@ use App\Services\Team\TeamService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Models\Project;
 
 new class extends Component {
     public $teamMembers = [];
@@ -20,9 +21,7 @@ new class extends Component {
     public function mount()
     {
         $this->teamMembers = app(TeamService::class)->getTeamMembers();
-        $this->projects = Auth::user()
-            ->currentTeam->owner->projects()
-            ->where('workspace_id', Auth::user()->current_workspace_id)
+        $this->projects = Project::where('workspace_id', Auth::user()->current_workspace_id)
             ->orderBy('created_at', 'asc')
             ->get()
             ->toArray();
@@ -80,10 +79,10 @@ new class extends Component {
             @endforeach
         </x-wui-select>
         @if ($type === 'Single')
-        <x-wui-button xs primary label="Range" class="mt-6"
-    x-on:click="
-        $wire.set('type', 'Range'); 
-        $wire.set('start_date', '{{ now()->startOfMonth()->format('Y-m-d') }}'); 
+            <x-wui-button xs primary label="Range" class="mt-6"
+                x-on:click="
+        $wire.set('type', 'Range');
+        $wire.set('start_date', '{{ now()->startOfMonth()->format('Y-m-d') }}');
         $wire.set('end_date', '{{ now()->format('Y-m-d') }}');
     " />
         @else
