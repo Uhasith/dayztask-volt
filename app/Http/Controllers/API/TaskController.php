@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Image\Image;
 
 class TaskController extends Controller
@@ -38,8 +39,8 @@ class TaskController extends Controller
         $stored_path = $screenshot->storeAs('uploads', $filename, 'public');
 
         $task = Task::find($task_id);
-        $task->addMedia(\Storage::disk('public')->path($stored_path))->withCustomProperties(['user_id' => $request->user()->id, 'display_index' => $request->get('display_index'), 'display_count' => $request->get('display_count')])->toMediaCollection('screenshot');
-        Image::load($stored_path)->optimize()->save($filename);
+        $task->addMedia(Storage::disk('public')->path($stored_path))->withCustomProperties(['user_id' => $request->user()->id, 'display_index' => $request->get('display_index'), 'display_count' => $request->get('display_count')])->toMediaCollection('screenshot');
+        Image::load($stored_path)->width(1200)->optimize()->save($filename);
     }
 
     function getTeamTasks(Request $request) : Collection {
