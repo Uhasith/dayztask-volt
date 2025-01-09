@@ -10,7 +10,12 @@ use App\Livewire\Pages\Task\Create as TaskCreate;
 use App\Livewire\Pages\Task\Update as TaskUpdate;
 use App\Mail\DayEndUpdate;
 use App\Models\Event;
+use App\Models\Task;
+use App\Models\TaskTracking;
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
@@ -64,12 +69,31 @@ Route::middleware([
         $data = [
             'user' => Auth::user(),
             'team' => Auth::user()->currentTeam,
-            'checkin' => now(),
-            'checkout' => now(),
+            'checkin' => Carbon::parse('2025-01-01 09:00:00'),
+            'checkout' => Carbon::parse('2025-01-01 18:00:00'),
             'location' => 'Office',
             'update' => 'Day End Update',
         ];
 
         echo Mail::to(Auth::user()->currentTeam->owner->email)->queue(new DayEndUpdate($data));
+
+    //    $tasks = Task::with('project')->where('user_id', 1)->whereDate('updated_at', Carbon::parse('2025-01-01'))->select('task_id', DB::raw('SUM(TIMESTAMPDIFF(SECOND, start_time, end_time)) as total_tracking_time'))
+        // ->groupBy('task_id')->get();
+
+        $trackings = TaskTracking::select('task_id')
+        ->selectRaw('SUM(TIMESTAMPDIFF(SECOND, start_time, end_time)) as total_tracking_time')
+        ->whereDate('created_at',Carbon::today())
+        ->with(['task']) // Include the related task details
+        ->groupBy('task_id')
+        ->get();
+
+        foreach ($trackings as $tracking):
+            echo $tracking->task->project->title . '<br>';
+            echo $tracking->task->name . '<br>';
+            echo CarbonInterval::seconds($tracking->total_tracking_time)->cascade()->forHumans() . '<br>';
+            echo $tracking->task->status . '<br>';
+    endforeach;
+
+        // dd($trackings);
     });
 });
