@@ -33,7 +33,7 @@ class Event extends Model implements Eventable
             $eventEnd = !empty($this->end) ? Carbon::parse($this->end) : ($this->is_full_day ? Carbon::parse($this->start)->addHours(23)  : Carbon::parse($this->start)->addHours(6));
         }
         $event = CalendarEvent::make($this)
-            ->title($title)
+            ->title($start . ' and ' . $eventEnd)
             ->start($start)
             ->end($eventEnd)->backgroundColor($color)->allDay($this->is_full_day ?? false)->action('edit');
         return $event;
