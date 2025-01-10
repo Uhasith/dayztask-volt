@@ -30,10 +30,10 @@ class Event extends Model implements Eventable
 
         $eventEnd = !empty($this->end) ? Carbon::parse($this->end) : ($this->is_full_day ? Carbon::parse($this->start)->endOfDay()  : Carbon::parse($this->start)->midDay());
         if(!empty($this->user_id) && $this->user && $this->user->timezone !== auth()->user()->timezone){
-            $start = Carbon::parse($this->start)->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone);
+            $start = Carbon::parse($this->start)->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone)->startOfDay();
             $eventEnd = $eventEnd->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone);     
         }else{
-            $start = Carbon::parse($this->start);
+            $start = Carbon::parse($this->start)->startOfDay();
         }
         $event = CalendarEvent::make($this)
             ->title($title)
