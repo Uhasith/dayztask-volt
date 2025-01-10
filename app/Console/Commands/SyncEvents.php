@@ -29,7 +29,7 @@ class SyncEvents extends Command
      */
     public function handle()
     {
-        $file_url = storage_path('ics/2024.ics');
+        $file_url = storage_path('ics/2025.ics');
         $ical = new ICal($file_url, array('httpUserAgent' => 'A Different User Agent'));
 
         foreach($ical->events() as $event){
@@ -40,7 +40,7 @@ class SyncEvents extends Command
             $holidayData = array(
                 'start' => Carbon::parse($event->dtstart_tz)->format('Y-m-d H:i:s'),
                 'end' => Carbon::parse($event->dtstart_tz)->format('Y-m-d H:i:s'),
-                'description' => $event->description,
+                'description' => $event->summary . ' - ' . $event->description,
                 'is_full_day' => true,
                 'is_approved' => true,
             );
@@ -48,7 +48,7 @@ class SyncEvents extends Command
             Event::updateOrCreate([
                 'start' => Carbon::parse($event->dtstart_tz)->format('Y-m-d H:i:s'),
                 'end' => Carbon::parse($event->dtstart_tz)->format('Y-m-d H:i:s'),
-                'description' => $event->summary,
+                'description' => $event->summary . ' - ' . $event->description,
             ], $holidayData);
 
         }
