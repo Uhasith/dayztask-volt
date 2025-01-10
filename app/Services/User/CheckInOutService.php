@@ -57,7 +57,7 @@ class CheckInOutService
             $todayCheckin->save();
 
             $mailData = array(
-                'user' => $user,
+                'user' => $user ?? auth()->user(),
                 'team' => $user->currentTeam,
                 'checkin' => $todayCheckin->properties['checkin'],
                 'checkout' => $todayCheckin->properties['checkout'],
