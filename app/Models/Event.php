@@ -15,7 +15,10 @@ class Event extends Model implements Eventable
 
     function toEvent(): array|CalendarEvent
     {
-        $title = $this->user?->name . ' - ' .  $this->description;
+        $title = $this->description;
+        if(!empty($this->user_id)){
+            $title = $this->user?->name . ' - ' .  $this->description;
+        }
         $color = str_contains(strtolower($this->description), 'mercantile') ? "#ff5959" : "#e8bc82";
         if(!$this->is_approved){
             $color = "#cccccc";
@@ -25,8 +28,8 @@ class Event extends Model implements Eventable
             $color = "#f28650";
         }
 
-        $eventEnd = !empty($this->end) ? Carbon::parse($this->end) : ($this->is_full_day ? Carbon::parse($this->start)->addHours(23)->addMinutes(59)  : Carbon::parse($this->start)->addHours(6));
-        if($this->user && $this->user->timezone !== auth()->user()->timezone){
+        $eventEnd = !empty($this->end) ? Carbon::parse($this->end) : ($this->is_full_day ? Carbon::parse($this->start)->endOfDay()  : Carbon::parse($this->start)->midDay());
+        if(!empty($this->user_id) && $this->user && $this->user->timezone !== auth()->user()->timezone){
             $start = Carbon::parse($this->start)->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone);
             $eventEnd = $eventEnd->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone);     
         }else{
