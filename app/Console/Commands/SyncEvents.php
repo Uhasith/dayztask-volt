@@ -38,7 +38,7 @@ class SyncEvents extends Command
 
 
             $holidayData = array(
-                'start' => Carbon::parse($event->dtstart_tz)->format('Y-m-d H:i:s'),
+                'start' => Carbon::parse($event->dtstart_tz)->addMinute()->format('Y-m-d H:i:s'),
                 'end' => Carbon::parse($event->dtstart_tz)->addHours(23)->format('Y-m-d H:i:s'),
                 'description' => $event->summary . ' - ' . $event->description,
                 'is_full_day' => true,
@@ -46,7 +46,7 @@ class SyncEvents extends Command
             );
 
             Event::updateOrCreate([
-                'start' => Carbon::parse($event->dtstart_tz)->format('Y-m-d H:i:s'),
+                'start' => Carbon::parse($event->dtstart_tz)->addMinute()->format('Y-m-d H:i:s'),
                 'end' => Carbon::parse($event->dtstart_tz)->addHours(23)->format('Y-m-d H:i:s'),
                 'description' => $event->summary . ' - ' . $event->description,
             ], $holidayData);

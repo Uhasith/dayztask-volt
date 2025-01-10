@@ -25,15 +25,15 @@ class Event extends Model implements Eventable
             $color = "#f28650";
         }
 
+        $eventEnd = !empty($this->end) ? Carbon::parse($this->end) : ($this->is_full_day ? Carbon::parse($this->start)->addHours(23)->addMinutes(59)  : Carbon::parse($this->start)->addHours(6));
         if($this->user && $this->user->timezone !== auth()->user()->timezone){
             $start = Carbon::parse($this->start)->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone);
-            $eventEnd = Carbon::parse($this->end)->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone);     
+            $eventEnd = $eventEnd->timezone($this->user->timezone)->setTimezone(auth()->user()->timezone);     
         }else{
             $start = Carbon::parse($this->start);
-            $eventEnd = !empty($this->end) ? Carbon::parse($this->end) : ($this->is_full_day ? Carbon::parse($this->start)->addHours(23)  : Carbon::parse($this->start)->addHours(6));
         }
         $event = CalendarEvent::make($this)
-            ->title($start . ' and ' . $eventEnd)
+            ->title($title)
             ->start($start)
             ->end($eventEnd)->backgroundColor($color)->allDay($this->is_full_day ?? false)->action('edit');
         return $event;
