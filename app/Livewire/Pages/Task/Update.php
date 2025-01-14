@@ -222,13 +222,13 @@ class Update extends Component
             $this->reset();
             app(NotificationService::class)->sendSuccessNotification('Task updated successfully');
 
-            return $this->redirectRoute('projects.show', $uuid);
+            return $this->redirectIntended(route('projects.show', $uuid));
         } catch (Exception $e) {
             Log::error("Failed to update task: {$e->getMessage()}");
 
             app(NotificationService::class)->sendExeptionNotification();
 
-            return $this->redirectRoute('projects.show', $uuid);
+            return $this->redirectIntended(route('projects.index', $uuid));
         }
     }
 
