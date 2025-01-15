@@ -33,6 +33,47 @@
     </div>
     @filamentScripts
     @livewireScripts
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('onlineUsers', {
+                users: [],
+                setUsers(users) {
+                    this.users = users;
+                },
+                addUser(userId) {
+                    if (!this.users.includes(userId)) {
+                        this.users.push(userId);
+                    }
+                },
+                removeUser(userId) {
+                    this.users = this.users.filter(id => id !== userId);
+                },
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Echo) {
+                window.Echo.join('online-users')
+                    .here((users) => {
+                        console.log("Initial users:", users);
+                        Alpine.store("onlineUsers").setUsers(users.map(user => user.id));
+                    })
+                    .joining((user) => {
+                        console.log("User joined:", user);
+                        Alpine.store("onlineUsers").addUser(user.id);
+                    })
+                    .leaving((user) => {
+                        console.log("User left:", user);
+                        Alpine.store("onlineUsers").removeUser(user.id);
+                    });
+            } else {
+                console.error("Echo is not initialized.");
+            }
+        });
+    </script>
 </body>
 
 </html>
