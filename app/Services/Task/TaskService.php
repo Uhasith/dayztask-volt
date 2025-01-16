@@ -530,6 +530,43 @@ class TaskService extends Component
                 }
             }
 
+            $assignedUsers = $task->users;
+
+            if (empty($task->check_by_user_id)  && $task->status == 'done') {
+                if ($task->created_by != null) {
+                    $creatorId = $task->created_by;
+
+                    $creatorExists = $assignedUsers->contains(function ($user) use ($creatorId) {
+                        return $user->id == $creatorId;
+                    });
+
+                    // If the creator is not in the list, add them
+                    if (!$creatorExists) {
+                        $assignedUsers->push($creatorId);
+                    }
+
+                    foreach ($assignedUsers as $user) {
+                        if ($user->id !== Auth::id()) {
+                            $title = 'Task Completed';
+                            $body = 'Submitted  ' . $task->name . ' task is marked as done by ' . Auth::user()->name . '.';
+
+                            app(NotificationService::class)->sendUserTaskDBNotification($user, $title, $body, $task->id);
+
+                            $mailData = [
+                                'email' => $user->email,
+                                'email_subject' => 'Task Completed',
+                                'email_body' => 'Submitted  ' . $task->name . ' task is marked as done by ' . Auth::user()->name . '.',
+                                'task' => $task,
+                                'user' => $user,
+                                'caused_by' => Auth::user(),
+                            ];
+
+                            Mail::to($user->email)->queue(new NotificationMail($mailData));
+                        }
+                    }
+                }
+            }
+
             DB::commit();
 
             $updatedTask = $task->refresh();
