@@ -97,6 +97,9 @@ class Create extends Component
             }
             $this->teamMembers = app(TeamService::class)->getTeamMembers();
             $this->project = $project;
+
+            $this->needToCheck = true;
+            $this->check_by_user_id = (string) Auth::id();
         } catch (Exception $e) {
             Log::error("Failed to find project: {$e->getMessage()}");
             app(NotificationService::class)->sendExeptionNotification();
@@ -113,7 +116,7 @@ class Create extends Component
         $uuid = $this->project->uuid;
 
         if (! empty($validatedData['estimate_time'])) {
-            $validatedData['estimate_time'] = $validatedData['estimate_time'].' '.$this->range;
+            $validatedData['estimate_time'] = $validatedData['estimate_time'] . ' ' . $this->range;
         }
 
         try {
