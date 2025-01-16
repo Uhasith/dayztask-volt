@@ -2,21 +2,25 @@
 
 namespace App\Livewire\Pages\Task;
 
+use Exception;
 use App\Models\Task;
-use App\Services\Notifications\NotificationService;
+use App\Models\Comment;
+use Livewire\Component;
+use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Locked;
+use WireUi\Traits\WireUiActions;
+use Livewire\Attributes\Validate;
 use App\Services\Task\TaskService;
 use App\Services\Team\TeamService;
-use Exception;
 use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Validate;
-use Livewire\Component;
-use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Notifications\NotificationService;
 
 class Update extends Component
 {
     use WithFileUploads;
+    use WireUiActions;
 
     #[Validate]
     public $task;
@@ -77,6 +81,9 @@ class Update extends Component
     public $oldRemovedSubTasks = [];
 
     public $oldRemovedAttachments = [];
+
+    public $editingCommentId = null;
+    public $editingContent = '';
 
     public function rules()
     {
@@ -230,6 +237,78 @@ class Update extends Component
 
             return $this->redirectIntended(route('projects.index', $uuid));
         }
+    }
+
+
+    public function deleteCommentConfirm($commentId)
+    {
+        $this->dialog()->confirm([
+            'title' => 'Are you sure ?',
+            'description' => 'Do You want to delete this comment ?',
+            'icon' => 'warning',
+            'accept' => [
+                'label' => 'Yes, delete it',
+                'method' => 'deleteComment',
+                'params' => '' . $commentId . '',
+            ],
+        ]);
+    }
+
+    public function deleteComment($commentId)
+    {
+        try {
+            $comment = $this->task->comments()->where('id', $commentId)->first();
+
+            if (! $comment) {
+                app(NotificationService::class)->sendExeptionNotification();
+
+                return $this->redirectIntended(route('projects.tasks.update', $this->task->uuid));
+            }
+
+            $comment->delete();
+            $this->task = Task::with('project', 'comments.user')->where('id', $comment->commentable_id)->first();
+            app(NotificationService::class)->sendSuccessNotification('Comment deleted successfully');
+        } catch (Exception $e) {
+            Log::error("Failed to delete comment: {$e->getMessage()}");
+            app(NotificationService::class)->sendExeptionNotification();
+        }
+    }
+
+    // Edit Comment
+    public function editComment($commentId, $content)
+    {
+        $this->editingCommentId = $commentId;
+        $this->editingContent = $content;
+    }
+
+    // Update Comment
+    public function updateComment($commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+
+        if ($comment->user_id !== Auth::id()) {
+            return;
+        }
+
+        $this->validate([
+            'editingContent' => 'required|string|max:1000',
+        ]);
+
+        $comment->update([
+            'content' => $this->editingContent,
+        ]);
+
+        $this->editingCommentId = null;
+        $this->editingContent = '';
+        $this->task = Task::with('project', 'comments.user')->where('id', $comment->commentable_id)->first();
+        app(NotificationService::class)->sendSuccessNotification('Comment updated successfully');
+    }
+
+    // Cancel Edit
+    public function cancelEdit()
+    {
+        $this->editingCommentId = null;
+        $this->editingContent = '';
     }
 
     public function render()

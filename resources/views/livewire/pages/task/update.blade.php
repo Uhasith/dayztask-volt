@@ -183,18 +183,47 @@
                                     <span
                                         class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ $comment->created_at->diffForHumans() }}</span>
                                 </div>
-                                <div
+
+                                @if ($editingCommentId === $comment->id)
+                                    <!-- Editing Mode -->
+                                    <div
+                                        class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                                        <textarea class="w-full p-2 text-sm border rounded-md dark:bg-gray-800 dark:text-white" wire:model="editingContent"></textarea>
+                                        <button type="button"
+                                            class="mt-2 text-sm font-semibold text-white bg-blue-500 rounded-md px-4 py-2"
+                                            wire:click="updateComment({{ $comment->id }})">
+                                            Save
+                                        </button>
+                                        <button type="button"
+                                            class="mt-2 text-sm font-semibold text-gray-500 dark:text-gray-300"
+                                            wire:click="cancelEdit">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                @else
+                                    <!-- View Mode -->
+                                    <div
                                     class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
                                     <p class="text-sm font-normal text-gray-900 dark:text-white">
                                         {!! preg_replace('/(@\w+)/', '<span class="highlight-at">$1</span>', nl2br(e($comment->content))) !!}
                                     </p>
                                 </div>
-                                <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                                    {{-- <span
-                                        class="text-sm font-normal text-blue-500 dark:text-blue-400 cursor-pointer">Edit</span> --}}
-                                    <span
-                                        class="text-sm font-normal text-red-500 dark:text-red-400 cursor-pointer">Delete</span>
-                                </div>
+
+                                    @if (auth()->id() === $comment->user_id)
+                                        <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                                            <span
+                                                class="text-sm font-normal text-blue-500 dark:text-blue-400 cursor-pointer"
+                                                wire:click="editComment({{ $comment->id }}, '{{ $comment->content }}')">
+                                                Edit
+                                            </span>
+                                            <span
+                                                class="text-sm font-normal text-red-500 dark:text-red-400 cursor-pointer"
+                                                wire:click="deleteCommentConfirm({{ $comment->id }})">
+                                                Delete
+                                            </span>
+                                        </div>
+                                    @endif
+                                @endif
                             </div>
                         </div>
                     @endforeach
