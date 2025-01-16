@@ -32,7 +32,6 @@ class Task extends Model implements HasMedia
         'check_by_user_id' => 'string',
         'confirm_by_user_id' => 'string',
         'follow_up_user_id' => 'string',
-
     ];
 
     public function toSearchableArray()
@@ -98,5 +97,10 @@ class Task extends Model implements HasMedia
     public function followUpUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'follow_up_user_id');
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

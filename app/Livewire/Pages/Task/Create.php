@@ -113,6 +113,7 @@ class Create extends Component
         $validatedData = $this->validate();
         $validatedData['user_id'] = Auth::id();
         $validatedData['project_id'] = $this->project->id;
+        $validatedData['created_by'] = $this->project->id;
         $uuid = $this->project->uuid;
 
         if (! empty($validatedData['estimate_time'])) {
