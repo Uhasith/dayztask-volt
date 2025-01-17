@@ -3,13 +3,14 @@
 namespace App\Livewire\Pages\Project;
 
 use App\Models\Task;
-use App\Models\TaskTracking;
-use App\Services\Team\TeamService;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Project;
 use Livewire\Component;
+use App\Models\TaskTracking;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
-use App\Models\Project;
+use App\Services\Team\TeamService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ShowAll extends Component
 {
@@ -30,7 +31,39 @@ class ShowAll extends Component
 
     public function mount()
     {
+        $userId = Auth::id();
+
         $this->teamMembers = app(TeamService::class)->getTeamMembers();
+
+        $this->showOnlyMyTasks = Cache::get("filter_show_only_my_tasks_{$userId}", $this->showOnlyMyTasks);
+
+        $this->showCompletedTasks = Cache::get("filter_show_completed_tasks_{$userId}", $this->showCompletedTasks);
+
+        $this->filterBy = Cache::get("filter_by_term_{$userId}", $this->filterBy);
+
+        $this->sortBy = Cache::get("filter_by_sort_{$userId}", $this->sortBy);
+    }
+
+
+    public function updated($property, $value)
+    {
+        $userId = Auth::id();
+
+        if ($property === 'showOnlyMyTasks') {
+            Cache::put("filter_show_only_my_tasks_{$userId}", $value, now()->addHours(2));
+        }
+
+        if ($property === 'showCompletedTasks') {
+            Cache::put("filter_show_completed_tasks_{$userId}", $value, now()->addHours(2));
+        }
+
+        if ($property === 'filterBy') {
+            Cache::put("filter_by_term_{$userId}", $value, now()->addHours(2));
+        }
+
+        if ($property === 'sortBy') {
+            Cache::put("filter_by_sort_{$userId}", $value, now()->addHours(2));
+        }
     }
 
     public function endTracking($id)
