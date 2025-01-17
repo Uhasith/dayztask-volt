@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\Project;
+use Illuminate\Support\Facades\Cache;
 
 new class extends Component {
     public $teamMembers = [];
@@ -25,14 +26,21 @@ new class extends Component {
             ->orderBy('created_at', 'asc')
             ->get()
             ->toArray();
+
         $this->user_id = (string) Auth::user()->id;
-        $this->start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
-        $this->end_date = Carbon::now()->format('Y-m-d');
+        $this->type = Cache::get('filter_type_' . Auth::id()) ?? 'Range';
+
+        if ($this->type === 'Single') {
+            $this->setSingle();
+        } else {
+            $this->setRange();
+        }
     }
 
     public function setSingle()
     {
         $this->type = 'Single';
+        Cache::put("filter_type_{$this->user_id}", $this->type, now()->addHours(2));
         $this->start_date = Carbon::now()->format('Y-m-d');
         $this->end_date = null;
         $this->dispatch('startDateUpdated', $this->start_date);
@@ -41,6 +49,7 @@ new class extends Component {
     public function setRange()
     {
         $this->type = 'Range';
+        Cache::put("filter_type_{$this->user_id}", $this->type, now()->addHours(2));
         $this->start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
         $this->end_date = Carbon::now()->format('Y-m-d');
         $this->dispatch('startDateUpdated', $this->start_date);
