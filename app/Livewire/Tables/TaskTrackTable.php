@@ -38,6 +38,7 @@ final class TaskTrackTable extends PowerGridComponent
         $this->start_date = $param;
         $this->end_date = null;
         $this->dispatch('pg:eventRefresh-TaskTrackTable');
+        Log::info($this->start_date);
     }
 
     #[On('endDateUpdated')]

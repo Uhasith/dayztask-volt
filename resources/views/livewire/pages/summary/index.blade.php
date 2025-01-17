@@ -30,11 +30,21 @@ new class extends Component {
         $this->end_date = Carbon::now()->format('Y-m-d');
     }
 
-    public function resetDate()
+    public function setSingle()
     {
         $this->type = 'Single';
         $this->start_date = Carbon::now()->format('Y-m-d');
         $this->end_date = null;
+        $this->dispatch('startDateUpdated', $this->start_date);
+    }
+
+    public function setRange()
+    {
+        $this->type = 'Range';
+        $this->start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $this->end_date = Carbon::now()->format('Y-m-d');
+        $this->dispatch('startDateUpdated', $this->start_date);
+        $this->dispatch('endDateUpdated', $this->end_date);
     }
 
     public function updatedStartDate()
@@ -79,14 +89,9 @@ new class extends Component {
             @endforeach
         </x-wui-select>
         @if ($type === 'Single')
-            <x-wui-button xs primary label="Range" class="mt-6"
-                x-on:click="
-        $wire.set('type', 'Range');
-        $wire.set('start_date', '{{ now()->startOfMonth()->format('Y-m-d') }}');
-        $wire.set('end_date', '{{ now()->format('Y-m-d') }}');
-    " />
+            <x-wui-button xs primary label="Range" class="mt-6" wire:click="setRange" />
         @else
-            <x-wui-button xs primary label="Single" class="mt-6" wire:click="resetDate" />
+            <x-wui-button xs primary label="Single" class="mt-6" wire:click="setSingle" />
         @endif
         <x-wui-datetime-picker wire:model.live="start_date" label="Start Date" placeholder="Start Date"
             class="max-w-[15%]" without-time without-timezone :clearable="false" />
