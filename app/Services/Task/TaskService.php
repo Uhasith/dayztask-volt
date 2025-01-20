@@ -320,8 +320,7 @@ class TaskService extends Component
                     $optimizerChain->optimize($path);
 
                     // Add to media collection
-                    $task->addMedia($path)
-                        ->toMediaCollection('attachments');
+                    $task->addMedia($path)->toMediaCollection('attachments');
                 }
             }
 

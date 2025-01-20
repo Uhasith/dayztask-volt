@@ -19,7 +19,7 @@ class TaskController extends Controller
     function getProjectTasks(Request $request, $project_id) {
         $tasks = Task::where('project_id', $project_id)->whereHas('users', function (Builder $query) use ($request) {
             $query->where('user_id', $request->user()->id);
-        })->get();
+        })->whereNot('status', 'done')->get();
         return response()->json($tasks);
     }
 
