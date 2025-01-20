@@ -17,7 +17,6 @@
         "flowframe/laravel-trend": "^0.2.0",
         "guava/calendar": "^1.11",
         "johngrogg/ics-parser": "^3.4",
-        "joshembling/image-optimizer": "^1.4",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.1",
         "laravel/reverb": "@beta",

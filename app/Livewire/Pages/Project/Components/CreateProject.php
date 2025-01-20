@@ -61,7 +61,7 @@ class CreateProject extends Component implements HasForms
                         'lg' => 2,
                     ]),
 
-                SpatieMediaLibraryFileUpload::make('company_logo')->image()->collection('company_logo')->optimize('webp'),
+                SpatieMediaLibraryFileUpload::make('company_logo')->image()->collection('company_logo'),
             ])
             ->statePath('data')
             ->model(Project::class);

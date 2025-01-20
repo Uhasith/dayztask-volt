@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\Project;
+use Illuminate\Support\Facades\Cache;
 
 new class extends Component {
     public $teamMembers = [];
@@ -25,16 +26,34 @@ new class extends Component {
             ->orderBy('created_at', 'asc')
             ->get()
             ->toArray();
+
         $this->user_id = (string) Auth::user()->id;
-        $this->start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
-        $this->end_date = Carbon::now()->format('Y-m-d');
+        $this->type = Cache::get('filter_type_' . Auth::id()) ?? 'Range';
+
+        if ($this->type === 'Single') {
+            $this->setSingle();
+        } else {
+            $this->setRange();
+        }
     }
 
-    public function resetDate()
+    public function setSingle()
     {
         $this->type = 'Single';
+        Cache::put("filter_type_{$this->user_id}", $this->type, now()->addHours(2));
         $this->start_date = Carbon::now()->format('Y-m-d');
         $this->end_date = null;
+        $this->dispatch('startDateUpdated', $this->start_date);
+    }
+
+    public function setRange()
+    {
+        $this->type = 'Range';
+        Cache::put("filter_type_{$this->user_id}", $this->type, now()->addHours(2));
+        $this->start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $this->end_date = Carbon::now()->format('Y-m-d');
+        $this->dispatch('startDateUpdated', $this->start_date);
+        $this->dispatch('endDateUpdated', $this->end_date);
     }
 
     public function updatedStartDate()
@@ -79,14 +98,9 @@ new class extends Component {
             @endforeach
         </x-wui-select>
         @if ($type === 'Single')
-            <x-wui-button xs primary label="Range" class="mt-6"
-                x-on:click="
-        $wire.set('type', 'Range');
-        $wire.set('start_date', '{{ now()->startOfMonth()->format('Y-m-d') }}');
-        $wire.set('end_date', '{{ now()->format('Y-m-d') }}');
-    " />
+            <x-wui-button xs primary label="Range" class="mt-6" wire:click="setRange" />
         @else
-            <x-wui-button xs primary label="Single" class="mt-6" wire:click="resetDate" />
+            <x-wui-button xs primary label="Single" class="mt-6" wire:click="setSingle" />
         @endif
         <x-wui-datetime-picker wire:model.live="start_date" label="Start Date" placeholder="Start Date"
             class="max-w-[15%]" without-time without-timezone :clearable="false" />
