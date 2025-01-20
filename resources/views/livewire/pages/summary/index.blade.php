@@ -40,7 +40,7 @@ new class extends Component {
     public function setSingle()
     {
         $this->type = 'Single';
-        Cache::put("filter_type_{$this->user_id}", $this->type, now()->addHours(2));
+        Cache::forever("filter_type_{$this->user_id}", $this->type);
         $this->start_date = Carbon::now()->format('Y-m-d');
         $this->end_date = null;
         $this->dispatch('startDateUpdated', $this->start_date);
@@ -49,7 +49,7 @@ new class extends Component {
     public function setRange()
     {
         $this->type = 'Range';
-        Cache::put("filter_type_{$this->user_id}", $this->type, now()->addHours(2));
+        Cache::forever("filter_type_{$this->user_id}", $this->type);
         $this->start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
         $this->end_date = Carbon::now()->format('Y-m-d');
         $this->dispatch('startDateUpdated', $this->start_date);
