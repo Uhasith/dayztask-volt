@@ -52,19 +52,19 @@ class Show extends Component
         $userId = Auth::id();
 
         if ($property === 'showOnlyMyTasks') {
-            Cache::put("filter_show_only_my_tasks_{$userId}", $value, now()->addHours(2));
+            Cache::forever("filter_show_only_my_tasks_{$userId}", $value);
         }
 
         if ($property === 'showCompletedTasks') {
-            Cache::put("filter_show_completed_tasks_{$userId}", $value, now()->addHours(2));
+            Cache::forever("filter_show_completed_tasks_{$userId}", $value);
         }
 
         if ($property === 'filterBy') {
-            Cache::put("filter_by_term_{$userId}", $value, now()->addHours(2));
+            Cache::forever("filter_by_term_{$userId}", $value);
         }
 
         if ($property === 'sortBy') {
-            Cache::put("filter_by_sort_{$userId}", $value, now()->addHours(2));
+            Cache::forever("filter_by_sort_{$userId}", $value);
         }
     }
 

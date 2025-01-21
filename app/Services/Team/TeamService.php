@@ -3,6 +3,7 @@
 namespace App\Services\Team;
 
 use App\Models\Task;
+use App\Models\Project;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,7 +37,7 @@ class TeamService
             return [];
         }
 
-        $projectIds = $user->currentTeam->owner->projects->pluck('id');
+        $projectIds = Project::where('workspace_id', Auth::user()->current_workspace_id)->pluck('id');
         $checkList = Task::with(['project', 'users'])
             ->whereIn('project_id', $projectIds)
             ->where('status', 'done')
