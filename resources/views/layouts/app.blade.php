@@ -58,9 +58,10 @@
                     <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}"
                         wire:navigate x-tooltip.placement.right.raw="Summary" />
                     <livewire:pages.checklist.components.checklist-sidebar-icon />
-                    <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range"
+                    <livewire:pages.team-owner.components.events-sidebar-icon />
+                    {{-- <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range"
                         link="{{ route('event-approvals') }}" wire:navigate
-                        x-tooltip.placement.right.raw="Event Approvals" />
+                        x-tooltip.placement.right.raw="Event Approvals" /> --}}
                     <x-mary-menu-item title="Screenshots" icon="o-computer-desktop" link="{{ route('screenshots') }}"
                         wire:navigate x-tooltip.placement.right.raw="Screenshots" />
                 @endif

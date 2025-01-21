@@ -32,21 +32,18 @@ class EventsWidget extends CalendarWidget
 
     function getEvents(array $fetchInfo = []): Collection|array
     {
-        return Event::whereNull('user_id')->orWhereIn('user_id', auth()->user()->currentTeam->allUsers()->pluck('id'))->where('is_approved', 1)->get()->map(function($event){
+        return Event::whereNull('user_id')->orWhereIn('user_id', auth()->user()->currentTeam->allUsers()->pluck('id'))->where('is_approved', 1)->get()->map(function ($event) {
             $event['title'] = $event['description'];
             return $event;
         });
     }
 
-    function onDateClick(array $info = []): void
-    {
-        
-    }
+    function onDateClick(array $info = []): void {}
 
     public function getHeaderActions(): array
     {
         return [
-                CreateAction::make('createLeaveRequest')->model(Event::class)->label('Request a leave')
+            CreateAction::make('createLeaveRequest')->model(Event::class)->label('Request a leave')
         ];
     }
 
@@ -68,7 +65,7 @@ class EventsWidget extends CalendarWidget
         return [
             CreateAction::make('createLeaveRequest')
                 ->model(Event::class)->label('Request a leave')
-                ->mountUsing(fn ($arguments, $form) => $form->fill([
+                ->mountUsing(fn($arguments, $form) => $form->fill([
                     'start' => data_get($arguments, 'dateStr'),
                     'end' => data_get($arguments, 'dateStr'),
                 ]))
@@ -77,15 +74,17 @@ class EventsWidget extends CalendarWidget
 
     public function getSchema(?string $model = null): ?array
     {
+        Log::info('TEST');
         return match ($model) {
-            Log::info($this->getEventRecord()),
             Event::class => [
                 Hidden::make('user_id')->default(auth()->user()->id)->required(),
                 Textarea::make('description')->label('Reason')->rows(5)->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id),
                 Group::make([
                     Radio::make('is_full_day')->label(false)->options(
-                        [1 => 'Full day',
-                         0 => 'Half day']
+                        [
+                            1 => 'Full day',
+                            0 => 'Half day'
+                        ]
                     )->reactive()
                 ])->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id),
                 Group::make([
@@ -101,7 +100,7 @@ class EventsWidget extends CalendarWidget
                             return $get('is_full_day') == 0;
                         }),
                 ])->columns()->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id)
-            ]
+            ],
         };
     }
 

@@ -82,6 +82,9 @@ final class EventTable extends PowerGridComponent
         Event::query()->find($id)->update([
             $field => e($value),
         ]);
+
+        $this->dispatch('calendar--refresh');
+
     }
 
     public function filters(): array
