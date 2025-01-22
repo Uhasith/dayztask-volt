@@ -8,57 +8,116 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Validate;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\On;
 
 new class extends Component {
     public $teamMembers = [];
+    public $teamMembersData = [];
 
     public function mount()
     {
-        $this->teamMembers = app(TeamService::class)->getTeamMembers();
+        $this->teamMembers = app(TeamService::class)->getTeamMembersIds();
+        $this->teamMembersData = app(TeamService::class)->getTeamMembersData($this->teamMembers);
+    }
+
+    #[On('start-tracking')]
+    public function listenStartTracking($id)
+    {
+        $this->redirectRoute('status.index');
+    }
+
+    #[On('end-tracking')]
+    public function listenEndTracking($id)
+    {
+        $this->redirectRoute('status.index');
     }
 }; ?>
 
 <div class="w-full mx-auto p-5 lg:px-10 lg:py-5" x-init="initFlowbite();">
     <div>
         <div class="container mx-auto">
-            <h1 class="text-2xl font-bold mb-6 text-center">Team Status Dashboard</h1>
+            <h1 class="text-2xl font-bold my-4 text-center">Team Status Dashboard</h1>
             <div class="flex items-stretch justify-between gap-8 mt-8">
-                <div class="w-[70%] flex-grow">
+                <div class="w-full flex-grow">
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg h-full">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3">
+                                    <th scope="col" class="px-6 py-3 text-center">
                                         Name
                                     </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Position
+                                    <th scope="col" class="px-6 py-3 text-center">
+                                        Working On
                                     </th>
-                                    <th scope="col" class="px-6 py-3">
+                                    <th scope="col" class="px-6 py-3 text-center">
+                                        Tracking Details
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center">
+                                        Open Tasks
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center">
+                                        Missed Deadline
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center">
                                         Status
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($teamMembers as $teamMember)
+                                @foreach ($teamMembersData as $teamMember)
                                     <tr
-                                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
                                         <th scope="row"
                                             class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                             <img class="w-10 h-10 rounded-full"
-                                                src="{{ $teamMember['profile_photo_url'] ?? asset('assets/images/no-user-image.png') }}" alt="Jese image">
+                                                src="{{ $teamMember['profile_photo_url'] ?? asset('assets/images/no-user-image.png') }}"
+                                                alt="Jese image">
                                             <div class="ps-3">
                                                 <div class="text-base font-semibold">{{ $teamMember['name'] }}</div>
                                                 <div class="font-normal text-gray-500">{{ $teamMember['email'] }}</div>
                                             </div>
                                         </th>
                                         <td class="px-6 py-4">
-                                            React Developer
+                                            @if (!$teamMember['no_task_found'])
+                                                {{ $teamMember['tracking_task']['name'] }}
+                                            @else
+                                                <span class="text-gray-500">No Task Found</span>
+                                            @endif
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-center">
+                                            @if (!$teamMember['no_task_found'])
+                                                <livewire:global.timer class="" :key="'userStatusTimer-' .
+                                                    $teamMember['tracking_task_id'] .
+                                                    '-' .
+                                                    $teamMember['id']"
+                                                    :trackedTime="$teamMember['tracked_time']" :timerRunning="$teamMember['timer_running']" :taskId="$teamMember['tracking_task_id']" />
+                                            @else
+                                                <span class="text-gray-500">No Task Found</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            {{ $teamMember['open_task_count'] }}
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            {{ $teamMember['missed_deadline_count'] }}
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
                                             <div class="flex items-center">
-                                                <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> Online
+                                                <template
+                                                    x-if="$store.onlineUsers.users.includes({{ $teamMember['id'] }})">
+                                                    <div class="flex items-center">
+                                                        <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                                                        Online
+                                                    </div>
+                                                </template>
+                                                <template
+                                                    x-if="!$store.onlineUsers.users.includes({{ $teamMember['id'] }})">
+                                                    <div class="flex items-center">
+                                                        <div class="h-2.5 w-2.5 rounded-full bg-gray-400 me-2"></div>
+                                                        Offline
+                                                    </div>
+                                                </template>
                                             </div>
                                         </td>
                                     </tr>
@@ -68,7 +127,7 @@ new class extends Component {
                     </div>
                 </div>
                 <!-- Example Team Member Card -->
-                <div class="w-[30%] flex-grow">
+                {{-- <div class="w-[30%] flex-grow">
                     <div class="rounded-lg border bg-white px-4 pt-8 pb-10 shadow-lg h-full">
                         <div class="relative mx-auto w-36 rounded-full">
                             <span
@@ -95,7 +154,7 @@ new class extends Component {
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

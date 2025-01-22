@@ -3,7 +3,10 @@
 namespace App\Services\Team;
 
 use App\Models\Task;
+use App\Models\User;
 use App\Models\Project;
+use App\Models\TaskTracking;
+use App\Services\Task\TaskService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,6 +30,86 @@ class TeamService
         }
 
         return $user->currentTeam->allUsers();
+    }
+
+    public function getTeamMembersIds(): mixed
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->currentTeam) {
+            return [];
+        }
+
+        return $user->currentTeam->allUsers()->pluck('id');
+    }
+
+    public function getTeamMembersData(array | Collection $teamMembers = []): mixed
+    {
+        $users = User::whereIn('id', $teamMembers)
+            ->withCount([
+                'tasks as open_task_count' => function ($query) {
+                    $query->where('status', 'todo');
+                },
+                'tasks as missed_deadline_count' => function ($query) {
+                    $query->whereNotNull('deadline')
+                        ->where('deadline', '<', now());
+                }
+            ])
+            ->get();
+
+        return $users->map(function ($user) {
+            // Check if the user is currently tracking a task
+            $userTrackingTask = TaskTracking::where('user_id', $user->id)
+                ->whereNull('end_time')
+                ->where('enable_tracking', true)
+                ->first();
+
+            $noTaskFound = false;
+
+            if ($userTrackingTask) {
+                $taskId = $userTrackingTask->task_id;
+                $task = $userTrackingTask->task;
+                $trackedTime = $this->calculateTotalTrackedTimeOnTask($taskId, $user->id);
+                $timerRunning = true;
+            } else {
+                // If not currently tracking, retrieve the last tracked task
+                $lastTrackedTask = TaskTracking::where('user_id', $user->id)
+                    ->latest()
+                    ->first();
+
+                $timerRunning = false;
+
+                if ($lastTrackedTask) {
+                    $taskId = $lastTrackedTask->task_id;
+                    $task = $lastTrackedTask->task;
+                    $trackedTime = $this->calculateTotalTrackedTimeOnTask($taskId, $user->id);
+                } else {
+                    // No tracked tasks found
+                    $taskId = null;
+                    $task = null;
+                    $trackedTime = 0;
+                    $noTaskFound = true;
+                }
+            }
+
+            return [
+                ...$user->toArray(),
+                'open_task_count' => $user->open_task_count,
+                'missed_deadline_count' => $user->missed_deadline_count,
+                'tracking_task_id' => $taskId,
+                'tracking_task' => $task,
+                'tracked_time' => $trackedTime,
+                'timer_running' => $timerRunning,
+                'no_task_found' => $noTaskFound
+            ];
+        });
+    }
+
+    public function calculateTotalTrackedTimeOnTask($taskId, $userId)
+    {
+        $taskService = app(TaskService::class);
+        $time = $taskService->calculateTotalTrackedTime($taskId, $userId);
+
+        return $time;
     }
 
 
