@@ -89,22 +89,40 @@ class TeamMemberWeekTimeChart extends ChartWidget
         $taskIds = Task::whereIn('project_id', $projectIds)->pluck('id');
 
         // Get task tracking records for the specified date range
-        $data = TaskTracking::where('user_id', Auth::id())
+        $records = TaskTracking::where('user_id', Auth::id())
             ->whereIn('task_id', $taskIds)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->groupBy(function ($record) {
-                return Carbon::parse($record->created_at)->format('l'); // Group by day of the week (e.g., Monday)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate])
+                    ->orWhereBetween('updated_at', [$startDate, $endDate]);
             })
-            ->map(function ($day) {
-                // Sum the total tracked time for each day
-                return $day->sum(function ($record) {
-                    $startTime = Carbon::parse($record->created_at);
-                    $endTime = $record->end_time ? Carbon::parse($record->end_time) : Carbon::now();
+            ->get();
 
-                    return round($startTime->diffInHours($endTime), 2);
-                });
-            });
+        // Process and group records by day of the week
+        $data = $records->flatMap(function ($record) use ($startDate, $endDate) {
+            $startTime = Carbon::parse($record->created_at)->max($startDate);
+            $endTime = $record->updated_at ? Carbon::parse($record->updated_at) : Carbon::now();
+            $endTime = $endTime->min($endDate);
+
+            $dailyTrackedTime = [];
+
+            // Split time across multiple days if it spans across them
+            while ($startTime->lt($endTime)) {
+                $endOfDay = $startTime->copy()->endOfDay();
+                $effectiveEnd = $endTime->lt($endOfDay) ? $endTime : $endOfDay;
+                $dailyTrackedTime[$startTime->format('l')] = ($dailyTrackedTime[$startTime->format('l')] ?? 0)
+                    + $startTime->diffInHours($effectiveEnd);
+                $startTime = $effectiveEnd->addSecond();
+            }
+
+            return $dailyTrackedTime;
+        });
+
+        // Sum tracked time for each day of the week
+        $data = collect($data)->groupBy(function ($value, $key) {
+            return $key; // Group by day of the week
+        })->map(function ($times) {
+            return array_sum($times->toArray()); // Convert the collection to an array before summing
+        });
 
         // Ensure all days of the week are included, even if there is no data for them
         $daysOfWeek = collect(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
