@@ -70,9 +70,8 @@ new class extends Component {
                                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
                                         <th scope="row"
                                             class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                            <img class="w-10 h-10 rounded-full"
-                                                src="{{ $teamMember['profile_photo_url'] ?? asset('assets/images/no-user-image.png') }}"
-                                                alt="Jese image">
+                                            <x-wui-avatar lg
+                                                src="{{ !empty($teamMember['profile_photo_url']) ? $teamMember['profile_photo_url'] : asset('assets/images/no-user-image.png') }}" />
                                             <div class="ps-3">
                                                 <div class="text-base font-semibold">{{ $teamMember['name'] }}</div>
                                                 <div class="font-normal text-gray-500">{{ $teamMember['email'] }}</div>
