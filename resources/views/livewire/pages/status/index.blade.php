@@ -79,7 +79,13 @@ new class extends Component {
                                         </th>
                                         <td class="px-6 py-4">
                                             @if (!$teamMember['no_task_found'])
-                                                {{ $teamMember['tracking_task']['name'] }}
+                                                @if ($teamMember['timer_running'])
+                                                    <span class="text-green-500">
+                                                        {{ $teamMember['tracking_task']['name'] }}</span>
+                                                @else
+                                                    <span class="text-orange-500">
+                                                        {{ $teamMember['tracking_task']['name'] }}</span>
+                                                @endif
                                             @else
                                                 <span class="text-gray-500">No Task Found</span>
                                             @endif
