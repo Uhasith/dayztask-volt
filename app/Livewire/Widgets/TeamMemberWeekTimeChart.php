@@ -110,7 +110,7 @@ class TeamMemberWeekTimeChart extends ChartWidget
                 $endOfDay = $startTime->copy()->endOfDay();
                 $effectiveEnd = $endTime->lt($endOfDay) ? $endTime : $endOfDay;
                 $dailyTrackedTime[$startTime->format('l')] = ($dailyTrackedTime[$startTime->format('l')] ?? 0)
-                    + $startTime->diffInHours($effectiveEnd);
+                    + $startTime->diffInMinutes($effectiveEnd); // Use minutes for finer granularity
                 $startTime = $effectiveEnd->addSecond();
             }
 
@@ -121,7 +121,7 @@ class TeamMemberWeekTimeChart extends ChartWidget
         $data = collect($data)->groupBy(function ($value, $key) {
             return $key; // Group by day of the week
         })->map(function ($times) {
-            return array_sum($times->toArray()); // Convert the collection to an array before summing
+            return round(array_sum($times->toArray()) / 60, 2); // Convert minutes to hours and round to 2 decimals
         });
 
         // Ensure all days of the week are included, even if there is no data for them
