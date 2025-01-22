@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Widgets;
 
-use App\Models\Project;
-use App\Models\Task;
-use App\Models\TaskTracking;
 use Carbon\Carbon;
+use App\Models\Task;
+use App\Models\Project;
+use App\Models\TaskTracking;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class TeamMemberWeekTimeChart extends ChartWidget
@@ -67,6 +68,9 @@ class TeamMemberWeekTimeChart extends ChartWidget
                 $endDate = Carbon::now()->subWeek()->endOfWeek();
                 break;
             case 'week':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                break;
             default:
                 $startDate = Carbon::now()->startOfWeek();
                 $endDate = Carbon::now()->endOfWeek();
@@ -87,7 +91,7 @@ class TeamMemberWeekTimeChart extends ChartWidget
         // Get task tracking records for the specified date range
         $data = TaskTracking::where('user_id', Auth::id())
             ->whereIn('task_id', $taskIds)
-            ->whereBetween('start_time', [$startDate, $endDate])
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->get()
             ->groupBy(function ($record) {
                 return Carbon::parse($record->start_time)->format('l'); // Group by day of the week (e.g., Monday)
@@ -107,6 +111,8 @@ class TeamMemberWeekTimeChart extends ChartWidget
         $data = $daysOfWeek->mapWithKeys(function ($day) use ($data) {
             return [$day => $data->get($day, 0)];
         });
+
+        Log::info($data);
 
         return [
             'datasets' => [
