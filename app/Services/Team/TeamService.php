@@ -50,7 +50,7 @@ class TeamService
                     $query->where('status', 'todo');
                 },
                 'tasks as missed_deadline_count' => function ($query) {
-                    $query->whereNotNull('deadline')
+                    $query->where('status', '!=', 'done')->whereNotNull('deadline')
                         ->where('deadline', '<', now());
                 }
             ])

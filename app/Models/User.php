@@ -90,10 +90,9 @@ class User extends AuthUser
     public function tasks(): BelongsToMany
     {
         return $this->belongsToMany(Task::class, 'tasks_users', 'user_id', 'task_id')->whereHas('project', function ($query) {
-            if(auth()->check()){
-            $query->where('workspace_id', auth()->user()->current_workspace_id);
+            if (auth()->check()) {
+                $query->where('workspace_id', auth()->user()->current_workspace_id);
             }
-        
         });
     }
 
@@ -111,7 +110,8 @@ class User extends AuthUser
         return $this->hasMany(TaskTracking::class, 'user_id');
     }
 
-    public function events() : HasMany {
+    public function events(): HasMany
+    {
         return $this->hasMany(Event::class);
     }
 }
