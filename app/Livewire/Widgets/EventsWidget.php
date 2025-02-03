@@ -92,13 +92,13 @@ class EventsWidget extends CalendarWidget
                         ->native(false)
                         ->seconds(false)
                         ->required()->minDate(Carbon::today()->addDays(2)),
-                    DateTimePicker::make('end')
-                        ->native(false)
-                        ->seconds(false)
-                        ->required()->minDate(Carbon::today()->addDays(3))
-                        ->hidden(function (Get $get) {
-                            return $get('is_full_day') == 0;
-                        }),
+                    // DateTimePicker::make('end')
+                    //     ->native(false)
+                    //     ->seconds(false)
+                    //     ->required()->minDate(Carbon::today()->addDays(3))
+                    //     ->hidden(function (Get $get) {
+                    //         return $get('is_full_day') == 0;
+                    //     }),
                 ])->columns()->disabled($this->getEventRecord() && $this->getEventRecord()->user_id !== auth()->user()->id)
             ],
         };
