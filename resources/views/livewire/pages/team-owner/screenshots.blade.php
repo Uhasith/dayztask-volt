@@ -85,6 +85,15 @@ new class extends Component {
 
         $this->dispatch('screenshots-updated');
     }
+
+    function removeSs($id) : void {
+        Log::info($id);
+        $media = Media::find($id);
+        if($media){
+            $media->model->deleteMedia($media->id);
+            $this->dispatch('screenshots-updated');
+        }   
+    }
 }; ?>
 
 <div class="py-4">
@@ -146,6 +155,7 @@ new class extends Component {
                                     <x-wui-icon data-tooltip-target="tooltip-displays-{{$screenshot->id}}"
                                         name="computer-desktop" class="w-5 h-5" solid />
                                     @endif
+                                    <x-wui-icon name="trash" class="w-5 h-5" wire:click="removeSs({{$screenshot->id}})" />
                                 </div>
 
                                 <div id="tooltip-{{$screenshot->id}}" role="tooltip"
