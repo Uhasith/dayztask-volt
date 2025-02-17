@@ -23,6 +23,29 @@
                         <x-wui-badge flat red label="Project : {{ $task->project->title }}" />
                     </a>
                 </div>
+                @if ($task?->rejected_reasons && count($task?->rejected_reasons) > 0)
+                    <div>
+                        <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                            role="alert">
+                            <svg class="shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                            </svg>
+                            <span class="sr-only">Danger</span>
+                            <div>
+                                <span class="font-medium">Task Rejected Reasons :</span>
+                                <ul class="mt-1.5 list-disc list-inside">
+                                    @foreach ($task->rejected_reasons as $key => $reason)
+                                        <li wire:key="reason-{{ $key }}">
+                                            {{ $reason }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
                     <x-wui-input icon="document-text" label="Task Name" placeholder="Task Name" wire:model="name" />
                     <x-wui-select id="assignTo" icon="user" label="Assign To" placeholder="Assign To"
@@ -203,11 +226,11 @@
                                 @else
                                     <!-- View Mode -->
                                     <div
-                                    class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                                    <p class="text-sm font-normal text-gray-900 dark:text-white">
-                                        {!! preg_replace('/(@\w+)/', '<span class="highlight-at">$1</span>', nl2br(e($comment->content))) !!}
-                                    </p>
-                                </div>
+                                        class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                                        <p class="text-sm font-normal text-gray-900 dark:text-white">
+                                            {!! preg_replace('/(@\w+)/', '<span class="highlight-at">$1</span>', nl2br(e($comment->content))) !!}
+                                        </p>
+                                    </div>
 
                                     @if (auth()->id() === $comment->user_id)
                                         <div class="flex items-center space-x-2 rtl:space-x-reverse">

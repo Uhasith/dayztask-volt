@@ -32,6 +32,7 @@ class Task extends Model implements HasMedia
         'check_by_user_id' => 'string',
         'confirm_by_user_id' => 'string',
         'follow_up_user_id' => 'string',
+        'rejected_reasons' => 'array',
     ];
 
     public function toSearchableArray()

@@ -153,7 +153,12 @@ class TaskService extends Component
                 return;
             }
 
-            $task->update(['is_checked' => false, 'is_confirmed' => false, 'status' => 'todo']);
+            $task->update([
+                'is_checked' => false,
+                'is_confirmed' => false,
+                'status' => 'todo',
+                'rejected_reasons' => array_merge($task->rejected_reasons ?? [], [$rejectionReason])
+            ]);
 
             $assignedUsers = $task->users;
             foreach ($assignedUsers as $user) {
