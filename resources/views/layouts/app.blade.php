@@ -36,6 +36,7 @@
     @livewireStyles
     @wireUiScripts
     @stack('styles')
+    @wirechatStyles
 </head>
 
 <body class="font-sans antialiased" x-data>
@@ -138,6 +139,7 @@
     @filamentScripts
     @livewireScripts
     @stack('scripts')
+    @wirechatAssets
     <script src="https://unpkg.com/@victoryoalli/alpinejs-timeout@1.0.0/dist/timeout.min.js" defer></script>
 
     <!-- Include the Quill library -->
