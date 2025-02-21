@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
 
     /**
@@ -12,7 +14,7 @@ return [
      * User Model:
      * The model class representing your users.
      */
-    'user_model' => \App\Models\User::class,
+    'user_model' => User::class,
 
     /**
      * Broadcasting:

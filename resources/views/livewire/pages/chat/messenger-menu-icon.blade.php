@@ -20,7 +20,8 @@ new class extends Component {
     }
 
     #[On('messengerUpdated')] 
-    public function chatReceived()
+    #[On('private-participant.{type}.{id}')] 
+    public function chatReceived($type, $id)
     {
         $this->count = app(MessengerService::class)->getMessengerCount();
         $this->dispatch('play-notification-sound', sound: asset('assets/sounds/notification.mp3'));
