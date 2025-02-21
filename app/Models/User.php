@@ -16,6 +16,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Namu\WireChat\Traits\Chatable;
 
 #[ObservedBy([UserObserver::class])]
 class User extends AuthUser
@@ -26,6 +27,7 @@ class User extends AuthUser
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use Chatable;
 
     /**
      * The attributes that are mass assignable.
@@ -113,5 +115,15 @@ class User extends AuthUser
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function canCreateChats(): bool
+    {
+        return $this->hasVerifiedEmail();
+    }
+
+    public function canCreateGroups(): bool
+    {
+        return $this->hasVerifiedEmail() === true;
     }
 }

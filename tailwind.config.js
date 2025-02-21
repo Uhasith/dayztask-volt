@@ -29,7 +29,9 @@ export default {
         "./app/Livewire/**/*Table.php",
         "./vendor/power-components/livewire-powergrid/resources/views/**/*.php",
         "./vendor/power-components/livewire-powergrid/src/Themes/Tailwind.php",
-        './vendor/guava/calendar/resources/**/*.blade.php',
+        "./vendor/guava/calendar/resources/**/*.blade.php",
+        "./vendor/namu/wirechat/resources/views/**/*.blade.php",
+        "./vendor/namu/wirechat/src/Livewire/**/*.php",
     ],
     theme: {
         extend: {

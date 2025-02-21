@@ -25,6 +25,7 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.6",
+        "namu/wirechat": "^0.1.1",
         "power-components/livewire-powergrid": "^6.1",
         "robsontenorio/mary": "^1.30",
         "spatie/image-optimizer": "^1.7",

@@ -65,7 +65,7 @@
                     <x-mary-menu-item title="Screenshots" icon="o-computer-desktop" link="{{ route('screenshots') }}"
                         wire:navigate x-tooltip.placement.right.raw="Screenshots" />
                 @endif
-                <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('messenger') }}"
+                <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('chats') }}"
                     wire:navigate x-tooltip.placement.right.raw="Messenger" />
 
                 {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
