@@ -28,7 +28,7 @@ new class extends Component {
             class="block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-900 dark:text-white">
             Messages
         </div>
-        <div class="divide-y divide-gray-100 dark:divide-gray-700 h-[500px] border">
+        <div class="divide-y divide-gray-100 dark:divide-gray-700 h-[500px]">
             <livewire:wirechat.chats />
         </div>
     </div>
