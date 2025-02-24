@@ -26,6 +26,10 @@
                 <!-- Dark Mode Toggle -->
                 <x-mary-theme-toggle class="btn btn-sm mx-2 btn-circle btn-ghost" />
 
+                <div>
+                    <livewire:global.chat />
+                </div>
+
                 <!-- Notifications -->
                 <div>
                     @livewire('database-notifications')
