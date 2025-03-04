@@ -128,8 +128,8 @@ final class TaskTrackTable extends PowerGridComponent
 
         // Calculate the total worked time
         $totalMinutes = $query->get()->sum(function ($record) {
-            $startTime = Carbon::parse($record->start_time);
-            $endTime = $record->end_time ? Carbon::parse($record->end_time) : Carbon::now();
+            $startTime = Carbon::parse($record->created_at);
+            $endTime = $record->updated_at ? Carbon::parse($record->updated_at) : Carbon::now();
 
             return $startTime->diffInMinutes($endTime);
         });
@@ -158,8 +158,8 @@ final class TaskTrackTable extends PowerGridComponent
             ->add('project_title')
             ->add('start_time')
             ->add('total_time', function ($record) {
-                $start = Carbon::parse($record->start_time);
-                $end = Carbon::parse($record->end_time) ?? Carbon::now();
+                $start = Carbon::parse($record->created_at);
+                $end = Carbon::parse($record->updated_at) ?? Carbon::now();
 
                 $totalMinutes = $start->diffInMinutes($end); // Total difference in minutes
                 $hours = floor($totalMinutes / 60); // Calculate hours as an integer

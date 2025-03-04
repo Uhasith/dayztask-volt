@@ -85,6 +85,7 @@ class TeamMemberWeekTimeChart extends ChartWidget
         $activeFilter = $this->filter;
         [$startDate, $endDate] = $this->getDateRange($activeFilter);
 
+        // Get all relevant project and task IDs
         $projectIds = Project::where('workspace_id', Auth::user()->current_workspace_id)->pluck('id');
         $taskIds = Task::whereIn('project_id', $projectIds)->pluck('id');
 
@@ -97,40 +98,39 @@ class TeamMemberWeekTimeChart extends ChartWidget
             })
             ->get();
 
-        // Process and group records by day of the week
-        $data = $records->flatMap(function ($record) use ($startDate, $endDate) {
+        // Initialize array to store total time per day
+        $trackedTimeByDay = [];
+
+        // Process each task tracking record
+        foreach ($records as $record) {
             $startTime = Carbon::parse($record->created_at)->max($startDate);
             $endTime = $record->updated_at ? Carbon::parse($record->updated_at) : Carbon::now();
             $endTime = $endTime->min($endDate);
 
-            $dailyTrackedTime = [];
-
-            // Split time across multiple days if it spans across them
             while ($startTime->lt($endTime)) {
+                $day = $startTime->format('l'); // Get day name (Monday, Tuesday, etc.)
                 $endOfDay = $startTime->copy()->endOfDay();
                 $effectiveEnd = $endTime->lt($endOfDay) ? $endTime : $endOfDay;
-                $dailyTrackedTime[$startTime->format('l')] = ($dailyTrackedTime[$startTime->format('l')] ?? 0)
-                    + $startTime->diffInMinutes($effectiveEnd); // Use minutes for finer granularity
+
+                // Accumulate time in minutes for each day
+                if (!isset($trackedTimeByDay[$day])) {
+                    $trackedTimeByDay[$day] = 0;
+                }
+                $trackedTimeByDay[$day] += $startTime->diffInMinutes($effectiveEnd);
+
+                // Move to next day if needed
                 $startTime = $effectiveEnd->addSecond();
             }
+        }
 
-            return $dailyTrackedTime;
-        });
+        // Convert minutes to hours and round to 2 decimal places
+        $trackedTimeByDay = collect($trackedTimeByDay)->map(fn($minutes) => round($minutes / 60, 2));
 
-        // Sum tracked time for each day of the week
-        $data = collect($data)->groupBy(function ($value, $key) {
-            return $key; // Group by day of the week
-        })->map(function ($times) {
-            return round(array_sum($times->toArray()) / 60, 2); // Convert minutes to hours and round to 2 decimals
-        });
-
-        // Ensure all days of the week are included, even if there is no data for them
+        // Ensure all 7 days of the week are included, even if they have 0 tracked hours
         $daysOfWeek = collect(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
-        $data = $daysOfWeek->mapWithKeys(function ($day) use ($data) {
-            return [$day => $data->get($day, 0)];
-        });
+        $data = $daysOfWeek->mapWithKeys(fn($day) => [$day => $trackedTimeByDay->get($day, 0)]);
 
-        Log::info($data);
+        // Log::info(['Tracked Data' => $data->toArray()]);
 
         return [
             'datasets' => [
