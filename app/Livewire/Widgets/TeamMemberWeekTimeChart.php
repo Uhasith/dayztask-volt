@@ -18,9 +18,9 @@ class TeamMemberWeekTimeChart extends ChartWidget
 
     protected static ?string $pollingInterval = '5s';
 
-    protected static ?string $maxHeight = '35vh';
+    protected static ?string $maxHeight = '30vh';
 
-    public ?string $filter = 'month';
+    public ?string $filter = 'week';
 
     protected function getFilters(): ?array
     {
