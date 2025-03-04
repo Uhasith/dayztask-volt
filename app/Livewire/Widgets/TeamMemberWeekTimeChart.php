@@ -20,7 +20,7 @@ class TeamMemberWeekTimeChart extends ChartWidget
 
     protected static ?string $maxHeight = '35vh';
 
-    public ?string $filter = 'week';
+    public ?string $filter = 'month';
 
     protected function getFilters(): ?array
     {

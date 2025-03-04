@@ -18,7 +18,7 @@ class TeamMemberTaskStatusChart extends ChartWidget
 
     protected static ?string $maxHeight = '35vh';
 
-    public ?string $filter = 'month';
+    public ?string $filter = 'year';
 
     protected function getFilters(): ?array
     {
