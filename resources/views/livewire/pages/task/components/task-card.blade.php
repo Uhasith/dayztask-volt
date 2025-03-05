@@ -97,8 +97,8 @@
                 @endif
             </div>
         </div>
-        <div class="flex items-center py-2 gap-5">
-            @if ($task['subtasks_count'] > 0)
+        @if ($task['subtasks_count'] > 0)
+            <div class="flex items-center py-2 gap-5">
                 @php
                     $completedPrecent = ($task['completed_subtasks_count'] / $task['subtasks_count']) * 100;
                 @endphp
@@ -108,8 +108,8 @@
                     <div class="h-1.5 rounded-full {{ $task['completed_subtasks_count'] == $task['subtasks_count'] ? 'bg-green-500 dark:bg-green-400' : 'bg-blue-500 dark:bg-blue-400' }}"
                         style="width: {{ $completedPrecent }}%"></div>
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
     </x-wui-card>
 
     <div data-popover id="popover-user-profile-{{ $task['uuid'] }}" role="tooltip"
