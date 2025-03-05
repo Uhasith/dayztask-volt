@@ -2,23 +2,28 @@
     <x-wui-card rounded="3xl" class="cursor-pointer" wire:poll.10s="fetchData">
         <div class="flex items-center justify-between">
             <div class="max-w-xs truncate">
-                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-lg font-semibold" wire:navigate>{{ $task['name'] }}</a>
+                <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-lg font-semibold"
+                    wire:navigate>{{ $task['name'] }}</a>
             </div>
 
             <div class="flex items-center gap-4">
-                {{-- <div>
-                    <x-wui-badge flat lime label="3" class="cursor-pointer"
-                        x-tooltip.placement.top.raw="Comments Count">
-                        <x-slot name="prepend" class="relative flex items-center size-2 mr-1">
-                            <span
-                                class="absolute inline-flex w-full h-full rounded-full opacity-75 bg-lime-500 animate-ping"></span>
+                @if ($task['comments_count'] > 0)
+                    <div>
+                        <x-wui-badge flat lime label="{{ $task['comments_count'] }}" class="cursor-pointer"
+                            x-tooltip.placement.top.raw="Comments Count">
+                            <x-slot name="prepend" class="relative flex items-center size-2 mr-1">
+                                <span
+                                    class="absolute inline-flex w-full h-full rounded-full opacity-75 bg-lime-500 animate-ping"></span>
 
-                            <span class="relative inline-flex size-2 rounded-full bg-lime-500"
-                                x-tooltip.placement.top.raw="Comments"></span>
-                        </x-slot>
-                    </x-wui-badge>
-                </div> --}}
-                @if ($task['users']->pluck('id')->contains(auth()->id()) || auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
+                                <span class="relative inline-flex size-2 rounded-full bg-lime-500"
+                                    x-tooltip.placement.top.raw="Comments"></span>
+                            </x-slot>
+                        </x-wui-badge>
+                    </div>
+                @endif
+                @if (
+                    $task['users']->pluck('id')->contains(auth()->id()) ||
+                        auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
 
                     @if ($taskStatus == 'todo')
                         <div>
@@ -66,7 +71,9 @@
             </div>
         </div>
         <div class="flex items-center justify-between py-1">
-            <a href="{{ route('projects.show', $task['project']['uuid']) }}" class="text-md max-w-[50%] font-semibold truncate" wire:navigate>Project : {{ $task['project']['title'] }}</a>
+            <a href="{{ route('projects.show', $task['project']['uuid']) }}"
+                class="text-md max-w-[50%] font-semibold truncate" wire:navigate>Project :
+                {{ $task['project']['title'] }}</a>
             <div class="px-1">
                 <livewire:global.timer :trackedTime="$trackedTime" :timerRunning="$timerRunning" :taskId="$taskId" :key="'authUserTimer-' . $task['uuid']" />
             </div>
@@ -89,6 +96,19 @@
                     <x-wui-badge flat purple label="Low" />
                 @endif
             </div>
+        </div>
+        <div class="flex items-center py-2 gap-5">
+            @if ($task['subtasks_count'] > 0)
+                @php
+                    $completedPrecent = ($task['completed_subtasks_count'] / $task['subtasks_count']) * 100;
+                @endphp
+                <p class="text-xs font-semibold">Sub Tasks
+                    ({{ $task['completed_subtasks_count'] }}/{{ $task['subtasks_count'] }}) :</p>
+                <div class="w-[35%] bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                    <div class="h-1.5 rounded-full {{ $task['completed_subtasks_count'] == $task['subtasks_count'] ? 'bg-green-500 dark:bg-green-400' : 'bg-blue-500 dark:bg-blue-400' }}"
+                        style="width: {{ $completedPrecent }}%"></div>
+                </div>
+            @endif
         </div>
     </x-wui-card>
 

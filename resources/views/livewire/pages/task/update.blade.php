@@ -5,7 +5,7 @@
     followup: $wire.entangle('needFollowUp'),
     billable: $wire.entangle('isBillable'),
     newSubs: $wire.entangle('subtasks'),
-    oldAddedSubs: $wire.entangle('oldSubtasks'),
+    oldAddedSubs: $wire.entangle('oldSubtasks').live,
     oldSubsRemoved: $wire.entangle('oldRemovedSubTasks'),
 }" class="w-full mx-auto p-5 lg:px-10 lg:py-5 min-h-[calc(100vh - 5rem)]">
     <form wire:submit="updateTask">
@@ -289,11 +289,23 @@
                         <template x-for="(sub, index) in oldAddedSubs" :key="'sub-task-' + index">
                             <div x-show="oldAddedSubs.length > 0"
                                 class="flex items-center justify-between py-2 gap-5">
-                                <x-wui-input icon="document-text" placeholder="Add Sub Task" x-model="sub.subTask" />
-                                <x-mary-icon name="m-trash"
-                                    x-on:click="if(sub.old === true) { oldSubsRemoved.push(sub.id)};   oldAddedSubs.splice(index, 1);"
-                                    class="text-red-400 hover:text-red-600 cursor-pointer w-6 h-6"
-                                    x-tooltip.placement.top.raw="Remove" />
+                                <template x-if="!sub.is_completed">
+                                    <x-wui-input icon="document-text" placeholder="Add Sub Task"
+                                        x-model="sub.subTask" />
+                                </template>
+
+                                <template x-if="sub.is_completed">
+                                    <p x-text="sub.subTask" class="line-through text-gray-500"></p>
+                                </template>
+
+                                <!-- Checkbox for completion status -->
+                                <div class="flex items-center gap-4">
+                                    <x-wui-checkbox id="label" x-model="sub.is_completed" :value="true" />
+                                    <x-mary-icon name="m-trash"
+                                        x-on:click="if(sub.old === true) { oldSubsRemoved.push(sub.id)};   oldAddedSubs.splice(index, 1);"
+                                        class="text-red-400 hover:text-red-600 cursor-pointer w-6 h-6"
+                                        x-tooltip.placement.top.raw="Remove" />
+                                </div>
                             </div>
                         </template>
                         <template x-for="(sub, index) in newSubs" :key="'sub-task-' + index">

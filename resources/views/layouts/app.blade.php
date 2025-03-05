@@ -91,6 +91,9 @@
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
             'userId' => auth()->check() ? auth()->user()->id : null,
+            'encodedType' => auth()->check()
+                ? Namu\WireChat\Helpers\MorphClassResolver::encode(auth()->user()->getMorphClass())
+                : null,
         ]) !!};
     </script>
 

@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Task;
 use Exception;
 use App\Models\Task;
 use App\Models\Comment;
+use App\Models\SubTask;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
@@ -196,6 +197,19 @@ class Update extends Component
             app(NotificationService::class)->sendExeptionNotification();
 
             return $this->redirectRoute('projects.index');
+        }
+    }
+
+    public function updatedOldSubtasks($value)
+    {
+        if ($value === true || $value === false) {
+            foreach ($this->oldSubtasks as $subtask) {
+                SubTask::find($subtask['id'])->update([
+                    'is_completed' => $subtask['is_completed'],
+                ]);
+            }
+
+            app(NotificationService::class)->sendSuccessNotification('Subtask updated successfully');
         }
     }
 

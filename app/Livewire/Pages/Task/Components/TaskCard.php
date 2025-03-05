@@ -59,7 +59,11 @@ class TaskCard extends Component
 
     public function fetchData()
     {
-        $this->task = Task::where('id', $this->taskId)->with('users', 'subtasks')->first();
+        $this->task = Task::where('id', $this->taskId)->with('users', 'subtasks')->withCount('comments', 'subtasks')->withCount([
+            'subtasks as completed_subtasks_count' => function ($query) {
+                $query->where('is_completed', true);
+            }
+        ])->first();
         $this->taskStatus = $this->task->status;
         $this->project = $this->task->project;
         $this->projectId = $this->project->uuid;
