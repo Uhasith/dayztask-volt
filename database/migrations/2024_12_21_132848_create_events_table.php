@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamp('start')->nullable();
             $table->timestamp('end')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->boolean('is_full_day')->default(false)->nullable();
             $table->boolean('is_approved')->nullable();
             $table->timestamps();

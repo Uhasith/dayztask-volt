@@ -3,13 +3,15 @@
 namespace App\Livewire\Tables;
 
 use App\Models\Event;
+use Livewire\Attributes\On;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
-use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
+use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 
 final class EventTable extends PowerGridComponent
@@ -29,9 +31,29 @@ final class EventTable extends PowerGridComponent
         ];
     }
 
+    public function header(): array
+    {
+        return [
+            Button::add('bulk-delete')
+                ->slot('Bulk Delete')
+                ->class('rounded bg-red-600 text-white btn-sm')
+                ->dispatch('bulkDelete.' . $this->tableName, []),
+        ];
+    }
+
+    #[On('bulkDelete.{tableName}')]
+    public function bulkDelete(): void
+    {
+        if ($this->checkboxValues) {
+            Event::destroy($this->checkboxValues);
+            $this->js('window.pgBulkActions.clearAll()'); // clear the count on the interface.
+        }
+    }
+
     public function datasource(): Builder
     {
-        return Event::query()->whereNot('user_id')->with('user');
+        $teamIds = Auth::user()->currentTeam->allUsers()->pluck('id');
+        return Event::query()->whereIn('user_id', $teamIds)->with('user')->latest();
     }
 
     public function relationSearch(): array
@@ -73,7 +95,7 @@ final class EventTable extends PowerGridComponent
             Column::make('To', 'end'),
             Column::make('Submitted at', 'created_at')
             ->sortable()
-                ->searchable()
+                ->searchable(),
         ];
     }
 
