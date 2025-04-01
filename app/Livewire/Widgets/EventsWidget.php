@@ -17,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Guava\Calendar\Actions\CreateAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
+use HusamTariq\FilamentTimePicker\Forms\Components\TimePickerField;
 use Guava\Calendar\Widgets\CalendarWidget;
 
 class EventsWidget extends CalendarWidget
@@ -172,14 +173,14 @@ class EventsWidget extends CalendarWidget
                         ->required()
                         ->minDate(now()->addDays(2)->startOfDay()),
 
-                    TimePicker::make('start_time')
+                    TimePickerField::make('start_time')->label('Start Time')
+                        ->okLabel("Confirm")->cancelLabel("Cancel")
                         ->label('Start Time')
-                        ->native(false)
                         ->required(),
 
-                    TimePicker::make('end_time')
-                        ->label('End Time')
-                        ->native(false)
+                    TimePickerField::make('end_time')->label('End Time')
+                        ->okLabel("Confirm")->cancelLabel("Cancel")
+                        ->label('Start Time')
                         ->required()
                         ->after('start_time'),
                 ])->visible(fn(Get $get) => $get('is_full_day') == 0)
