@@ -290,8 +290,9 @@
                             <div x-show="oldAddedSubs.length > 0"
                                 class="flex items-center justify-between py-2 gap-5">
                                 <template x-if="!sub.is_completed">
-                                    <x-wui-input icon="document-text" placeholder="Add Sub Task"
-                                        x-model="sub.subTask" />
+                                    <p x-text="sub.subTask" class="border border-gray-400 p-2 rounded-sm"></p>
+                                    {{-- <x-wui-input icon="document-text" placeholder="Add Sub Task"
+                                        x-model="sub.subTask" /> --}}
                                 </template>
 
                                 <template x-if="sub.is_completed">

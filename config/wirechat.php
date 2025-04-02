@@ -22,7 +22,10 @@ return [
      */
     'broadcasting' => [
         'messages_queue' => 'messages', // Queue for real-time messaging.
-        'notifications_queue' => 'default', // Queue for chat notifications.
+        'notifications' => [
+            'enabled' => true,
+            'main_sw_script' => 'sw.js', // Relative to the public folder
+        ],
     ],
 
     /**
@@ -43,7 +46,7 @@ return [
      */
     'routes' => [
         'prefix' => '/messenger',
-        'middleware' => ['web', 'auth'],
+        'middleware' => ['web', 'auth:sanctum'],
         'guards' => ['web'],
     ],
 
