@@ -172,7 +172,8 @@ final class TaskTrackTable extends PowerGridComponent
                 return "{$minutes} minute" . ($minutes == 1 ? '' : 's');
             })
             ->add('invoice_reference')
-            ->add('end_time');
+            ->add('end_time')
+            ->add('updated_at');
     }
 
     public function columns(): array
@@ -189,6 +190,7 @@ final class TaskTrackTable extends PowerGridComponent
             Column::make('End Time', 'end_time')->sortable()->searchable(),
             Column::make('Total Time', 'total_time'),
             Column::make('Invoice Reference', 'invoice_reference')->searchable(),
+            Column::make('Date', 'updated_at'),
             // Column::action('Action')
         ];
     }
