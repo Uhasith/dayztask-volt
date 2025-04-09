@@ -189,7 +189,7 @@ class ShowAll extends Component
         }
 
         // Paginate the results
-        $tasks = $query->paginate(6);
+        $tasks = $query->paginate(10);
 
         return view('livewire.pages.project.show-all', [
             'tasks' => $tasks,
