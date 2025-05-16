@@ -9,7 +9,7 @@
     <form wire:submit="createTask">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-                <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4 mb-4 md:mb-0">
                     <x-wui-input icon="document-text" label="Task Name" placeholder="Task Name" wire:model="name" />
                     <x-wui-select id="assignTo" icon="user" label="Assign To" placeholder="Assign To" class="w-[50%]"
                         wire:model="assigned_users" multiselect>

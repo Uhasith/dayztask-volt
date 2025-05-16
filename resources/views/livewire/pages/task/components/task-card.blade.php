@@ -1,6 +1,6 @@
 <div x-init="initFlowbite();">
     <x-wui-card rounded="3xl" class="cursor-pointer" wire:poll.10s="fetchData">
-        <div class="flex items-center justify-between">
+        <div class="flex lg:items-center justify-between flex-col lg:flex-row">
             <div class="max-w-xs truncate">
                 <a href="{{ route('projects.tasks.update', $task['uuid']) }}" class="text-lg font-semibold"
                     wire:navigate>{{ $task['name'] }}</a>

@@ -15,7 +15,7 @@
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "filament/widgets": "^3.2",
         "flowframe/laravel-trend": "^0.2.0",
-        "guava/calendar": "^1.11",
+        "guava/calendar": "^1.13",
         "husam-tariq/filament-timepicker": "^3.0",
         "johngrogg/ics-parser": "^3.4",
         "laravel/framework": "^11.0",
