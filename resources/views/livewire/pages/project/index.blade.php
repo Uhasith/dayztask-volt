@@ -9,7 +9,7 @@
         </div>
 
         <div class="max-w-lg mx-auto mt-4 md:mt-8">
-            <x-wui-card shadow="xl" rounded="3xl"
+            <x-wui-card shadow="xl" rounded="xl"
                 class="px-4 !bg-[#eaddd7] !dark:bg-[#eaddd7] transform hover:scale-105 transition duration-700 ease-in-out">
                 <a href="{{ route('projects.show.all') }}" wire:navigate>
                     <div>

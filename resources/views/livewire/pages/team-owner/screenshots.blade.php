@@ -7,12 +7,12 @@ use function Livewire\Volt\{with, usesPagination};
 use Carbon\Carbon;
 // use App\Contracts\Sorting;
 // use App\Concerns\WithSorting;
- 
+
 // uses([Sorting::class, WithSorting::class]);
 // usesPagination();
 
 new class extends Component {
-    
+
     public $screenshots;
     public $selectedProjectIDs, $selectedTaskIDs, $selectedUserID, $selectedDate;
     public $user;
@@ -92,7 +92,7 @@ new class extends Component {
         if($media){
             $media->model->deleteMedia($media->id);
             $this->dispatch('screenshots-updated');
-        }   
+        }
     }
 }; ?>
 
@@ -100,8 +100,8 @@ new class extends Component {
     <div class="mx-auto sm:px-6 lg:px-8">
 
         {{-- Filters --}}
-        <div class="mb-10 bg-teal-50 border border-teal-400 dark:bg-gray-800 dark:border-gray-800 p-5 rounded-lg">
-            <div class="grid grid-cols-4 gap-5">
+        <div class="mb-10 bg-teal-50 border border-teal-400 dark:bg-gray-800 dark:border-gray-800 p-5 rounded-lg mx-3">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
                 <x-wui-select label="Filter by Projects" placeholder="Select Projects"
                     wire:model.live="selectedProjectIDs" multiselect :async-data="route('projects.search')"
                     option-label="title" option-value="id" />

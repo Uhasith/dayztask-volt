@@ -45,7 +45,7 @@ new class extends Component {
     }
 }; ?>
 <div x-cloak class="flex items-center">
-    <div class="flex gap-8 items-center justify-center">
+    <div class="flex gap-2 lg:gap-8 items-center justify-center flex-col lg:flex-row">
         <div x-data="{ checkin: $wire.entangle('checked_in'), show: true }">
             <div x-show="!checkin">
                 <x-wui-button x-show="show" label="Check-in" x-on:click="show = !show" right-icon="finger-print" positive

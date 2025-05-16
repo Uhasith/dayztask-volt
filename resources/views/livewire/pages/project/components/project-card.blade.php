@@ -1,5 +1,5 @@
 <div x-data="{ bgColor: '{{ $project['bg_color'] ?? '#eaddd7' }}', fontColor: '{{ $project['font_color'] ?? '#000000' }}' }">
-    <x-wui-card shadow="xl" rounded="3xl" x-bind:style="{ backgroundColor: bgColor }"
+    <x-wui-card shadow="xl" rounded="xl" x-bind:style="{ backgroundColor: bgColor }"
         class="px-4 transform hover:scale-105 transition duration-700 ease-in-out h-28 flex flex-col justify-between">
 
         <div class="absolute z-10 block top-3 right-6 cursor-pointer"

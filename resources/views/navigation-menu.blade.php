@@ -3,22 +3,26 @@
     <!-- Primary Navigation Menu -->
     <div class="mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex items-center gap-8">
+            <div class="w-[60%] md:w-[55%] lg:w-full flex items-center gap-8 justify-between">
+                <!-- mobile drawer for page nav init and toggle -->
+                <div class="drawer-content">
+                    <label for="my-drawer" class="">Menu</label>
+                </div>
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                <div class="shrink-0 flex items-center ">
                     <a href="{{ route('dashboard') }}">
                         <x-application-mark class="block h-9 w-auto" />
                     </a>
                 </div>
-                <div>
+                <div class="hidden lg:block">
                     @livewire('global.workspace')
                 </div>
-                <div>
+                <div class="hidden lg:block">
                     @livewire('global.check-status')
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden lg:flex sm:items-center sm:ms-6">
 
                 <!-- Spotlight Search -->
                 <livewire:global.search />
@@ -148,7 +152,7 @@
             </div>
 
             <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
+            <div class="-me-2 flex items-center lg:block">
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -164,7 +168,7 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden lg:hidden">
         {{-- <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
@@ -173,6 +177,28 @@
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+            <div class="w-3/4 pl-3">
+                @livewire('global.workspace')
+            </div>
+
+            <div class="my-3 w-full flex justify-start pl-3">
+                @livewire('global.check-status')
+            </div>
+
+            <div class="flex items-center px-4 w-3/4 pl-3 my-3 justify-start">
+                <x-mary-theme-toggle class="btn btn-sm mx-2 btn-circle btn-ghost" />
+
+                <div>
+                    <livewire:global.chat />
+                </div>
+
+                <!-- Notifications -->
+                <div>
+                    @livewire('database-notifications')
+                </div>
+            </div>
+
+
             <div class="flex items-center px-4">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                     <div class="shrink-0 me-3">
@@ -238,4 +264,47 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+    <!-- mobile drawer for page nav component -->
+    <div class="drawer">
+        <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+
+        <div class="drawer-side">
+            <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+                <x-mary-menu activate-by-route>
+                    <x-mary-menu-item title="Dashboard" icon="o-home" link="{{ route('dashboard') }}" wire:navigate
+                        x-tooltip.placement.right.raw="Dashboard" />
+                    <x-mary-menu-item title="Projects" icon="o-presentation-chart-line" link="{{ route('projects.index') }}"
+                        wire:navigate x-tooltip.placement.right.raw="Projects" />
+                    @if (auth()->user()->hasTeamRole(auth()->user()->currentTeam, 'admin'))
+                        <x-mary-menu-item title="Team Status" icon="o-sparkles" link="{{ route('status.index') }}"
+                            wire:navigate x-tooltip.placement.right.raw="Team Status" />
+                        <x-mary-menu-item title="Summary" icon="o-chart-bar" link="{{ route('summary.index') }}"
+                            wire:navigate x-tooltip.placement.right.raw="Summary" />
+                        <livewire:pages.checklist.components.checklist-sidebar-icon />
+                        <livewire:pages.team-owner.components.events-sidebar-icon />
+                        {{-- <x-mary-menu-item title="Leave Approvals" icon="o-calendar-date-range"
+                            link="{{ route('event-approvals') }}" wire:navigate
+                            x-tooltip.placement.right.raw="Event Approvals" /> --}}
+                        <x-mary-menu-item title="Screenshots" icon="o-computer-desktop" link="{{ route('screenshots') }}"
+                            wire:navigate x-tooltip.placement.right.raw="Screenshots" />
+                    @endif
+                    <x-mary-menu-item title="Messenger" icon="o-chat-bubble-left-right" link="{{ route('chats') }}"
+                        wire:navigate x-tooltip.placement.right.raw="Messenger" />
+
+                    {{-- <x-mary-menu-sub title="Settings" icon="o-cog-6-tooth">
+                        <x-mary-menu-item title="Wifi" icon="o-wifi" link="####" />
+                        <x-mary-menu-item title="Archives" icon="o-archive-box" link="####" />
+                    </x-mary-menu-sub> --}}
+                </x-mary-menu>
+            </ul>
+
+        </div>
+    </div>
+
 </nav>

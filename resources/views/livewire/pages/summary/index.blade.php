@@ -79,8 +79,8 @@ new class extends Component {
 }; ?>
 
 <div class="w-full mx-auto p-5 lg:px-10 lg:py-5">
-    <div class="flex items-center justify-end gap-6">
-        <x-wui-select id="user" icon="user" label="Select an user" placeholder="Select an user" class="max-w-[20%]"
+    <div class="flex items-center justify-end gap-6 flex-col md:flex-row">
+        <x-wui-select id="user" icon="user" label="Select an user" placeholder="Select an user" class="w-[90%] lg:max-w-[20%]"
             wire:model.live="user_id" :clearable="false">
             <x-wui-select.option label="All Users" value="All" />
             @foreach ($teamMembers as $key => $member)
@@ -90,7 +90,7 @@ new class extends Component {
             @endforeach
         </x-wui-select>
         <x-wui-select id="project" icon="user" label="Select a project" placeholder="Select a project"
-            class="max-w-[20%]" wire:model.live="project_id" :clearable="false">
+            class="w-[90%] lg:max-w-[20%]" wire:model.live="project_id" :clearable="false">
             <x-wui-select.option label="All Projects" value="All" />
             @foreach ($projects as $key => $project)
                 <x-wui-select.option label="{{ $project['title'] }}" value="{{ $project['id'] }}"
@@ -103,10 +103,10 @@ new class extends Component {
             <x-wui-button xs primary label="Single" class="mt-6" wire:click="setSingle" />
         @endif
         <x-wui-datetime-picker wire:model.live="start_date" label="Start Date" placeholder="Start Date"
-            class="max-w-[15%]" without-time without-timezone :clearable="false" />
+            class="w-[90%] lg:max-w-[15%]" without-time without-timezone :clearable="false" />
         @if ($type === 'Range')
             <x-wui-datetime-picker wire:model.live="end_date" label="End Date" placeholder="End Date"
-                class="max-w-[15%]" without-time without-timezone :clearable="false" />
+                class="w-[90%] lg:max-w-[15%]" without-time without-timezone :clearable="false" />
         @endif
     </div>
     <div class="my-8">
